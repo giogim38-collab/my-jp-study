@@ -1,0 +1,259 @@
+HTML
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <!-- 모바일 화면 비율 맞춤 & 손가락 확대/축소 가능 -->
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>일본어 문장 학습장</title>
+  <style>
+    * { box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
+      padding: 15px; line-height: 1.6; max-width: 700px; margin: 0 auto; background-color: #fcfcfc;
+    }
+    
+    /* 상단 고정 바 */
+    .progress-box {
+      position: sticky; top: 0; background: rgba(255, 255, 255, 0.95); padding: 12px 10px;
+      border-bottom: 2px solid #0066cc; margin-bottom: 20px; z-index: 10;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-radius: 0 0 8px 8px;
+    }
+    .progress-text { font-weight: bold; color: #0066cc; font-size: 15px; }
+    .jump-btn {
+      background-color: #28a745; color: white; border: none;
+      padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;
+    }
+
+    /* 📦 문장 박스 (긴 문장이 오면 아래로만 늘어남) */
+    .item { 
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 14px; margin-bottom: 12px; background: white; 
+      border: 1px solid #e2e8f0; border-radius: 8px;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+      gap: 12px;
+    }
+    
+    /* 체크박스 영역 (좌측 상단 고정) */
+    .item-check {
+      padding-top: 2px;
+    }
+    input[type="checkbox"] { 
+      width: 22px; height: 22px; cursor: pointer; accent-color: #0066cc;
+    }
+
+    /* 📝 문장 내용 영역 (세로로 차곡차곡 들어감) */
+    .item-content {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+      word-break: break-word; /* 긴 글자 자동 줄바꿈 */
+    }
+
+    /* 각 항목별 글자 스타일 */
+    .jp-text { font-size: 18px; font-weight: bold; color: #1a202c; } /* 일본어 원문 */
+    .reading-text { font-size: 14px; color: #4a5568; }               /* 읽기 (한자) */
+    .pron-text { font-size: 14px; color: #2b6cb0; }                  /* 한글 발음 */
+    .ko-text { font-size: 15px; color: #2d3748; margin-top: 2px; }   /* 한국어 해석 */
+
+    /* 완료된 문장 스타일 (체크 시 살짝 연하게) */
+    .completed .jp-text, .completed .ko-text { text-decoration: line-through; color: #a0aec0; }
+    .completed .reading-text, .completed .pron-text { color: #cbd5e1; }
+
+    /* 🔊 소리 버튼 영역 (우측 상단 고정) */
+    .btn {
+      background-color: #0066cc; color: white; border: none;
+      padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold;
+      flex-shrink: 0; font-size: 14px;
+    }
+    .btn:active { background-color: #004999; }
+
+    /* 하단 페이지 버튼 */
+    .pagination {
+      display: flex; justify-content: center; align-items: center;
+      gap: 6px; margin-top: 25px; margin-bottom: 30px; flex-wrap: wrap;
+    }
+    .page-btn {
+      background: white; border: 1px solid #cbd5e1; padding: 8px 14px;
+      border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;
+    }
+    .page-btn.active { background-color: #0066cc; color: white; border-color: #0066cc; }
+    .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 진행 바 -->
+  <div class="progress-box">
+    <div id="progressText" class="progress-text">진행률: 0 / 0 (0%)</div>
+    <button class="jump-btn" onclick="goToUncheckedPage()">📍 이어 공부하기</button>
+  </div>
+
+  <h2>📖 일본어 문장 학습장</h2>
+  <div id="list"></div>
+
+  <!-- 하단 페이지 버튼 -->
+  <div class="pagination" id="pagination"></div>
+
+  <script>
+    // 💡 여기에 일본어 원문(jp), 읽기(reading), 발음(pron), 해석(ko), 파일명(file)을 적어주시면 됩니다!
+    var data = [
+     {
+        num: "1-1",
+        jp: "一緒に。",
+        reading: "いっしょに。",
+        pron: "잇쇼니.",
+        ko: "함께, 같이.",
+        file: "1-1.mp3"
+      },
+      {
+        num: "1-2",
+        jp: "一緒に行きましょう。",
+        reading: "いっしょにいきましょう。",
+        pron: "잇쇼니 이키마쇼-",
+        ko: "함께 갑시다.",
+        file: "sound2.mp3"
+      },
+{
+        num: "2-1",
+        jp: "別々に。",
+        reading: "べつべつに",
+        pron: "베쯔베쯔니",
+        ko: "따로따로",
+        file: "2-1.mp3"
+      },
+{
+        num: "2-2",
+        jp: "別々に払います。",
+        reading: "べつべつにはらいます。",
+        pron: "베쯔베쯔니 하라이마스",
+        ko: "따로따로 계산하겠습니다.",
+        file: "sound2.mp3"
+      }
+
+
+      // ... 계속 추가 가능
+    ];
+
+    var PAGE_SIZE = 10;
+    var currentPage = 1;
+    var listDiv = document.getElementById('list');
+    var progressText = document.getElementById('progressText');
+    var paginationDiv = document.getElementById('pagination');
+    var currentAudio = null;
+
+    var savedProgress = JSON.parse(localStorage.getItem('my_study_progress') || '{}');
+
+    function render() {
+      listDiv.innerHTML = '';
+      var completedCount = 0;
+
+      data.forEach(function(item, index) {
+        if (savedProgress[index]) completedCount++;
+      });
+
+      var startIndex = (currentPage - 1) * PAGE_SIZE;
+      var endIndex = Math.min(startIndex + PAGE_SIZE, data.length);
+      var pageData = data.slice(startIndex, endIndex);
+
+      pageData.forEach(function(item, i) {
+        var realIndex = startIndex + i;
+        var isChecked = savedProgress[realIndex] || false;
+
+        var div = document.createElement('div');
+        div.className = 'item' + (isChecked ? ' completed' : '');
+        
+        // 4가지 정보(원문, 읽기, 발음, 해석)를 세로로 정렬하여 박스 생성
+        div.innerHTML = 
+          '<div class="item-check">' +
+            '<input type="checkbox" ' + (isChecked ? 'checked' : '') + ' onchange="toggleCheck(' + realIndex + ')">' +
+          '</div>' +
+          '<div class="item-content">' +
+            '<div class="jp-text">' + item.num + '. ' + item.jp + '</div>' +
+            '<div class="reading-text">📖 ' + item.reading + '</div>' +
+            '<div class="pron-text">🗣️ ' + item.pron + '</div>' +
+            '<div class="ko-text">💡 ' + item.ko + '</div>' +
+          '</div>' +
+          '<button class="btn" onclick="play(\'' + item.file + '\')">🔊 소리</button>';
+
+        listDiv.appendChild(div);
+      });
+
+      var percent = Math.round((completedCount / data.length) * 100) || 0;
+      progressText.innerText = '진행률: ' + completedCount + ' / ' + data.length + ' (' + percent + '%)';
+
+      renderPagination();
+    }
+
+    function renderPagination() {
+      paginationDiv.innerHTML = '';
+      var totalPages = Math.ceil(data.length / PAGE_SIZE);
+
+      if (totalPages <= 1) return;
+
+      var prevBtn = document.createElement('button');
+      prevBtn.className = 'page-btn';
+      prevBtn.innerText = '이전';
+      prevBtn.disabled = (currentPage === 1);
+      prevBtn.onclick = function() { currentPage--; render(); window.scrollTo(0, 0); };
+      paginationDiv.appendChild(prevBtn);
+
+      for (var p = 1; p <= totalPages; p++) {
+        (function(pageNum) {
+          var btn = document.createElement('button');
+          btn.className = 'page-btn' + (pageNum === currentPage ? ' active' : '');
+          btn.innerText = pageNum;
+          btn.onclick = function() {
+            currentPage = pageNum;
+            render();
+            window.scrollTo(0, 0);
+          };
+          paginationDiv.appendChild(btn);
+        })(p);
+      }
+
+      var nextBtn = document.createElement('button');
+      nextBtn.className = 'page-btn';
+      nextBtn.innerText = '다음';
+      nextBtn.disabled = (currentPage === totalPages);
+      nextBtn.onclick = function() { currentPage++; render(); window.scrollTo(0, 0); };
+      paginationDiv.appendChild(nextBtn);
+    }
+
+    function goToUncheckedPage() {
+      var targetIndex = -1;
+      for (var i = 0; i < data.length; i++) {
+        if (!savedProgress[i]) {
+          targetIndex = i;
+          break;
+        }
+      }
+
+      if (targetIndex !== -1) {
+        currentPage = Math.floor(targetIndex / PAGE_SIZE) + 1;
+        render();
+        window.scrollTo(0, 0);
+      } else {
+        alert('🎉 모든 문장의 공부를 완료하셨습니다!');
+      }
+    }
+
+    function toggleCheck(index) {
+      savedProgress[index] = !savedProgress[index];
+      localStorage.setItem('my_study_progress', JSON.stringify(savedProgress));
+      render();
+    }
+
+    function play(file) {
+      if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
+      currentAudio = new Audio(file);
+      currentAudio.play();
+    }
+
+    render();
+  </script>
+
+</body>
+</html>
