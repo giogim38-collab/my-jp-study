@@ -966,9 +966,22 @@ HTML
     }
 
     function play(file) {
-      if (currentAudio) { currentAudio.pause(); currentAudio.currentTime = 0; }
-      currentAudio = new Audio(file);
-      currentAudio.play();
+      if (currentAudio) { 
+        currentAudio.pause(); 
+        currentAudio.currentTime = 0; 
+      }
+      
+      // 웹서버 상대 경로를 명확하게 지정 (./ 추가)
+      currentAudio = new Audio('./' + file);
+      
+      // 웹 브라우저/모바일 재생 예외 처리 추가
+      var playPromise = currentAudio.play();
+      if (playPromise !== undefined) {
+        playPromise.catch(function(error) {
+          console.log("재생 오류 발생:", error);
+          alert("소리를 재생할 수 없습니다. 파일명이 맞는지 확인해주세요.");
+        });
+      }
     }
 
     render();
