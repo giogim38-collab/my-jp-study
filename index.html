@@ -57,12 +57,12 @@ HTML
 </head>
 <body>
 
-  <!-- 공통 오디오 플레이어 태그 -->
-  <audio id="globalAudio"></audio>
+  <!-- 공통 오디오 태그 -->
+  <audio id="player" preload="auto"></audio>
 
   <div class="progress-box">
     <div id="progressText" class="progress-text">진행률: 0 / 0 (0%)</div>
-    <button class="jump-btn" onclick="goToUncheckedPage()">📍 이어 공부하기</button>
+    <button class="jump-btn" id="jumpBtn">📍 이어 공부하기</button>
   </div>
 
   <h2>📖 송은임의 일본어 정복 아자아자!</h2>
@@ -73,7 +73,7 @@ HTML
     var data = [
       { num: "1-1", jp: "一緒に。", reading: "いっしょに", pron: "잇쇼니", ko: "함께, 같이", file: "01-1.mp3" },
       { num: "1-2", jp: "一緒に行きましょう。", reading: "いっしょにいきましょう。", pron: "잇쇼니 이키마쇼-", ko: "함께 갑시다.", file: "01-2.mp3" },
-      { num: "2-1", jp: "別々に", reading: "べつべつに", pron: "베쯔베쯔니", ko: "따로따로", file: "02-1.mp3" },
+      { num: "2-1", jp: "別々に", reading: "べつべつに", pron: "베쯔ベ쯔니", ko: "따로따로", file: "02-1.mp3" },
       { num: "2-2", jp: "別々に払います。", reading: "べつべつにはらいます。", pron: "베즈베즈니 하라이마스", ko: "따로따로 계산하겠습니다.", file: "02-2.mp3" },
       { num: "3-1", jp: "早く", reading: "はやく", pron: "하야쿠", ko: "일찍, 빠르게", file: "03-1.mp3" },
       { num: "3-2", jp: "早く起きました。", reading: "はやくおきました。", pron: "하야쿠 오키마시타", ko: "일찍 일어났습니다.", file: "03-2.mp3" },
@@ -93,16 +93,16 @@ HTML
       { num: "10-2", jp: "今日は休みます。", reading: "きょうはやすみます。", pron: "쿄-와 야스미마스", ko: "오늘은 쉬겠습니다.", file: "10-2.mp3" },
       { num: "11-1", jp: "夏休み", reading: "なつやすみ", pron: "나쯔야스미", ko: "여름휴가, 여름방학", file: "11-1.mp3" },
       { num: "11-2", jp: "夏休みに旅行します。", reading: "なつやすみにりょこうします。", pron: "나쯔야스미니 료코-시마스", ko: "여름휴가/방학에 여행합니다.", file: "11-2.mp3" },
-      { num: "12-1", jp: "冬休み", reading: "ふゆやすみ", pron: "후유야스미", ko: "겨울휴가, 겨울방학", file: "12-1.mp3" },
+      { num: "12-1", jp: "冬休み", reading: "ふゆやすみ", pron: "후ゆ야스미", ko: "겨울휴가, 겨울방학", file: "12-1.mp3" },
       { num: "12-2", jp: "冬休みは短いです。", reading: "ふゆやすみはみじかいです。", pron: "후유야스미와 미지카이데스", ko: "겨울휴가/방학은 짧습니다.", file: "12-2.mp3" },
       { num: "13-1", jp: "春", reading: "はる", pron: "하루", ko: "봄", file: "13-1.mp3" },
       { num: "13-2", jp: "春になりました。", reading: "はるになりました。", pron: "하루니 나리마시타", ko: "봄이 되었습니다.", file: "13-2.mp3" },
       { num: "14-1", jp: "夏", reading: "なつ", pron: "나쯔", ko: "여름", file: "14-1.mp3" },
       { num: "14-2", jp: "夏は暑いです。", reading: "なつはあついです。", pron: "나쯔와 아쯔이데스", ko: "여름은 덥습니다.", file: "14-2.mp3" },
       { num: "15-1", jp: "秋", reading: "あき", pron: "아키", ko: "가을", file: "15-1.mp3" },
-      { num: "15-2", jp: "秋の空が好きです。", reading: "あきのそらがすきです。", pron: "아키ノ 소라가 스키데스", ko: "가을 하늘을 좋아합니다.", file: "15-2.mp3" },
+      { num: "15-2", jp: "秋の空が好きです。", reading: "あきのそらがすきです。", pron: "아키노 소라가 스키데스", ko: "가을 하늘을 좋아합니다.", file: "15-2.mp3" },
       { num: "16-1", jp: "冬", reading: "ふゆ", pron: "후유", ko: "겨울", file: "16-1.mp3" },
-      { num: "16-2", jp: "冬は雪が降ります。", reading: "ふゆはゆきがふります。", pron: "후ゆ와 유키가 후리마스", ko: "겨울에는 눈이 내립니다.", file: "16-2.mp3" },
+      { num: "16-2", jp: "冬は雪が降ります。", reading: "ふゆはゆきがふります。", pron: "후유와 유키가 후리마스", ko: "겨울에는 눈이 내립니다.", file: "16-2.mp3" },
       { num: "17-1", jp: "飲み会", reading: "のみかい", pron: "노미카이", ko: "회식, 술자리", file: "17-1.mp3" },
       { num: "17-2", jp: "明日飲み会があります。", reading: "あしたのみかいがあります。", pron: "아시타 노미카이가 아리마스", ko: "내일 회식이 있습니다.", file: "17-2.mp3" },
       { num: "18-1", jp: "食事会", reading: "しょくじかい", pron: "쇼쿠지카이", ko: "식사 모임", file: "18-1.mp3" },
@@ -112,17 +112,17 @@ HTML
       { num: "20-1", jp: "足", reading: "あし", pron: "아시", ko: "발, 다리", file: "20-1.mp3" },
       { num: "20-2", jp: "足が大きいです。", reading: "あしがおおきいです。", pron: "아시가 오오키이데스", ko: "발이 큽니다.", file: "20-2.mp3" },
       { num: "21-1", jp: "足元", reading: "あしもと", pron: "아しも토", ko: "발밑", file: "21-1.mp3" },
-      { num: "21-2", jp: "足元に注意してください。", reading: "あしもとにちゅういしてください。", pron: "아시모토니 츄-이시테 쿠다사이", ko: "발밑을 조심하세요.", file: "21-2.mp3" },
+      { num: "21-2", jp: "足元に注意してください。", reading: "あしもとにちゅういしてください。", pron: "아시モ토니 츄-이시테 쿠다사이", ko: "발밑을 조심하세요.", file: "21-2.mp3" },
       { num: "22-1", jp: "親切", reading: "しんせつ", pron: "신세쯔", ko: "친절", file: "22-1.mp3" },
       { num: "22-2", jp: "彼はとても親切です。", reading: "かれはとてもしんせつです。", pron: "카레와 토테모 신세쯔데스", ko: "그는 매우 친절합니다.", file: "22-2.mp3" },
       { num: "23-1", jp: "不親切", reading: "ふしんせつ", pron: "후신세쯔", ko: "불친절", file: "23-1.mp3" },
       { num: "23-2", jp: "店員の態度が不親切でした。", reading: "てんいんのたいどがふしんせつでした", pron: "텐인노 타이도가 후신세쯔데시타", ko: "점원의 태도가 불친절했습니다.", file: "23-2.mp3" },
       { num: "24-1", jp: "入り口", reading: "いりぐち", pron: "이리구치", ko: "입구", file: "24-1.mp3" },
       { num: "24-2", jp: "入口はこちらです。", reading: "いりぐちはあちらです。", pron: "이리구치와 아치라데스", ko: "입구는 저쪽입니다.", file: "24-2.mp3" },
-      { num: "25-1", jp: "出口", reading: "でぐち", pron: "데ぐ치", ko: "출구", file: "25-1.mp3" },
+      { num: "25-1", jp: "出口", reading: "でぐち", pron: "데구치", ko: "출구", file: "25-1.mp3" },
       { num: "25-2", jp: "出口はどこですか。", reading: "でぐちはどこですか。", pron: "데구치와 도코데스카", ko: "출구는 어디입니까?", file: "25-2.mp3" },
       { num: "26-1", jp: "超おいしい", reading: "ちょうおいしい", pron: "쵸-오이시이", ko: "엄청/겁나 맛있음", file: "26-1.mp3" },
-      { num: "26-2", jp: "このラーメンは超おいしいです。", reading: "このらーめんはちょうおいしいです。", pron: "코ノ 라-멘와 쵸-오이시이데스", ko: "이 라멘은 진짜/겁나 맛있습니다.", file: "26-2.mp3" },
+      { num: "26-2", jp: "このラーメンは超おいしいです。", reading: "このらーめんはちょうおいしいです。", pron: "코노 라-멘와 쵸-오이시이데스", ko: "이 라멘은 진짜/겁나 맛있습니다.", file: "26-2.mp3" },
       { num: "27-1", jp: "暑い", reading: "あつい", pron: "아쯔이", ko: "덥다", file: "27-1.mp3" },
       { num: "27-2", jp: "今日はとても暑いです。", reading: "きょうはとてもあついです。", pron: "쿄-와 토테모 아쯔이데스", ko: "오늘은 매우 덥습니다.", file: "27-2.mp3" },
       { num: "28-1", jp: "冷たい", reading: "つめたい", pron: "쯔메타이", ko: "차갑다", file: "28-1.mp3" },
@@ -132,7 +132,7 @@ HTML
       { num: "30-1", jp: "悲しい", reading: "かなしい", pron: "카나시이", ko: "슬프다", file: "30-1.mp3" },
       { num: "30-2", jp: "悲しい映画を見ました。", reading: "かなしいえいがをみました。", pron: "카나시이 에-가오 미마시타", ko: "슬픈 영화를 봤습니다.", file: "30-2.mp3" },
       { num: "31-1", jp: "朝ご飯", reading: "あさごはん", pron: "아사고한", ko: "아침밥", file: "31-1.mp3" },
-      { num: "31-2", jp: "7時に朝ご飯を食べます。", reading: "しちじにあさごはんをたべます。", pron: "시치지니 아사고한오 타베마스", ko: "7시에 아침밥을 먹습니다.", file: "31-2.mp3" },
+      { num: "31-2", jp: "7時に朝ご飯を食べます。", reading: "しちじにあさごはんをたべます。", pron: "시치지니 아사고한오 타べ마스", ko: "7시에 아침밥을 먹습니다.", file: "31-2.mp3" },
       { num: "32-1", jp: "晩ご飯", reading: "ばんごはん", pron: "반고한", ko: "저녁밥", file: "32-1.mp3" },
       { num: "32-2", jp: "今日の晩ご飯はカレーです。", reading: "きょうのばんごはんはかれーです。", pron: "쿄-노 반고한와 카레-데스", ko: "오늘 저녁밥은 카레입니다.", file: "32-2.mp3" },
       { num: "33-1", jp: "忘れる", reading: "わすれる", pron: "와스레루", ko: "잊다, 잊어버리다", file: "33-1.mp3" },
@@ -154,9 +154,9 @@ HTML
       { num: "41-1", jp: "お姉さん", reading: "おねえさん", pron: "오네-산", ko: "누나, 언니", file: "41-1.mp3" },
       { num: "41-2", jp: "お姉さんは親切です。", reading: "おねえさんはしんせつです。", pron: "오네-산와 신세쯔데스", ko: "누나/언니는 친절합니다.", file: "41-2.mp3" },
       { num: "42-1", jp: "お勉強", reading: "おべんきょう", pron: "오벤쿄-", ko: "공부", file: "42-1.mp3" },
-      { num: "42-2", jp: "そろそろお勉強の時間です。", reading: "そろそろおべんきょうのじかんです。", pron: "소로소로 오벤쿄-노 지칸데스", ko: "이제 공부할 시간입니다.", file: "42-2.mp3" },
+      { num: "42-2", jp: "そろそろお勉強の時間です。", reading: "そろそろおべんきょうのじかんです。", pron: "소로소로 오ベン쿄-노 지칸데스", ko: "이제 공부할 시간입니다.", file: "42-2.mp3" },
       { num: "43-1", jp: "宿題", reading: "しゅくだい", pron: "슈쿠다이", ko: "숙제", file: "43-1.mp3" },
-      { num: "43-2", jp: "宿題を終わらせました。", reading: "しゅくだいをおわらせました。", pron: "슈쿠だい오 오와라세마시타", ko: "숙제를 끝냈습니다.", file: "43-2.mp3" },
+      { num: "43-2", jp: "宿題を終わらせました。", reading: "しゅくだいをおわらせました。", pron: "슈쿠다이오 오와라세마시타", ko: "숙제를 끝냈습니다.", file: "43-2.mp3" },
       { num: "44-1", jp: "二十日", reading: "はつか", pron: "하쯔카", ko: "20일, 20일간", file: "44-1.mp3" },
       { num: "44-2", jp: "今月の二十日に会います。", reading: "こんげつのはつかにあいます。", pron: "콘게츠노 하즈카니 아이마스", ko: "이번 달 20일에 만납니다.", file: "44-2.mp3" },
       { num: "45-1", jp: "涼しい", reading: "すずしい", pron: "스즈시이", ko: "시원하다", file: "45-1.mp3" },
@@ -164,7 +164,7 @@ HTML
       { num: "46-1", jp: "電車", reading: "でんしゃ", pron: "덴샤", ko: "전철", file: "46-1.mp3" },
       { num: "46-2", jp: "電車で通勤します。", reading: "でんしゃでつうきんします。", pron: "덴샤데 츠-킨시마스", ko: "전철로 출퇴근합니다.", file: "46-2.mp3" },
       { num: "47-1", jp: "汽車", reading: "きしゃ", pron: "키샤", ko: "기차", file: "47-1.mp3" },
-      { num: "47-2", jp: "煙をはく汽車が見えます。", reading: "けむりをはくきしゃがみえます。", pron: "케무리오 하쿠 키샤가 미에마스", ko: "연기를 뿜는 기차가 보입니다.", file: "47-2.mp3" }
+      { num: "47-2", jp: "煙をはく汽車が見えます。", reading: "けむりをはくきしゃがみえます。", pron: "케무リオ 하쿠 키샤가 미エ마스", ko: "연기를 뿜는 기차가 보입니다.", file: "47-2.mp3" }
     ];
 
     var PAGE_SIZE = 10;
@@ -172,6 +172,7 @@ HTML
     var listDiv = document.getElementById('list');
     var progressText = document.getElementById('progressText');
     var paginationDiv = document.getElementById('pagination');
+    var player = document.getElementById('player');
 
     var savedProgress = JSON.parse(localStorage.getItem('my_study_progress') || '{}');
 
@@ -194,9 +195,10 @@ HTML
         var div = document.createElement('div');
         div.className = 'item' + (isChecked ? ' completed' : '');
         
+        // data-file 속성에 파일명을 담아 안전하게 전달
         div.innerHTML = 
           '<div class="item-check">' +
-            '<input type="checkbox" ' + (isChecked ? 'checked' : '') + ' onchange="toggleCheck(' + realIndex + ')">' +
+            '<input type="checkbox" ' + (isChecked ? 'checked' : '') + ' data-index="' + realIndex + '">' +
           '</div>' +
           '<div class="item-content">' +
             '<div class="jp-text">' + item.num + '. ' + item.jp + '</div>' +
@@ -204,7 +206,7 @@ HTML
             '<div class="pron-text">🗣️ ' + item.pron + '</div>' +
             '<div class="ko-text">💡 ' + item.ko + '</div>' +
           '</div>' +
-          '<button class="btn" onclick="play(\'' + item.file + '\')">🔊 소리</button>';
+          '<button class="btn sound-btn" data-file="' + item.file + '">🔊 소리</button>';
 
         listDiv.appendChild(div);
       });
@@ -250,7 +252,36 @@ HTML
       paginationDiv.appendChild(nextBtn);
     }
 
-    function goToUncheckedPage() {
+    // 클릭 이벤트 통합 관리 (터치 및 클릭 오작동 방지)
+    document.addEventListener('click', function(e) {
+      // 🔊 소리 버튼 클릭 시
+      if (e.target && e.target.classList.contains('sound-btn')) {
+        var rawFile = e.target.getAttribute('data-file');
+        // 특수문자 정제
+        var cleanFile = String(rawFile).replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '').trim();
+
+        player.pause();
+        player.src = './' + cleanFile;
+        player.load();
+        
+        var playPromise = player.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(function(err) {
+            alert('오디오를 재생할 수 없습니다: ' + cleanFile);
+          });
+        }
+      }
+
+      // 체크박스 클릭 시
+      if (e.target && e.target.type === 'checkbox') {
+        var idx = e.target.getAttribute('data-index');
+        savedProgress[idx] = !savedProgress[idx];
+        localStorage.setItem('my_study_progress', JSON.stringify(savedProgress));
+        render();
+      }
+    });
+
+    document.getElementById('jumpBtn').onclick = function() {
       var targetIndex = -1;
       for (var i = 0; i < data.length; i++) {
         if (!savedProgress[i]) {
@@ -266,30 +297,7 @@ HTML
       } else {
         alert('🎉 모든 문장의 공부를 완료하셨습니다!');
       }
-    }
-
-    function toggleCheck(index) {
-      savedProgress[index] = !savedProgress[index];
-      localStorage.setItem('my_study_progress', JSON.stringify(savedProgress));
-      render();
-    }
-
-    // 모바일 재생 안전 재생 함수
-    function play(file) {
-      var audio = document.getElementById('globalAudio');
-      var cleanFile = String(file).replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '').trim();
-      
-      audio.pause();
-      audio.src = cleanFile;
-      audio.load();
-      
-      var playPromise = audio.play();
-      if (playPromise !== undefined) {
-        playPromise.catch(function(error) {
-          alert('소리를 열 수 없습니다.\n파일명: ' + cleanFile + '\n확장자 대소문자(.mp3/.MP3)를 확인해주세요.');
-        });
-      }
-    }
+    };
 
     render();
   </script>
