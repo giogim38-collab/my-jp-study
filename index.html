@@ -1,10 +1,10 @@
-html
+HTML
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>🌱 초급 일본어 - 송은임의 일본어 정복</title>
+  <title>🌱 초급 일본어 - 학습페이지</title>
   <style>
     * { box-sizing: border-box; }
     body { 
@@ -21,10 +21,6 @@ html
     }
     .progress-text { font-weight: bold; color: #2563eb; font-size: 16px; }
     .nav-btns { display: flex; gap: 6px; }
-    .home-btn {
-      background-color: #64748b; color: white; border: none; text-decoration: none;
-      padding: 8px 12px; border-radius: 6px; font-weight: bold; font-size: 14px; display: inline-block;
-    }
     .jump-btn {
       background-color: #28a745; color: white; border: none;
       padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;
@@ -74,7 +70,7 @@ html
   <div class="progress-box">
     <div id="progressText" class="progress-text">초급 진행률: 0 / 0 (0%)</div>
     <div class="nav-btns">
-           <button class="jump-btn" id="jumpBtn">📍 이어하기</button>
+      <button class="jump-btn" id="jumpBtn">📍 이어하기</button>
     </div>
   </div>
 
@@ -105,7 +101,7 @@ html
       { num: "10-1", jp: "休む", reading: "やすむ", pron: "야스무", ko: "쉬다", file: "10-1.mp3" },
       { num: "10-2", jp: "今日は休みます。", reading: "きょうはやすみます。", pron: "쿄-와 야스미마스", ko: "오늘은 쉬겠습니다.", file: "10-2.mp3" },
       { num: "11-1", jp: "夏休み", reading: "なつやすみ", pron: "나쯔야스미", ko: "여름휴가, 여름방학", file: "11-1.mp3" },
-      { num: "11-2", jp: "夏休みに旅行します。", reading: "なつやすみにりょこうします。", pron: "나쯔야스미니 료코-시마스", ko: "여름휴가/방학에 여행합니다.", file: "11-2.mp3" },
+      { num: "11-2", jp: "夏休みに旅行します。", reading: "なつやすみにりょこうします。", pron: "나쯔やすみにりょこうします。", pron: "나쯔야스미니 료코-시마스", ko: "여름휴가/방학에 여행합니다.", file: "11-2.mp3" },
       { num: "12-1", jp: "冬休み", reading: "ふゆやすみ", pron: "후유야스미", ko: "겨울휴가, 겨울방학", file: "12-1.mp3" },
       { num: "12-2", jp: "冬休みは短いです。", reading: "ふゆやすみはみじかいです。", pron: "후유야스미와 미지카이데스", ko: "겨울휴가/방학은 짧습니다.", file: "12-2.mp3" },
       { num: "13-1", jp: "春", reading: "はる", pron: "하루", ko: "봄", file: "13-1.mp3" },
@@ -116,7 +112,7 @@ html
       { num: "15-2", jp: "秋の空が好きです。", reading: "あきのそらがすきです。", pron: "아키ノ 소라가 스키데스", ko: "가을 하늘을 좋아합니다.", file: "15-2.mp3" },
       { num: "16-1", jp: "冬", reading: "ふゆ", pron: "후유", ko: "겨울", file: "16-1.mp3" },
       { num: "16-2", jp: "冬は雪が降ります。", reading: "ふゆはゆきがふります。", pron: "후유와 유키가 후리마스", ko: "겨울에는 눈이 내립니다.", file: "16-2.mp3" },
-      { num: "17-1", jp: "飲み会", reading: "のみかい", pron: "노미카이", ko: "회식, 술자리", file: "17-1.mp3" },
+      { num: "17-1", jp: "飲み会", reading: "のみかい", pron: "노미카い", ko: "회식, 술자리", file: "17-1.mp3" },
       { num: "17-2", jp: "明日飲み会があります。", reading: "あしたのみかいがあります。", pron: "아시타 노미카이가 아리마스", ko: "내일 회식이 있습니다.", file: "17-2.mp3" },
       { num: "18-1", jp: "食事会", reading: "しょくじかい", pron: "쇼쿠지카이", ko: "식사 모임", file: "18-1.mp3" },
       { num: "18-2", jp: "食事会に参加します。", reading: "しょくじかいにさんかします。", pron: "쇼쿠지카이니 산카시마스", ko: "식사 모임에 참석합니다.", file: "18-2.mp3" },
@@ -167,7 +163,7 @@ html
       { num: "41-1", jp: "お姉さん", reading: "おねえさん", pron: "오네-산", ko: "누나, 언니", file: "41-1.mp3" },
       { num: "41-2", jp: "お姉さんは親切です。", reading: "おねえさんはしんせつです。", pron: "오네-산와 신세쯔데스", ko: "누나/언니는 친절합니다.", file: "41-2.mp3" },
       { num: "42-1", jp: "お勉強", reading: "おべんきょう", pron: "오벤쿄-", ko: "공부", file: "42-1.mp3" },
-      { num: "42-2", jp: "そろそろお勉強の時間です。", reading: "そろそろおべんきょうのじかんです。", pron: "소로소로 오벤쿄-노 지칸데스", ko: "이제 공부할 시간입니다.", file: "42-2.mp3" },
+      { num: "42-2", jp: "そろそろお勉強の時間です。", reading: "そろそろおべんきょうのじかんです。", pron: "소로소로 오ベン쿄-노 지칸데스", ko: "이제 공부할 시간입니다.", file: "42-2.mp3" },
       { num: "43-1", jp: "宿題", reading: "しゅくだい", pron: "슈쿠다이", ko: "숙제", file: "43-1.mp3" },
       { num: "43-2", jp: "宿題を終わらせました。", reading: "しゅくだいをおわらせました。", pron: "슈쿠다이오 오와라세마시타", ko: "숙제를 끝냈습니다.", file: "43-2.mp3" },
       { num: "44-1", jp: "二十日", reading: "はつか", pron: "하쯔카", ko: "20일, 20일간", file: "44-1.mp3" },
@@ -177,138 +173,26 @@ html
       { num: "46-1", jp: "電車", reading: "でんしゃ", pron: "덴샤", ko: "전철", file: "46-1.mp3" },
       { num: "46-2", jp: "電車で通勤します。", reading: "でんしゃでつうきんします。", pron: "덴샤데 쯔-킨시마스", ko: "전철로 출퇴근합니다.", file: "46-2.mp3" },
       { num: "47-1", jp: "汽車", reading: "きしゃ", pron: "키샤", ko: "기차", file: "47-1.mp3" },
-      { num: "47-2", jp: "煙をはく汽車が見えます。", reading: "けむりをはくきしゃがみえます。", pron: "케무리오 하쿠 키샤가 미에마스", ko: "연기를 뿜는 기차가 보입니다.", file: "47-2.mp3" },
-{
-    num: "48-1",
-    jp: "行ってきます",
-    reading: "いってきます",
-    pron: "잇테키마스",
-    ko: "다녀오겠습니다.(외출하면서 집에있는 사람에게 하는 인사)",
-    file: "48-1.mp3"
-  },
-  {
-    num: "48-2",
-    jp: "行っていらっしゃい",
-    reading: "いっていらっしゃい",
-    pron: "잇테랏샤이",
-    ko: "다녀오세요(집에 있는 사람이 배웅하며 하는 인사)",
-    file: "48-2.mp3"
-  },
-  {
-    num: "49-1",
-    jp: "ただいま",
-    reading: "ただいま",
-    pron: "다타이마",
-    ko: "다녀왔습니다(외출하고 돌아오면서 하는 인사) ",
-    file: "49-1.mp3"
-  },
-  {
-    num: "49-2",
-    jp: "お帰りなさい",
-    reading: "おかえりなさい",
-    pron: "오카에리나사이",
-    ko: "어서 오세요 (다녀오셨어요?)-돌아 오는 사람을 맞이 하는 인사",
-    file: "49-2.mp3"
-  },
-  {
-    num: "50-1",
-    jp: "お久しぶりです",
-    reading: "おひさしぶりです",
-    pron: "오히사시부리데스",
-    ko: "오랜만입니다",
-    file: "50-1.mp3"
-  },
-  {
-    num: "50-2",
-    jp: "久しぶり",
-    reading: "ひさしぶり",
-    pron: "히사시부리",
-    ko: "오랜만이야(친구, 아랫사람에게 하는 인사)",
-    file: "50-2.mp3"
-  },
-  {
-    num: "51-1",
-    jp: "旅行に行きます",
-    reading: "りょこうにいきます",
-    pron: "료코-니 이키마스",
-    ko: "여행을 갑니다",
-    file: "51-1.mp3"
-  },
-  {
-    num: "51-2",
-    jp: "友達と一緒に旅行に行きます",
-    reading: "ともだちといっしょにりょこうにいきます",
-    pron: "토모다치토 잇쇼니 료코-니 이키마스",
-    ko: "친구와 함께 여행을 갑니다",
-    file: "51-2.mp3"
-  },
-  {
-    num: "52-1",
-    jp: "旅に出ます",
-    reading: "たびにでます",
-    pron: "타비니 데마스",
-    ko: "여행(길)을 떠납니다.(출발에 무게를 둔 말)",
-    file: "52-1.mp3"
-  },
-  {
-    num: "52-2",
-    jp: "朝、旅に出ます",
-    reading: "あさ、たびにでます",
-    pron: "아사, 타비니 데마스",
-    ko: "아침, 여행을 떠납니다.(아침에 출발)",
-    file: "52-2.mp3"
-  },
-  {
-    num: "53-1",
-    jp: "午前",
-    reading: "ごぜん",
-    pron: "고젠",
-    ko: "오전",
-    file: "53-1.mp3"
-  },
-  {
-    num: "53-2",
-    jp: "午前9時です。",
-    reading: "ごぜんくじです",
-    pron: "고젠 쿠지데스",
-    ko: "오전 9시입니다",
-    file: "53-2.mp3"
-  },
-  {
-    num: "54-1",
-    jp: "午後",
-    reading: "ごご",
-    pron: "고고",
-    ko: "오후",
-    file: "54-1.mp3"
-  },
-  {
-    num: "54-2",
-    jp: "午後3時です",
-    reading: "ごごさんじです",
-    pron: "고고 산지데스",
-    ko: "오후 3시입니다",
-    file: "54-2.mp3"
-  },
-  {
-    num: "55-1",
-    jp: "今日は木曜日です",
-    reading: "きょうはもくようびです",
-    pron: "쿄-와 모쿠요-비데스",
-    ko: "오늘은 목요일입니다",
-    file: "55-1.mp3"
-  },
-  {
-    num: "55-2",
-    jp: "今日は10月1日木曜日です",
-    reading: "きょうじゅうがつついたちもくようびです",
-    pron: "쿄-와 주-가쯔 쯔이타치 모쿠요-비데스",
-    ko: "오늘은 10월 1일 목요일입니다",
-    file: "55-2.mp3"
-  },
-  { num: "56-1", jp: "寒い", reading: "さむい", pron: "사무이", ko: "춥다", file: "56-1.mp3" },
-  { num: "56-2", jp: "朝は寒いです", reading: "あさはさむいです", pron: "아사와사무이데스", ko: "아침에는 추워요", file: "56-2.mp3" },
-  { num: "56-3", jp: "昼は寒くないです", reading: "ひるはさむくないです", pron: "히루와사무쿠나이데스", ko: "낮에는 춥지 않아요", file: "56-3.mp3" }
+      { num: "47-2", jp: "煙をはく汽車が見えます。", reading: "けむりをはくきしゃがみえます。", pron: "케무リオ 하쿠 키샤가 미에마스", ko: "연기를 뿜는 기차가 보입니다.", file: "47-2.mp3" },
+      { num: "48-1", jp: "行ってきます", reading: "いってきます", pron: "잇테키마스", ko: "다녀오겠습니다.(외출하면서 집에있는 사람에게 하는 인사)", file: "48-1.mp3" },
+      { num: "48-2", jp: "行っていらっしゃい", reading: "いっていらっしゃい", pron: "잇테랏샤이", ko: "다녀오세요(집에 있는 사람이 배웅하며 하는 인사)", file: "48-2.mp3" },
+      { num: "49-1", jp: "ただいま", reading: "ただいま", pron: "다타이마", ko: "다녀왔습니다(외출하고 돌아오면서 하는 인사)", file: "49-1.mp3" },
+      { num: "49-2", jp: "お帰りなさい", reading: "おかえりなさい", pron: "오카에리나사이", ko: "어서 오세요 (다녀오셨어요?)-돌아 오는 사람을 맞이 하는 인사", file: "49-2.mp3" },
+      { num: "50-1", jp: "お久しぶりです", reading: "おひさしぶりです", pron: "오히사시부리데스", ko: "오랜만입니다", file: "50-1.mp3" },
+      { num: "50-2", jp: "久しぶり", reading: "ひさしぶり", pron: "히사시부리", ko: "오랜만이야(친구, 아랫사람에게 하는 인사)", file: "50-2.mp3" },
+      { num: "51-1", jp: "旅行に行きます", reading: "りょこうにいきます", pron: "료코-니 이키마스", ko: "여행을 갑니다", file: "51-1.mp3" },
+      { num: "51-2", jp: "友達と一緒に旅行に行きます", reading: "ともだちといっしょにりょこうにいきます", pron: "토모다치토 잇쇼니 료코-니 이키마스", ko: "친구와 함께 여행을 갑니다", file: "51-2.mp3" },
+      { num: "52-1", jp: "旅に出ます", reading: "たびにでます", pron: "타비니 데마스", ko: "여행(길)을 떠납니다.(출발에 무게를 둔 말)", file: "52-1.mp3" },
+      { num: "52-2", jp: "朝、旅に出ます", reading: "あさ、たびにでます", pron: "아사, 타비니 데마스", ko: "아침, 여행을 떠납니다.(아침에 출발)", file: "52-2.mp3" },
+      { num: "53-1", jp: "午前", reading: "ごぜん", pron: "고젠", ko: "오전", file: "53-1.mp3" },
+      { num: "53-2", jp: "午前9時です。", reading: "ごぜんくじです", pron: "고젠 쿠지데스", ko: "오전 9시입니다", file: "53-2.mp3" },
+      { num: "54-1", jp: "午後", reading: "ごご", pron: "고고", ko: "오후", file: "54-1.mp3" },
+      { num: "54-2", jp: "午後3時です", reading: "ごごさんじです", pron: "고고 산지데스", ko: "오후 3시입니다", file: "54-2.mp3" },
+      { num: "55-1", jp: "今日は木曜日です", reading: "きょうはもくようびです", pron: "쿄-와 모쿠요-비데스", ko: "오늘은 목요일입니다", file: "55-1.mp3" },
+      { num: "55-2", jp: "今日は10月1日木曜日です", reading: "きょうじゅうがつついたちもくようびです", pron: "쿄-와 주-가쯔 쯔이타치 모쿠요-비데스", ko: "오늘은 10월 1일 목요일입니다", file: "55-2.mp3" },
+      { num: "56-1", jp: "寒い", reading: "さむい", pron: "사무이", ko: "춥다", file: "56-1.mp3" },
+      { num: "56-2", jp: "朝は寒いです", reading: "あさはさむいです", pron: "아사와사무이데스", ko: "아침에는 추워요", file: "56-2.mp3" },
+      { num: "56-3", jp: "昼は寒くないです", reading: "ひるはさむくないです", pron: "히루와사무쿠나이데스", ko: "낮에는 춥지 않아요", file: "56-3.mp3" }
     ];
 
     var PAGE_SIZE = 10;
@@ -318,7 +202,6 @@ html
     var paginationDiv = document.getElementById('pagination');
     var player = document.getElementById('player');
 
-    // 초급 전용 저장 키 사용
     var savedProgress = JSON.parse(localStorage.getItem('my_study_progress_basic') || '{}');
 
     function render() {
@@ -402,7 +285,13 @@ html
         var cleanFile = String(rawFile).replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '').trim();
 
         player.pause();
+        
+        // MP3 파일 위치 설정 (HTML 파일과 같은 폴더에 있을 경우)
         player.src = './' + cleanFile;
+        
+        // 만약 audio 폴더 안에 MP3가 있다면 아래 주석을 풀고 사용하세요:
+        // player.src = './audio/' + cleanFile;
+
         player.load();
         
         var playPromise = player.play();
