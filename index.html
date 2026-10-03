@@ -1,27 +1,35 @@
-HTML
+
 <!DOCTYPE html>
 <html lang="ko">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>송은임의 일본어 정복 아자아자!</title>
+  <title>🌱 초급 일본어 - 송은임의 일본어 정복</title>
   <style>
     * { box-sizing: border-box; }
     body { 
       font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif; 
       padding: 15px; line-height: 1.6; max-width: 700px; margin: 0 auto; background-color: #fcfcfc;
     }
+    
+    /* 상단 고정 바 */
     .progress-box {
       position: sticky; top: 0; background: rgba(255, 255, 255, 0.95); padding: 12px 10px;
-      border-bottom: 2px solid #0066cc; margin-bottom: 20px; z-index: 10;
+      border-bottom: 2px solid #2563eb; margin-bottom: 20px; z-index: 10;
       display: flex; justify-content: space-between; align-items: center;
       box-shadow: 0 2px 5px rgba(0,0,0,0.05); border-radius: 0 0 8px 8px;
     }
-    .progress-text { font-weight: bold; color: #0066cc; font-size: 16px; }
+    .progress-text { font-weight: bold; color: #2563eb; font-size: 16px; }
+    .nav-btns { display: flex; gap: 6px; }
+    .home-btn {
+      background-color: #64748b; color: white; border: none; text-decoration: none;
+      padding: 8px 12px; border-radius: 6px; font-weight: bold; font-size: 14px; display: inline-block;
+    }
     .jump-btn {
       background-color: #28a745; color: white; border: none;
-      padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 15px;
+      padding: 8px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 14px;
     }
+    
     .item { 
       display: flex; align-items: flex-start; justify-content: space-between;
       padding: 14px; margin-bottom: 12px; background: white; 
@@ -29,10 +37,10 @@ HTML
       box-shadow: 0 1px 3px rgba(0,0,0,0.02); gap: 12px;
     }
     .item-check { padding-top: 4px; }
-    input[type="checkbox"] { width: 24px; height: 24px; cursor: pointer; accent-color: #0066cc; }
+    input[type="checkbox"] { width: 24px; height: 24px; cursor: pointer; accent-color: #2563eb; }
     .item-content { flex: 1; display: flex; flex-direction: column; gap: 6px; word-break: break-word; }
 
-    /* 🔤 글자 크기 및 두께 수정 부분 */
+    /* 글자 크기 및 두께 스타일 */
     .jp-text { font-size: 20px; font-weight: bold; color: #1a202c; }          /* 일본어 원문 */
     .reading-text { font-size: 17px; font-weight: bold; color: #2d3748; }     /* 한자 읽기 */
     .pron-text { font-size: 17px; font-weight: bold; color: #1d4ed8; }        /* 한글 발음 */
@@ -41,11 +49,11 @@ HTML
     .completed .jp-text, .completed .ko-text { text-decoration: line-through; color: #a0aec0; }
     .completed .reading-text, .completed .pron-text { color: #cbd5e1; }
     .btn {
-      background-color: #0066cc; color: white; border: none;
+      background-color: #2563eb; color: white; border: none;
       padding: 10px 14px; border-radius: 6px; cursor: pointer; font-weight: bold;
       flex-shrink: 0; font-size: 15px;
     }
-    .btn:active { background-color: #004999; }
+    .btn:active { background-color: #1d4ed8; }
     .pagination {
       display: flex; justify-content: center; align-items: center;
       gap: 6px; margin-top: 25px; margin-bottom: 30px; flex-wrap: wrap;
@@ -54,7 +62,7 @@ HTML
       background: white; border: 1px solid #cbd5e1; padding: 8px 14px;
       border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 15px;
     }
-    .page-btn.active { background-color: #0066cc; color: white; border-color: #0066cc; }
+    .page-btn.active { background-color: #2563eb; color: white; border-color: #2563eb; }
     .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
   </style>
 </head>
@@ -64,11 +72,15 @@ HTML
   <audio id="player" preload="auto"></audio>
 
   <div class="progress-box">
-    <div id="progressText" class="progress-text">진행률: 0 / 0 (0%)</div>
-    <button class="jump-btn" id="jumpBtn">📍 이어 공부하기</button>
+    <div id="progressText" class="progress-text">초급 진행률: 0 / 0 (0%)</div>
+    <div class="nav-btns">
+      <!-- 🏠 메인 버튼: 한 단계 상위 폴더의 index.html로 이동 -->
+      <a href="../index.html" class="home-btn">🏠 메인</a>
+      <button class="jump-btn" id="jumpBtn">📍 이어하기</button>
+    </div>
   </div>
 
-  <h2>📖 송은임의 일본어 정복 아자아자!</h2>
+  <h2>🌱 초급 일본어 학습</h2>
   <div id="list"></div>
   <div class="pagination" id="pagination"></div>
 
@@ -103,7 +115,7 @@ HTML
       { num: "14-1", jp: "夏", reading: "なつ", pron: "나쯔", ko: "여름", file: "14-1.mp3" },
       { num: "14-2", jp: "夏は暑いです。", reading: "なつはあついです。", pron: "나쯔와 아쯔이데스", ko: "여름은 덥습니다.", file: "14-2.mp3" },
       { num: "15-1", jp: "秋", reading: "あき", pron: "아키", ko: "가을", file: "15-1.mp3" },
-      { num: "15-2", jp: "秋の空が好きです。", reading: "あきのそらがすきです。", pron: "아키노 소라가 스키데스", ko: "가을 하늘을 좋아합니다.", file: "15-2.mp3" },
+      { num: "15-2", jp: "秋の空が好きです。", reading: "あきのそらがすきです。", pron: "아키ノ 소라가 스키데스", ko: "가을 하늘을 좋아합니다.", file: "15-2.mp3" },
       { num: "16-1", jp: "冬", reading: "ふゆ", pron: "후유", ko: "겨울", file: "16-1.mp3" },
       { num: "16-2", jp: "冬は雪が降ります。", reading: "ふゆはゆきがふります。", pron: "후유와 유키가 후리마스", ko: "겨울에는 눈이 내립니다.", file: "16-2.mp3" },
       { num: "17-1", jp: "飲み会", reading: "のみかい", pron: "노미카이", ko: "회식, 술자리", file: "17-1.mp3" },
@@ -146,10 +158,10 @@ HTML
       { num: "35-2", jp: "週末に友達と遊びます。", reading: "しゅうまつにともだちとあそびます。", pron: "슈-마쯔니 토모다치토 아소비마스", ko: "주말에 친구와 놀니다.", file: "35-2.mp3" },
       { num: "36-1", jp: "ぬるい", reading: "ぬるい", pron: "누루이", ko: "미지근하다", file: "36-1.mp3" },
       { num: "36-2", jp: "お湯がぬるいです。", reading: "おゆがぬるいです。", pron: "오유가 누루이데스", ko: "따뜻한 물이 미지근합니다.", file: "36-2.mp3" },
-      { num: "37-1", jp: "熱い", reading: "あつい", pron: "아쯔가", ko: "뜨겁다", file: "37-1.mp3" },
+      { num: "37-1", jp: "熱い", reading: "あつい", pron: "아쯔이", ko: "뜨겁다", file: "37-1.mp3" },
       { num: "37-2", jp: "熱いお茶を飲みます。", reading: "あついおちゃをのみます。", pron: "아쯔이 오차오 노미마스", ko: "뜨거운 차를 마십니다.", file: "37-2.mp3" },
       { num: "38-1", jp: "十五夜", reading: "じゅうごや", pron: "쥬-고야", ko: "보름달 밤", file: "38-1.mp3" },
-      { num: "38-2", jp: "十五夜の月が綺麗です。", reading: "じゅうごやのつきがきれいです。", pron: "쥬-고야노 츠키가 키레이데스", ko: "보름달 밤의 달이 예쁩니다.", file: "38-2.mp3" },
+      { num: "38-2", jp: "十五夜の月が綺麗です。", reading: "じゅうごやのつきがきれいです。", pron: "쥬-고야노 쯔키가 키레이데스", ko: "보름달 밤의 달이 예쁩니다.", file: "38-2.mp3" },
       { num: "39-1", jp: "弟", reading: "おとうと", pron: "오토-토", ko: "남동생", file: "39-1.mp3" },
       { num: "39-2", jp: "弟は高校生です。", reading: "おとうとはこうこうせいです。", pron: "오토-토와 코-코-세데스", ko: "남동생은 고등학생입니다.", file: "39-2.mp3" },
       { num: "40-1", jp: "お兄ちゃん", reading: "おにいちゃん", pron: "오니-찬", ko: "오빠, 형", file: "40-1.mp3" },
@@ -161,7 +173,7 @@ HTML
       { num: "43-1", jp: "宿題", reading: "しゅくだい", pron: "슈쿠다이", ko: "숙제", file: "43-1.mp3" },
       { num: "43-2", jp: "宿題を終わらせました。", reading: "しゅくだいをおわらせました。", pron: "슈쿠다이오 오와라세마시타", ko: "숙제를 끝냈습니다.", file: "43-2.mp3" },
       { num: "44-1", jp: "二十日", reading: "はつか", pron: "하쯔카", ko: "20일, 20일간", file: "44-1.mp3" },
-      { num: "44-2", jp: "今月の二十日に会います。", reading: "こんげつのはつかにあいます。", pron: "콘게츠노 하즈카니 아이마스", ko: "이번 달 20일에 만납니다.", file: "44-2.mp3" },
+      { num: "44-2", jp: "今月の二十日に会います。", reading: "こんげつのはつかにあいます。", pron: "콘게츠노 하쯔카니 아이마스", ko: "이번 달 20일에 만납니다.", file: "44-2.mp3" },
       { num: "45-1", jp: "涼しい", reading: "すずしい", pron: "스즈시이", ko: "시원하다", file: "45-1.mp3" },
       { num: "45-2", jp: "秋風が涼しいです。", reading: "あきかぜがすずしいです。", pron: "아키카제가 스즈시이데스", ko: "가을바람이 시원합니다.", file: "45-2.mp3" },
       { num: "46-1", jp: "電車", reading: "でんしゃ", pron: "덴샤", ko: "전철", file: "46-1.mp3" },
@@ -173,7 +185,7 @@ HTML
     jp: "行ってきます",
     reading: "いってきます",
     pron: "잇테키마스",
-    ko: "다녀오겠습니다",
+    ko: "다녀오겠습니다.(외출하면서 집에있는 사람에게 하는 인사)",
     file: "48-1.mp3"
   },
   {
@@ -181,15 +193,15 @@ HTML
     jp: "行っていらっしゃい",
     reading: "いっていらっしゃい",
     pron: "잇테랏샤이",
-    ko: "다녀오세요",
+    ko: "다녀오세요(집에 있는 사람이 배웅하며 하는 인사)",
     file: "48-2.mp3"
   },
   {
     num: "49-1",
     jp: "ただいま",
     reading: "ただいま",
-    pron: "타다이마",
-    ko: "다녀왔습니다",
+    pron: "다타이마",
+    ko: "다녀왔습니다(외출하고 돌아오면서 하는 인사) ",
     file: "49-1.mp3"
   },
   {
@@ -197,7 +209,7 @@ HTML
     jp: "お帰りなさい",
     reading: "おかえりなさい",
     pron: "오카에리나사이",
-    ko: "어서 오세요 (다녀오셨어요)",
+    ko: "어서 오세요 (다녀오셨어요?)-돌아 오는 사람을 맞이 하는 인사",
     file: "49-2.mp3"
   },
   {
@@ -213,7 +225,7 @@ HTML
     jp: "久しぶり",
     reading: "ひさしぶり",
     pron: "히사시부리",
-    ko: "오랜만이야",
+    ko: "오랜만이야(친구, 아랫사람에게 하는 인사)",
     file: "50-2.mp3"
   },
   {
@@ -227,8 +239,8 @@ HTML
   {
     num: "51-2",
     jp: "友達と一緒に旅行に行きます",
-    reading: "ともだちといっしょによりょこうにいきます",
-    pron: "토모다치토 일쇼니 료코-니 이키마스",
+    reading: "ともだちといっしょにりょこうにいきます",
+    pron: "토모다치토 잇쇼니 료코-니 이키마스",
     ko: "친구와 함께 여행을 갑니다",
     file: "51-2.mp3"
   },
@@ -237,7 +249,7 @@ HTML
     jp: "旅に出ます",
     reading: "たびにでます",
     pron: "타비니 데마스",
-    ko: "여행(길)을 떠납니다",
+    ko: "여행(길)을 떠납니다.(출발에 무게를 둔 말)",
     file: "52-1.mp3"
   },
   {
@@ -245,7 +257,7 @@ HTML
     jp: "朝、旅に出ます",
     reading: "あさ、たびにでます",
     pron: "아사, 타비니 데마스",
-    ko: "아침, 여행을 떠납니다",
+    ko: "아침, 여행을 떠납니다.(아침에 출발)",
     file: "52-2.mp3"
   },
   {
@@ -295,7 +307,10 @@ HTML
     pron: "쿄-와 주-가쯔 쯔이타치 모쿠요-비데스",
     ko: "오늘은 10월 1일 목요일입니다",
     file: "55-2.mp3"
-  }
+  },
+  { num: "56-1", jp: "寒い", reading: "さむい", pron: "사무이", ko: "춥다", file: "56-1.mp3" },
+  { num: "56-2", jp: "朝は寒いです", reading: "あさはさむいです", pron: "아사와사무이데스", ko: "아침에는 추워요", file: "56-2.mp3" },
+  { num: "56-3", jp: "昼は寒くないです", reading: "ひるはさむくないです", pron: "히루와사무쿠나이데스", ko: "낮에는 춥지 않아요", file: "56-3.mp3" }
     ];
 
     var PAGE_SIZE = 10;
@@ -305,7 +320,8 @@ HTML
     var paginationDiv = document.getElementById('pagination');
     var player = document.getElementById('player');
 
-    var savedProgress = JSON.parse(localStorage.getItem('my_study_progress') || '{}');
+    // 초급 전용 저장 키 사용
+    var savedProgress = JSON.parse(localStorage.getItem('my_study_progress_basic') || '{}');
 
     function render() {
       listDiv.innerHTML = '';
@@ -342,7 +358,7 @@ HTML
       });
 
       var percent = Math.round((completedCount / data.length) * 100) || 0;
-      progressText.innerText = '진행률: ' + completedCount + ' / ' + data.length + ' (' + percent + '%)';
+      progressText.innerText = '초급 진행률: ' + completedCount + ' / ' + data.length + ' (' + percent + '%)';
 
       renderPagination();
     }
@@ -402,7 +418,7 @@ HTML
       if (e.target && e.target.type === 'checkbox') {
         var idx = e.target.getAttribute('data-index');
         savedProgress[idx] = !savedProgress[idx];
-        localStorage.setItem('my_study_progress', JSON.stringify(savedProgress));
+        localStorage.setItem('my_study_progress_basic', JSON.stringify(savedProgress));
         render();
       }
     });
@@ -421,7 +437,7 @@ HTML
         render();
         window.scrollTo(0, 0);
       } else {
-        alert('🎉 모든 문장의 공부를 완료하셨습니다!');
+        alert('🎉 초급 과정의 모든 문장 공부를 완료하셨습니다!');
       }
     };
 

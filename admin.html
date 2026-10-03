@@ -1,0 +1,150 @@
+HTML
+<!-- 🌱 [초급 자료 누적 등록 도구] /basic/admin.html -->
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>🌱 초급 일본어 - 자동 누적 등록 도구</title>
+  <style>
+    body { font-family: -apple-system, BlinkMacSystemFont, sans-serif; max-width: 650px; margin: 20px auto; padding: 20px; line-height: 1.6; background-color: #f8fafc; }
+    .card { background: white; padding: 20px; border-radius: 10px; box-shadow: 0 2px 8px rgba(0,0,0,0.08); margin-bottom: 20px; }
+    h2 { margin-top: 0; color: #1e293b; font-size: 20px; }
+    .form-group { margin-bottom: 12px; }
+    label { display: block; font-weight: bold; margin-bottom: 4px; color: #334155; font-size: 14px; }
+    input { width: 100%; padding: 10px; box-sizing: border-box; font-size: 15px; border: 1px solid #cbd5e1; border-radius: 6px; }
+    input:focus { border-color: #2563eb; outline: none; }
+    
+    .btn-group { display: flex; gap: 8px; margin-top: 15px; }
+    .btn-add { background: #2563eb; color: white; border: none; padding: 12px; font-size: 15px; font-weight: bold; border-radius: 6px; cursor: pointer; flex: 2; }
+    .btn-clear { background: #94a3b8; color: white; border: none; padding: 12px; font-size: 14px; font-weight: bold; border-radius: 6px; cursor: pointer; flex: 1; }
+    
+    .count-badge { display: inline-block; background: #e0e7ff; color: #3730a3; padding: 4px 8px; border-radius: 12px; font-size: 13px; font-weight: bold; margin-bottom: 8px; }
+    textarea { width: 100%; height: 220px; margin-top: 5px; font-family: monospace; font-size: 13px; padding: 10px; box-sizing: border-box; border: 1px solid #cbd5e1; border-radius: 6px; background-color: #0f172a; color: #38bdf8; }
+    .help-text { font-size: 13px; color: #64748b; margin-top: 6px; }
+  </style>
+</head>
+<body>
+
+  <div class="card">
+    <h2>🌱 초급 일본어 자료 누적 입력기</h2>
+    
+    <div class="form-group">
+      <label>번호 (예: 48-1)</label>
+      <input type="text" id="num" placeholder="예: 48-1">
+    </div>
+    <div class="form-group">
+      <label>일본어 문장 (jp)</label>
+      <input type="text" id="jp" placeholder="예: こんにちは。">
+    </div>
+    <div class="form-group">
+      <label>한자 읽기 (reading)</label>
+      <input type="text" id="reading" placeholder="예: こんにちは">
+    </div>
+    <div class="form-group">
+      <label>한글 발음 (pron)</label>
+      <input type="text" id="pron" placeholder="예: 콘니치와">
+    </div>
+    <div class="form-group">
+      <label>한국어 뜻 (ko)</label>
+      <input type="text" id="ko" placeholder="예: 안녕하세요">
+    </div>
+    <div class="form-group">
+      <label>음성 파일명 (file)</label>
+      <input type="text" id="file" placeholder="예: 48-1.mp3">
+    </div>
+
+    <div class="btn-group">
+      <button class="btn-add" onclick="addItem()">➕ 항목 추가하기</button>
+      <button class="btn-clear" onclick="resetAll()">🔄 처음부터 다시</button>
+    </div>
+  </div>
+
+  <div class="card">
+    <span class="count-badge" id="countBadge">현재 작성된 항목: 0개</span>
+    <textarea id="result" readonly placeholder="위에서 [항목 추가하기]를 누르면 여기에 누적된 코드가 생성됩니다."></textarea>
+    <p class="help-text">💡 입력을 다 마치신 후 상자 안의 코드를 전체 복사(`Ctrl + A` ➔ `Ctrl + C`)해서 `index.html` 파일의 기존 목록 맨 끝에 붙여넣으시면 됩니다.</p>
+  </div>
+
+  <script>
+    var itemList = [];
+
+    function addItem() {
+      var num = document.getElementById('num').value.trim();
+      var jp = document.getElementById('jp').value.trim();
+      var reading = document.getElementById('reading').value.trim();
+      var pron = document.getElementById('pron').value.trim();
+      var ko = document.getElementById('ko').value.trim();
+      var file = document.getElementById('file').value.trim();
+
+      if (!jp) {
+        alert('일본어 문장은 필수 입력 사항입니다!');
+        return;
+      }
+
+      // 새 항목 객체 저장
+      itemList.push({ num: num, jp: jp, reading: reading, pron: pron, ko: ko, file: file });
+
+      // 코드 화면 업데이트
+      updateResult();
+
+      // 다음 입력을 위해 입력 칸 비우기 (번호와 파일명은 편리하게 다음 번호 추측)
+      document.getElementById('jp').value = '';
+      document.getElementById('reading').value = '';
+      document.getElementById('pron').value = '';
+      document.getElementById('ko').value = '';
+      
+      // 번호 자동 증가 팁 (예: 48-1 -> 48-2)
+      if (num.includes('-')) {
+        var parts = num.split('-');
+        var nextSub = parseInt(parts[1]) + 1;
+        if (!isNaN(nextSub)) {
+          var nextNum = parts[0] + '-' + nextSub;
+          document.getElementById('num').value = nextNum;
+          document.getElementById('file').value = nextNum + '.mp3';
+        }
+      }
+      
+      document.getElementById('jp').focus();
+    }
+
+    function updateResult() {
+      if (itemList.length === 0) {
+        document.getElementById('result').value = '';
+        document.getElementById('countBadge').innerText = '현재 작성된 항목: 0개';
+        return;
+      }
+
+      var formattedLines = itemList.map(function(item, index) {
+        var line = '  { num: "' + item.num + '", jp: "' + item.jp + '", reading: "' + item.reading + '", pron: "' + item.pron + '", ko: "' + item.ko + '", file: "' + item.file + '" }';
+        
+        // 마지막 항목이면 뒤에 쉼표(,)를 붙이지 않음!
+        if (index < itemList.length - 1) {
+          line += ',';
+        }
+        return line;
+      });
+
+      // 앞부분에 쉼표(,)를 붙여 기존 index.html 코드 뒤에 바로 이어서 붙이기 좋게 만듦
+      var finalOutput = ',\n' + formattedLines.join('\n');
+      
+      document.getElementById('result').value = finalOutput;
+      document.getElementById('countBadge').innerText = '현재 작성된 항목: ' + itemList.length + '개';
+    }
+
+    function resetAll() {
+      if (confirm('작성 중인 모든 내용이 초기화됩니다. 계속하시겠습니까?')) {
+        itemList = [];
+        updateResult();
+        document.getElementById('num').value = '';
+        document.getElementById('jp').value = '';
+        document.getElementById('reading').value = '';
+        document.getElementById('pron').value = '';
+        document.getElementById('ko').value = '';
+        document.getElementById('file').value = '';
+      }
+    }
+  </script>
+
+</body>
+</html>
