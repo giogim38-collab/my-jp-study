@@ -1,1 +1,66 @@
+HTML
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+  <title>일본어 학습 메인</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", sans-serif;
+      background-color: #f4f6f8;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      padding: 24px 16px;
+    }
+    h1 {
+      font-size: 34px;
+      font-weight: 800;
+      color: #111111;
+      margin-bottom: 40px;
+      text-align: center;
+      line-height: 1.4;
+    }
+    .btn-container {
+      width: 100%;
+      max-width: 420px;
+      display: flex;
+      flex-direction: column;
+      gap: 24px;
+    }
+    .menu-btn {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 100%;
+      padding: 28px 20px;
+      font-size: 28px;
+      font-weight: bold;
+      color: #ffffff;
+      text-decoration: none;
+      border-radius: 20px;
+      box-shadow: 0 6px 14px rgba(0,0,0,0.15);
+      -webkit-tap-highlight-color: transparent;
+    }
+    .beginner { background-color: #1b5e20; }
+    .advanced { background-color: #0d47a1; }
+    .menu-btn:active { opacity: 0.85; transform: scale(0.98); }
+  </style>
+</head>
+<body>
 
+  <h1>🇯🇵 일본어 학습 선택</h1>
+
+  <div class="btn-container">
+    <!-- japan/beginner/beginner.html 로 이동 -->
+    <a href="beginner/beginner.html" class="menu-btn beginner">🌱 초급 일본어</a>
+    <!-- japan/advanced/advanced.html 로 이동 -->
+    <a href="advanced/advanced.html" class="menu-btn advanced">🌳 고급 일본어</a>
+  </div>
+
+</body>
+</html>
