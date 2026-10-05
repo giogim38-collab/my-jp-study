@@ -4,32 +4,35 @@ HTML
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
-  <title>고급 일본어</title>
+  <title>🌳 고급 일본어 - 학습페이지</title>
   <style>
     * { box-sizing: border-box; margin: 0; padding: 0; }
-    body {
-      font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", sans-serif;
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", sans-serif; 
+      padding: 16px; 
+      line-height: 1.6; 
+      max-width: 700px; 
+      margin: 0 auto; 
       background-color: #f4f6f8;
-      padding: 16px;
     }
-
-    /* 상단 이동 네비게이션 */
+    
+    /* 상단 네비게이션 바 (메인 / 초급 이동) */
     .nav-bar {
       display: flex;
       gap: 12px;
-      margin-bottom: 20px;
+      margin-bottom: 16px;
     }
     .nav-btn {
       flex: 1;
-      padding: 16px 10px;
+      padding: 14px 10px;
       text-align: center;
-      font-size: 20px;
+      font-size: 18px;
       font-weight: bold;
       text-decoration: none;
       color: #111111;
       background-color: #ffffff;
       border: 2px solid #bbb;
-      border-radius: 14px;
+      border-radius: 12px;
       -webkit-tap-highlight-color: transparent;
     }
     .nav-btn.direct {
@@ -39,101 +42,91 @@ HTML
     }
     .nav-btn:active { opacity: 0.8; }
 
-    /* 페이지 제목 */
-    .header-title {
-      font-size: 28px;
-      font-weight: 800;
-      color: #0d47a1;
-      text-align: center;
-      margin-bottom: 20px;
+    /* 상단 고정 진행률 바 */
+    .progress-box {
+      position: sticky; top: 0; background: rgba(255, 255, 255, 0.98); padding: 14px 12px;
+      border-bottom: 3px solid #0d47a1; margin-bottom: 20px; z-index: 10;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.06); border-radius: 12px;
     }
-
-    /* 문장 카드 리스트 */
-    .card-list {
-      display: flex;
-      flex-direction: column;
-      gap: 20px;
+    .progress-text { font-weight: bold; color: #0d47a1; font-size: 18px; }
+    .jump-btn {
+      background-color: #1565c0; color: white; border: none;
+      padding: 10px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;
     }
-
-    /* 개별 학습 카드 */
-    .card {
-      background-color: #ffffff;
-      border-radius: 18px;
-      padding: 22px 18px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      border-left: 8px solid #0d47a1;
-    }
-
-    /* 카드 번호 표시 */
-    .card-num {
-      font-size: 18px;
-      font-weight: bold;
-      color: #0d47a1;
-      margin-bottom: 8px;
-    }
-
-    /* 1. 일본어 한자 문장 (가장 크고 굵게) */
-    .jp-kanji {
+    .jump-btn:active { opacity: 0.85; }
+    
+    h2 {
       font-size: 26px;
-      font-weight: bold;
-      color: #111111;
-      line-height: 1.5;
-      margin-bottom: 10px;
-    }
-
-    /* 2. 히라가나 읽기 */
-    .jp-kana {
-      font-size: 21px;
-      font-weight: 600;
       color: #0d47a1;
-      line-height: 1.5;
-      margin-bottom: 12px;
-      background-color: #e8f0fe;
-      padding: 8px 12px;
-      border-radius: 8px;
-    }
-
-    /* 3. 한국어 해석 */
-    .kr-meaning {
-      font-size: 21px;
-      font-weight: 600;
-      color: #333333;
-      line-height: 1.5;
       margin-bottom: 16px;
+      text-align: center;
+      font-weight: 800;
     }
 
-    /* 소리 듣기 큰 버튼 */
-    .audio-btn {
-      width: 100%;
-      padding: 16px;
-      font-size: 22px;
-      font-weight: bold;
-      color: #ffffff;
-      background-color: #0d47a1;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
+    /* 학습 카드 스타일 */
+    .item { 
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 18px; margin-bottom: 14px; background: white; 
+      border: 1px solid #e2e8f0; border-radius: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04); gap: 14px;
+    }
+    .item-check { padding-top: 4px; }
+    input[type="checkbox"] { width: 26px; height: 26px; cursor: pointer; accent-color: #0d47a1; }
+    .item-content { flex: 1; display: flex; flex-direction: column; gap: 8px; word-break: break-word; }
+
+    /* 글자 크기 및 두께 스타일 */
+    .jp-text { font-size: 22px; font-weight: bold; color: #111111; }      /* 일본어 원문 */
+    .reading-text { font-size: 18px; font-weight: bold; color: #1b5e20; }   /* 히라가나 읽기 */
+    .ko-text { font-size: 19px; font-weight: bold; color: #222222; margin-top: 2px; } /* 한국어 해석 */
+
+    .completed .jp-text, .completed .ko-text { text-decoration: line-through; color: #a0aec0; }
+    .completed .reading-text { color: #cbd5e1; }
+    
+    .btn {
+      background-color: #0d47a1; color: white; border: none;
+      padding: 12px 16px; border-radius: 8px; cursor: pointer; font-weight: bold;
+      flex-shrink: 0; font-size: 16px;
       -webkit-tap-highlight-color: transparent;
     }
-    .audio-btn:active { background-color: #0a3880; }
+    .btn:active { background-color: #0a3880; }
+
+    /* 페이지네이션 버튼 */
+    .pagination {
+      display: flex; justify-content: center; align-items: center;
+      gap: 8px; margin-top: 25px; margin-bottom: 30px; flex-wrap: wrap;
+    }
+    .page-btn {
+      background: white; border: 1px solid #cbd5e1; padding: 10px 16px;
+      border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;
+    }
+    .page-btn.active { background-color: #0d47a1; color: white; border-color: #0d47a1; }
+    .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
   </style>
 </head>
 <body>
 
-  <!-- 이동 네비게이션 -->
+  <!-- 상단 네비게이션 바 -->
   <div class="nav-bar">
     <a href="../index.html" class="nav-btn">🏠 메인으로</a>
     <a href="../beginner/beginner.html" class="nav-btn direct">🌱 초급으로</a>
   </div>
 
-  <h1 class="header-title">🌳 고급 일본어 학습</h1>
+  <!-- 공통 오디오 태그 -->
+  <audio id="player" preload="auto"></audio>
 
-  <!-- 학습 카드 목록 -->
-  <div class="card-list" id="cardContainer"></div>
+  <!-- 진행률 및 이어하기 -->
+  <div class="progress-box">
+    <div id="progressText" class="progress-text">고급 진행률: 0 / 0 (0%)</div>
+    <button class="jump-btn" id="jumpBtn">📍 이어하기</button>
+  </div>
+
+  <h2>🌳 고급 일본어 학습</h2>
+  <div id="list"></div>
+  <div class="pagination" id="pagination"></div>
 
   <script>
-    // 이미지 표 내용 데이터
-    const studyData = [
+    var data = [
       {
         num: 1,
         kanji: "人生が生まれてくるのは、必ず死ぬためです。",
@@ -144,7 +137,7 @@ HTML
       {
         num: 2,
         kanji: "現在、日本は世界一の長寿国になっています。",
-        kana: "げんざい、にほんはせかいいつのちょうじゅこくになっています。",
+        kana: "げんざい、にほんはせかいいちのちょうじゅこくになっています。",
         kr: "현재, 일본은 세계 제일의 장수국가가 되어 있습니다.",
         audio: "seto_02.mp3"
       },
@@ -165,7 +158,7 @@ HTML
       {
         num: 5,
         kanji: "動けなくなり、下の始末も人任せになり、認知症になっている人もたくさんいます。",
-        kana: "うごけなくなり、したのしまともひとまかせになり、にんちしょうになっているひともたくさんいます。",
+        kana: "うごけなくなり、したのしまつもひとまかせになり、にんちしょうになっているひともたくさんいます。",
         kr: "움직이지 못하게 되고, 대소변 뒤처리도 남의 손에 맡기게 되며, 치매에 걸려 있는 사람도 많이 있습니다.",
         audio: "seto_05.mp3"
       },
@@ -179,43 +172,151 @@ HTML
       {
         num: 7,
         kanji: "そうした逃れられない老いの行く手には、これもまた逃れられない、死が待ち受けています。",
-        kana: "そうしたのがれられないおいのごくてには、これもまたのがれられない、しがまちうけています。",
+        kana: "そうしたのがれられないおいのゆくてには、これもまたのがれられない、しがまちうけています。",
         kr: "그러한 피할 수 없는 늙음의 앞길에는, 이것 또한 피할 수 없는 죽음이 기다리고 있습니다.",
         audio: "seto_07.mp3"
       },
       {
         num: 8,
         kanji: "医療は目覚ましい進歩を遂げ、たいていの病気を治す薬を発明し、手術も進化の一途をたどっています。",
-        kana: "いりょうはめざましいしんぽをとげ、たいていのびょうきになおすくすりをつくりだし、しゅじゅつもしんかのいずをたどっています。",
+        kana: "いりょうはめざましいしんぽをとげ、たいていのびょうきになおすくすりをはつめいし、しゅじゅつもしんかのいっとをたどっています。",
         kr: "의료는 눈부신 진보를 이루어, 웬만한 병을 고치는 약을 발명하고, 수술도 진화를 거듭하고 있습니다.",
         audio: "seto_08.mp3"
       }
     ];
 
-    // 화면에 카드 생성하기
-    const container = document.getElementById('cardContainer');
-    
-    studyData.forEach(item => {
-      const cardHtml = `
-        <div class="card">
-          <div class="card-num">문장 ${item.num}</div>
-          <div class="jp-kanji">${item.kanji}</div>
-          <div class="jp-kana">${item.kana}</div>
-          <div class="kr-meaning">${item.kr}</div>
-          <button class="audio-btn" onclick="playAudio('${item.audio}')">🔊 소리 듣기</button>
-        </div>
-      `;
-      container.innerHTML += cardHtml;
+    // 고급용 설정: 5개씩 보기
+    var PAGE_SIZE = 5;
+    var currentPage = 1;
+    var listDiv = document.getElementById('list');
+    var progressText = document.getElementById('progressText');
+    var paginationDiv = document.getElementById('pagination');
+    var player = document.getElementById('player');
+
+    // 고급 전용 로컬 스토리지 키
+    var savedProgress = JSON.parse(localStorage.getItem('my_study_progress_advanced') || '{}');
+
+    function render() {
+      listDiv.innerHTML = '';
+      var completedCount = 0;
+
+      data.forEach(function(item, index) {
+        if (savedProgress[index]) completedCount++;
+      });
+
+      var startIndex = (currentPage - 1) * PAGE_SIZE;
+      var endIndex = Math.min(startIndex + PAGE_SIZE, data.length);
+      var pageData = data.slice(startIndex, endIndex);
+
+      pageData.forEach(function(item, i) {
+        var realIndex = startIndex + i;
+        var isChecked = savedProgress[realIndex] || false;
+
+        var div = document.createElement('div');
+        div.className = 'item' + (isChecked ? ' completed' : '');
+        
+        div.innerHTML = 
+          '<div class="item-check">' +
+            '<input type="checkbox" ' + (isChecked ? 'checked' : '') + ' data-index="' + realIndex + '">' +
+          '</div>' +
+          '<div class="item-content">' +
+            '<div class="jp-text">' + item.num + '. ' + item.kanji + '</div>' +
+            '<div class="reading-text">📖 ' + item.kana + '</div>' +
+            '<div class="ko-text">💡 ' + item.kr + '</div>' +
+          '</div>' +
+          '<button class="btn sound-btn" data-file="' + item.audio + '">🔊 소리</button>';
+
+        listDiv.appendChild(div);
+      });
+
+      var percent = Math.round((completedCount / data.length) * 100) || 0;
+      progressText.innerText = '고급 진행률: ' + completedCount + ' / ' + data.length + ' (' + percent + '%)';
+
+      renderPagination();
+    }
+
+    function renderPagination() {
+      paginationDiv.innerHTML = '';
+      var totalPages = Math.ceil(data.length / PAGE_SIZE);
+
+      if (totalPages <= 1) return;
+
+      var prevBtn = document.createElement('button');
+      prevBtn.className = 'page-btn';
+      prevBtn.innerText = '이전';
+      prevBtn.disabled = (currentPage === 1);
+      prevBtn.onclick = function() { currentPage--; render(); window.scrollTo(0, 0); };
+      paginationDiv.appendChild(prevBtn);
+
+      for (var p = 1; p <= totalPages; p++) {
+        (function(pageNum) {
+          var btn = document.createElement('button');
+          btn.className = 'page-btn' + (pageNum === currentPage ? ' active' : '');
+          btn.innerText = pageNum;
+          btn.onclick = function() {
+            currentPage = pageNum;
+            render();
+            window.scrollTo(0, 0);
+          };
+          paginationDiv.appendChild(btn);
+        })(p);
+      }
+
+      var nextBtn = document.createElement('button');
+      nextBtn.className = 'page-btn';
+      nextBtn.innerText = '다음';
+      nextBtn.disabled = (currentPage === totalPages);
+      nextBtn.onclick = function() { currentPage++; render(); window.scrollTo(0, 0); };
+      paginationDiv.appendChild(nextBtn);
+    }
+
+    document.addEventListener('click', function(e) {
+      if (e.target && e.target.classList.contains('sound-btn')) {
+        var rawFile = e.target.getAttribute('data-file');
+        var cleanFile = String(rawFile).replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '').trim();
+
+        player.pause();
+        
+        // japan/advanced/audio/ 폴더 안의 MP3 파일 연결
+        player.src = './audio/' + cleanFile;
+
+        player.load();
+        
+        var playPromise = player.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(function(err) {
+            alert('오디오를 재생할 수 없습니다. audio 폴더에 ' + cleanFile + ' 파일이 있는지 확인해 주세요.');
+          });
+        }
+      }
+
+      if (e.target && e.target.type === 'checkbox') {
+        var idx = e.target.getAttribute('data-index');
+        savedProgress[idx] = !savedProgress[idx];
+        localStorage.setItem('my_study_progress_advanced', JSON.stringify(savedProgress));
+        render();
+      }
     });
 
-    // 모바일 오디오 재생 함수
-    function playAudio(fileName) {
-      // 오디오 파일 위치: japan/advanced/audio/파일명.mp3
-      const audio = new Audio('./audio/' + fileName);
-      audio.play().catch(function(error) {
-        alert("소리 재생 오류: audio 폴더에 " + fileName + " 파일이 있는지 확인해 주세요.");
-      });
-    }
+    document.getElementById('jumpBtn').onclick = function() {
+      var targetIndex = -1;
+      for (var i = 0; i < data.length; i++) {
+        if (!savedProgress[i]) {
+          targetIndex = i;
+          break;
+        }
+      }
+
+      if (targetIndex !== -1) {
+        currentPage = Math.floor(targetIndex / PAGE_SIZE) + 1;
+        render();
+        window.scrollTo(0, 0);
+      } else {
+        alert('🎉 고급 과정의 모든 문장 공부를 완료하셨습니다!');
+      }
+    };
+
+    render();
   </script>
 
 </body>
