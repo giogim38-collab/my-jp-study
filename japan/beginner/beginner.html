@@ -1,1 +1,74 @@
+HTML
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+  <title>초급 일본어</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", sans-serif;
+      background-color: #f4f6f8;
+      padding: 20px 16px;
+    }
+    .nav-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 24px;
+    }
+    .nav-btn {
+      flex: 1;
+      padding: 18px 10px;
+      text-align: center;
+      font-size: 20px;
+      font-weight: bold;
+      text-decoration: none;
+      color: #111111;
+      background-color: #ffffff;
+      border: 2px solid #bbb;
+      border-radius: 14px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-btn.direct {
+      background-color: #0d47a1;
+      color: #ffffff;
+      border: none;
+    }
+    .nav-btn:active { opacity: 0.8; }
 
+    .content-box {
+      background: #ffffff;
+      padding: 28px 20px;
+      border-radius: 20px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      text-align: center;
+    }
+    h1 {
+      font-size: 30px;
+      color: #1b5e20;
+      margin-bottom: 20px;
+      font-weight: 800;
+    }
+    p {
+      font-size: 22px;
+      color: #333;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 이동 네비게이션 -->
+  <div class="nav-bar">
+    <a href="../index.html" class="nav-btn">🏠 메인으로</a>
+    <a href="../advanced/advanced.html" class="nav-btn direct">🌳 고급으로 직행</a>
+  </div>
+
+  <div class="content-box">
+    <h1>🌱 초급 일본어 학습</h1>
+    <p>여기에 초급 학습 내용을 작성하시면 됩니다.</p>
+  </div>
+
+</body>
+</html>
