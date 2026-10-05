@@ -10,16 +10,18 @@ HTML
     body {
       font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", sans-serif;
       background-color: #f4f6f8;
-      padding: 20px 16px;
+      padding: 16px;
     }
+
+    /* 상단 이동 네비게이션 */
     .nav-bar {
       display: flex;
       gap: 12px;
-      margin-bottom: 24px;
+      margin-bottom: 20px;
     }
     .nav-btn {
       flex: 1;
-      padding: 18px 10px;
+      padding: 16px 10px;
       text-align: center;
       font-size: 20px;
       font-weight: bold;
@@ -37,38 +39,184 @@ HTML
     }
     .nav-btn:active { opacity: 0.8; }
 
-    .content-box {
-      background: #ffffff;
-      padding: 28px 20px;
-      border-radius: 20px;
-      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
-      text-align: center;
-    }
-    h1 {
-      font-size: 30px;
-      color: #0d47a1;
-      margin-bottom: 20px;
+    /* 페이지 제목 */
+    .header-title {
+      font-size: 28px;
       font-weight: 800;
+      color: #0d47a1;
+      text-align: center;
+      margin-bottom: 20px;
     }
-    p {
+
+    /* 문장 카드 리스트 */
+    .card-list {
+      display: flex;
+      flex-direction: column;
+      gap: 20px;
+    }
+
+    /* 개별 학습 카드 */
+    .card {
+      background-color: #ffffff;
+      border-radius: 18px;
+      padding: 22px 18px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.08);
+      border-left: 8px solid #0d47a1;
+    }
+
+    /* 카드 번호 표시 */
+    .card-num {
+      font-size: 18px;
+      font-weight: bold;
+      color: #0d47a1;
+      margin-bottom: 8px;
+    }
+
+    /* 1. 일본어 한자 문장 (가장 크고 굵게) */
+    .jp-kanji {
+      font-size: 26px;
+      font-weight: bold;
+      color: #111111;
+      line-height: 1.5;
+      margin-bottom: 10px;
+    }
+
+    /* 2. 히라가나 읽기 */
+    .jp-kana {
+      font-size: 21px;
+      font-weight: 600;
+      color: #0d47a1;
+      line-height: 1.5;
+      margin-bottom: 12px;
+      background-color: #e8f0fe;
+      padding: 8px 12px;
+      border-radius: 8px;
+    }
+
+    /* 3. 한국어 해석 */
+    .kr-meaning {
+      font-size: 21px;
+      font-weight: 600;
+      color: #333333;
+      line-height: 1.5;
+      margin-bottom: 16px;
+    }
+
+    /* 소리 듣기 큰 버튼 */
+    .audio-btn {
+      width: 100%;
+      padding: 16px;
       font-size: 22px;
-      color: #333;
-      line-height: 1.6;
+      font-weight: bold;
+      color: #ffffff;
+      background-color: #0d47a1;
+      border: none;
+      border-radius: 12px;
+      cursor: pointer;
+      -webkit-tap-highlight-color: transparent;
     }
+    .audio-btn:active { background-color: #0a3880; }
   </style>
 </head>
 <body>
 
-  <!-- 상단 이동 네비게이션 -->
+  <!-- 이동 네비게이션 -->
   <div class="nav-bar">
     <a href="../index.html" class="nav-btn">🏠 메인으로</a>
     <a href="../beginner/beginner.html" class="nav-btn direct">🌱 초급으로</a>
   </div>
 
-  <div class="content-box">
-    <h1>🌳 고급 일본어 학습</h1>
-    <p>여기에 고급 학습 내용을 작성하시면 됩니다.</p>
-  </div>
+  <h1 class="header-title">🌳 고급 일본어 학습</h1>
+
+  <!-- 학습 카드 목록 -->
+  <div class="card-list" id="cardContainer"></div>
+
+  <script>
+    // 이미지 표 내용 데이터
+    const studyData = [
+      {
+        num: 1,
+        kanji: "人生が生まれてくるのは、必ず死ぬためです。",
+        kana: "じんせいがうまれてくるのは、かならずしぬためです。",
+        kr: "인간이 태어나는 것은, 반드시 죽기 위해서입니다.",
+        audio: "seto_01.mp3"
+      },
+      {
+        num: 2,
+        kanji: "現在、日本は世界一の長寿国になっています。",
+        kana: "げんざい、にほんはせかいいつのちょうじゅこくになっています。",
+        kr: "현재, 일본은 세계 제일의 장수국가가 되어 있습니다.",
+        audio: "seto_02.mp3"
+      },
+      {
+        num: 3,
+        kanji: "百歳以上の人は六万人を越えているそうです。",
+        kana: "ひゃくさいいじょうのひとはろくまんにんをこえているそうです。",
+        kr: "백세 이상의 사람은 6만 명이 넘는다고 합니다.",
+        audio: "seto_03.mp3"
+      },
+      {
+        num: 4,
+        kanji: "しかし、長寿の人が必ずしも健康体とは言えません。",
+        kana: "しかし、ちょうじゅのひとがかならずしもけんこうたいとはいえません。",
+        kr: "하지만, 장수한 사람이 반드시 건강한 몸이라고는 할 수 없습니다.",
+        audio: "seto_04.mp3"
+      },
+      {
+        num: 5,
+        kanji: "動けなくなり、下の始末も人任せになり、認知症になっている人もたくさんいます。",
+        kana: "うごけなくなり、したのしまともひとまかせになり、にんちしょうになっているひともたくさんいます。",
+        kr: "움직이지 못하게 되고, 대소변 뒤처리도 남의 손에 맡기게 되며, 치매에 걸려 있는 사람도 많이 있습니다.",
+        audio: "seto_05.mp3"
+      },
+      {
+        num: 6,
+        kanji: "その介護に家族は泣かされています。",
+        kana: "そのかいごにかぞくはなかされています。",
+        kr: "그 간호에 가족은 시달리고(눈물 흘리고) 있습니다.",
+        audio: "seto_06.mp3"
+      },
+      {
+        num: 7,
+        kanji: "そうした逃れられない老いの行く手には、これもまた逃れられない、死が待ち受けています。",
+        kana: "そうしたのがれられないおいのごくてには、これもまたのがれられない、しがまちうけています。",
+        kr: "그러한 피할 수 없는 늙음의 앞길에는, 이것 또한 피할 수 없는 죽음이 기다리고 있습니다.",
+        audio: "seto_07.mp3"
+      },
+      {
+        num: 8,
+        kanji: "医療は目覚ましい進歩を遂げ、たいていの病気を治す薬を発明し、手術も進化の一途をたどっています。",
+        kana: "いりょうはめざましいしんぽをとげ、たいていのびょうきになおすくすりをつくりだし、しゅじゅつもしんかのいずをたどっています。",
+        kr: "의료는 눈부신 진보를 이루어, 웬만한 병을 고치는 약을 발명하고, 수술도 진화를 거듭하고 있습니다.",
+        audio: "seto_08.mp3"
+      }
+    ];
+
+    // 화면에 카드 생성하기
+    const container = document.getElementById('cardContainer');
+    
+    studyData.forEach(item => {
+      const cardHtml = `
+        <div class="card">
+          <div class="card-num">문장 ${item.num}</div>
+          <div class="jp-kanji">${item.kanji}</div>
+          <div class="jp-kana">${item.kana}</div>
+          <div class="kr-meaning">${item.kr}</div>
+          <button class="audio-btn" onclick="playAudio('${item.audio}')">🔊 소리 듣기</button>
+        </div>
+      `;
+      container.innerHTML += cardHtml;
+    });
+
+    // 모바일 오디오 재생 함수
+    function playAudio(fileName) {
+      // 오디오 파일 위치: japan/advanced/audio/파일명.mp3
+      const audio = new Audio('./audio/' + fileName);
+      audio.play().catch(function(error) {
+        alert("소리 재생 오류: audio 폴더에 " + fileName + " 파일이 있는지 확인해 주세요.");
+      });
+    }
+  </script>
 
 </body>
 </html>
