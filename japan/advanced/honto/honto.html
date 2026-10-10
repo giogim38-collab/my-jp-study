@@ -1,1 +1,343 @@
+HTML
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+  <title>honto 주제별 학습</title>
+  <!-- Google Fonts: Noto Sans JP & KR 적용 -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700;800&family=Noto+Sans+KR:wght@400;500;700;800&display=swap" rel="stylesheet">
+  
+  <style>
+    * { 
+      box-sizing: border-box; 
+      margin: 0; 
+      padding: 0; 
+    }
+    body { 
+      font-family: "Noto Sans JP", "Noto Sans KR", "Malgun Gothic", "맑은 고딕", sans-serif; 
+      padding: 20px 16px 40px; 
+      line-height: 1.7; 
+      max-width: 720px; 
+      margin: 0 auto; 
+      background-color: #f1f5f9;
+      color: #1e293b;
+      -webkit-font-smoothing: antialiased;
+    }
+    
+    /* 상단 네비게이션 바 */
+    .nav-bar {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 24px;
+    }
+    .nav-btn {
+      flex: 1;
+      padding: 12px 8px;
+      text-align: center;
+      font-size: 15px;
+      font-weight: 700;
+      text-decoration: none;
+      color: #334155;
+      background-color: #ffffff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+      transition: all 0.2s ease;
+    }
+    .nav-btn.direct { background-color: #1b5e20; color: #ffffff; border: none; }
+    .nav-btn.admin { background-color: #0d47a1; color: #ffffff; border: none; }
 
+    /* 타이틀 */
+    .page-title {
+      font-size: 25px;
+      color: #0f172a;
+      margin-bottom: 22px;
+      text-align: center;
+      font-weight: 800;
+      word-break: keep-all;
+      letter-spacing: -0.5px;
+    }
+
+    /* 문장 목록 컨테이너 */
+    .sentence-container {
+      background: #ffffff;
+      border-radius: 20px;
+      padding: 24px 20px;
+      border: 1px solid #e2e8f0;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.03);
+      min-height: 320px;
+    }
+
+    /* 개별 문장 아이템 */
+    .sentence-item {
+      padding: 18px 0;
+      border-bottom: 1px solid #f1f5f9;
+    }
+    .sentence-item:last-child {
+      border-bottom: none;
+    }
+
+    /* 문장 첫째 줄 (번호 + 본문 + 소리버튼) */
+    .main-line {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-wrap: wrap;
+    }
+
+    .sent-num {
+      font-size: 17px;
+      font-weight: 700;
+      color: #2563eb;
+      background-color: #eff6ff;
+      padding: 2px 8px;
+      border-radius: 6px;
+      letter-spacing: 0;
+    }
+
+    .jp-text {
+      font-size: 22px;
+      font-weight: 700;
+      color: #0f172a;
+      letter-spacing: 0.2px;
+    }
+
+    /* 작은 재생 버튼 */
+    .play-btn {
+      background-color: #2563eb;
+      color: #ffffff;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      margin-left: 4px;
+      box-shadow: 0 2px 4px rgba(37, 99, 235, 0.2);
+      -webkit-tap-highlight-color: transparent;
+      transition: background-color 0.15s ease, transform 0.15s ease;
+    }
+    .play-btn:active {
+      background-color: #1d4ed8;
+      transform: scale(0.96);
+    }
+
+    /* 둘째 줄 (괄호 안 설명) */
+    .sub-line {
+      margin-top: 6px;
+      padding-left: 4px;
+      font-size: 16px;
+      color: #475569;
+      font-weight: 500;
+      line-height: 1.5;
+      word-break: keep-all;
+    }
+
+    /* 하단 주제 페이지 이동 버튼 */
+    .pagination {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      gap: 8px;
+      margin-top: 28px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .page-btn {
+      background: #ffffff;
+      border: 1px solid #cbd5e1;
+      padding: 10px 18px;
+      border-radius: 10px;
+      cursor: pointer;
+      font-weight: 700;
+      font-size: 15px;
+      color: #334155;
+      box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+      transition: all 0.2s ease;
+    }
+    .page-btn.active {
+      background-color: #0d47a1;
+      color: #ffffff;
+      border-color: #0d47a1;
+      box-shadow: 0 2px 6px rgba(13, 71, 161, 0.3);
+    }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 네비게이션 바 -->
+  <div class="nav-bar">
+    <a href="../../index.html" class="nav-btn">🏠 메인</a>
+    <a href="../../beginner/beginner.html" class="nav-btn direct">🌱 초급</a>
+    <a href="../index.html" class="nav-btn admin">🌳 고급메뉴</a>
+  </div>
+
+  <!-- 공통 오디오 플레이어 -->
+  <audio id="player" preload="auto"></audio>
+
+  <!-- 동적 타이틀 영역 -->
+  <h2 class="page-title" id="pageTitle"></h2>
+
+  <!-- 문장 출력 영역 -->
+  <div class="sentence-container" id="sentenceList"></div>
+
+  <!-- 하단 주제 페이지 전환 버튼 목록 -->
+  <div class="pagination" id="pagination"></div>
+
+  <script>
+    // -------------------------------------------------------------
+    // [honto 주제 데이터 목록]
+    // -------------------------------------------------------------
+    var allTopics = [
+      // 0번째 주제 (0페이지)
+      {
+        topicNum: 0,
+        title: "어디서나 통하는 기본 표현 TOP 20",
+        sentences: [
+          { subNum: "1", jp: "おはようございます。", reading: "おはようございます。", ko: "좋은 아침입니다.", hasKanji: false },
+          { subNum: "2", jp: "こんにちは。", reading: "こんにちは。", ko: "안녕하세요. (낮)", hasKanji: false },
+          { subNum: "3", jp: "こんばんは。", reading: "こんばんは。", ko: "안녕하세요. (저녁)", hasKanji: false },
+          { subNum: "4", jp: "ありがとうございます。", reading: "ありがとうございます。", ko: "감사합니다.", hasKanji: false },
+          { subNum: "5", jp: "すみません。", reading: "すみません。", ko: "죄송합니다 / 실례합니다.", hasKanji: false },
+          { subNum: "6", jp: "大丈夫です。", reading: "だいじょうぶです。", ko: "괜찮습니다.", hasKanji: true },
+          { subNum: "7", jp: "失礼しました。", reading: "しつれいしました。", ko: "실례했습니다.", hasKanji: true },
+          { subNum: "8", jp: "お気を付けて。", reading: "おきをつけて。", ko: "조심해서 가세요.", hasKanji: true },
+          { subNum: "9", jp: "いただきます。", reading: "いただきます。", ko: "잘 먹겠습니다.", hasKanji: false },
+          { subNum: "10", jp: "ご馳走様でした。", reading: "ごちそうさまでした。", ko: "잘 먹었습니다.", hasKanji: true },
+          { subNum: "11", jp: "分かりました。", reading: "わかりました。", ko: "알겠습니다.", hasKanji: true },
+          { subNum: "12", jp: "分かりません。", reading: "わかりません。", ko: "모르겠습니다.", hasKanji: true },
+          { subNum: "13", jp: "ちょっと待ってください。", reading: "ちょっとまってください。", ko: "잠시만 기다려 주세요.", hasKanji: true },
+          { subNum: "14", jp: "もう一度話してもらえますか。", reading: "もういちどはなしてもらえますか。", ko: "한 번 더 말씀해 주시겠어요?", hasKanji: true },
+          { subNum: "15", jp: "お願いします。", reading: "おねがいします。", ko: "부탁합니다.", hasKanji: true },
+          { subNum: "16", jp: "ちょっと聞いてもいいですか。", reading: "ちょっときいてもいいですか。", ko: "잠시 물어봐도 될까요?", hasKanji: true },
+          { subNum: "17", jp: "お会いできて嬉しいです。", reading: "おあいできてうれしいです。", ko: "만나서 반갑습니다.", hasKanji: true },
+          { subNum: "18", jp: "お久しぶりです。", reading: "おひさしぶりです。", ko: "오랜만입니다.", hasKanji: true },
+          { subNum: "19", jp: "お元気ですか。", reading: "おげんきですか。", ko: "잘 지내시나요?", hasKanji: true },
+          { subNum: "20", jp: "また会いましょう。", reading: "またあいましょう。", ko: "또 만납시다.", hasKanji: true }
+        ]
+      },
+      // 1번째 주제 (1페이지)
+      {
+        topicNum: 1,
+        title: "두근두근 일본으로",
+        sentences: [
+          { subNum: "1", jp: "すみません、両替所はどこにありますか。", reading: "すみません、りょうがえじょはどこにありますか。", ko: "저기요, 환전소는 어디에 있나요?", hasKanji: true },
+          { subNum: "2", jp: "そちらにございます。", reading: "そちらにございます。", ko: "저쪽에 있습니다.", hasKanji: false },
+          { subNum: "3", jp: "すみません、韓国ウォンで10万ウォンあるんですけど、日本円に両替できますか。", reading: "すみません、かんこくウォンでじゅうまんウォンあるんですけど、にほんえんにりょうがえできますか。", ko: "저기요, 한국 돈으로 10만 원이 있는데, 일본 엔화로 환전할 수 있나요?", hasKanji: true },
+          { subNum: "4", jp: "はい、ウォンから円でしたらこちらになりますけども…", reading: "はい、ウォンからえんでしたらこちらになりますけども…", ko: "네, 원화에서 엔화라면 이쪽이 됩니다만…", hasKanji: true },
+          { subNum: "5", jp: "はい、大丈夫です。", reading: "はい、だいじょうぶです。", ko: "네, 괜찮습니다.", hasKanji: true },
+          { subNum: "6", jp: "9380円になります。", reading: "きゅうせんさんひゃくはちじゅうえんになります。", ko: "9,380엔이 됩니다.", hasKanji: true },
+          { subNum: "7", jp: "こちらにご住所、お名前、電話番号を書いてください。", reading: "こちらにごじゅうしょ、おなまえ、でんわばんごうをかいてください。", ko: "이곳에 주소, 성함, 전화번호를 적어 주세요.", hasKanji: true },
+          { subNum: "8", jp: "はい。", reading: "はい。", ko: "네.", hasKanji: false }
+        ]
+      },
+      // 2번째 주제 (2페이지)
+      {
+        topicNum: 2,
+        title: "교통 및 이동 표현",
+        sentences: [
+          { subNum: "1", jp: "難波駅まで行ってください。", reading: "なんばえきまでいってください。", ko: "난바역까지 가 주세요.", hasKanji: true },
+          { subNum: "2", jp: "はい、しゅっぱついたします。こちらでよろしいですか。", reading: "はい、しゅっぱついたします。こちらでよろしいですか。", ko: "네, 출발하겠습니다. 여기면 되시겠습니까?", hasKanji: false },
+          { subNum: "3", jp: "はい、ここで大丈夫です。あのすみません、梅田駅に行きたいんですけど、どの駅で乗り換えたらいいですか。", reading: "はい、ここでだいじょうぶです。あのすみません、うめだえきにいきたいんですけど、どのえきでのりかえたらいいですか。", ko: "네, 여기서 괜찮습니다. 저기 죄송한데요, 우메다역에 가고 싶은데 어느 역에서 환승하면 될까요?", hasKanji: true },
+          { subNum: "4", jp: "大国町駅で乗り換えてください。", reading: "だいこくちょうえきでのりかえてください。", ko: "다이코쿠초역에서 환승해 주세요.", hasKanji: true },
+          { subNum: "5", jp: "どうもありがとうございました。", reading: "どうもありがとうございました。", ko: "정말 감사했습니다.", hasKanji: false },
+          { subNum: "6", jp: "これ、もしよかったら持って行ってください。", reading: "これ、もしよかったらもっていってください。", ko: "이것, 괜찮으시다면 가져가세요.", hasKanji: true },
+          { subNum: "7", jp: "いいですか。ありがとうございます。", reading: "いいですか。ありがとうございます。", ko: "괜찮나요? 감사합니다.", hasKanji: false }
+        ]
+      }
+    ];
+
+    var currentTopicIndex = 0;
+    var titleElement = document.getElementById('pageTitle');
+    var listDiv = document.getElementById('sentenceList');
+    var paginationDiv = document.getElementById('pagination');
+    var player = document.getElementById('player');
+
+    function renderTopic(index) {
+      currentTopicIndex = index;
+      var topicData = allTopics[index];
+
+      var displayTitle = "";
+      var prefixNum = "";
+
+      if (topicData.topicNum === 0) {
+        displayTitle = topicData.title;
+        prefixNum = "0";
+      } else {
+        var paddedTopic = String(topicData.topicNum).padStart(2, '0');
+        displayTitle = paddedTopic + ". " + topicData.title;
+        prefixNum = paddedTopic;
+      }
+
+      titleElement.innerText = displayTitle;
+      document.title = displayTitle + " - honto";
+
+      listDiv.innerHTML = '';
+
+      topicData.sentences.forEach(function(item) {
+        var itemDiv = document.createElement('div');
+        itemDiv.className = 'sentence-item';
+
+        var numCode = prefixNum + "-" + item.subNum;
+        var audioFileName = numCode + ".mp3";
+
+        var subText = item.hasKanji ? '(' + item.reading + ' ' + item.ko + ')' : '(' + item.ko + ')';
+
+        itemDiv.innerHTML = 
+          '<div class="main-line">' +
+            '<span class="sent-num">' + numCode + '</span>' +
+            '<span class="jp-text">' + item.jp + '</span>' +
+            '<button class="play-btn" data-file="' + audioFileName + '">▶ 소리</button>' +
+          '</div>' +
+          '<div class="sub-line">' + subText + '</div>';
+
+        listDiv.appendChild(itemDiv);
+      });
+
+      renderPagination();
+    }
+
+    function renderPagination() {
+      paginationDiv.innerHTML = '';
+
+      allTopics.forEach(function(topic, i) {
+        var btn = document.createElement('button');
+        btn.className = 'page-btn' + (i === currentTopicIndex ? ' active' : '');
+        btn.innerText = topic.topicNum + "페이지";
+
+        btn.onclick = function() {
+          renderTopic(i);
+          window.scrollTo(0, 0);
+        };
+
+        paginationDiv.appendChild(btn);
+      });
+    }
+
+    document.addEventListener('click', function(e) {
+      if (e.target && e.target.classList.contains('play-btn')) {
+        var file = e.target.getAttribute('data-file');
+        player.pause();
+        player.src = './audio/' + file;
+        player.load();
+        
+        var playPromise = player.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(function(err) {
+            alert('오디오를 재생할 수 없습니다. audio 폴더에 ' + file + ' 파일이 있는지 확인해 주세요.');
+          });
+        }
+      }
+    });
+
+    renderTopic(0);
+  </script>
+
+</body>
+</html>
