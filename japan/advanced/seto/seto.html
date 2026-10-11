@@ -1,0 +1,415 @@
+HTML
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
+  <title>🌳 고급 일본어 학습</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", sans-serif; 
+      padding: 16px; 
+      line-height: 1.6; 
+      max-width: 700px; 
+      margin: 0 auto; 
+      background-color: #f4f6f8;
+    }
+    
+    /* 상단 네비게이션 바 (메인 / 초급 이동) */
+    .nav-bar {
+      display: flex;
+      gap: 12px;
+      margin-bottom: 16px;
+    }
+    .nav-btn {
+      flex: 1;
+      padding: 14px 10px;
+      text-align: center;
+      font-size: 18px;
+      font-weight: bold;
+      text-decoration: none;
+      color: #111111;
+      background-color: #ffffff;
+      border: 2px solid #bbb;
+      border-radius: 12px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .nav-btn.direct {
+      background-color: #1b5e20;
+      color: #ffffff;
+      border: none;
+    }
+    .nav-btn:active { opacity: 0.8; }
+
+    /* 상단 고정 진행률 바 */
+    .progress-box {
+      position: sticky; top: 0; background: rgba(255, 255, 255, 0.98); padding: 14px 12px;
+      border-bottom: 3px solid #0d47a1; margin-bottom: 20px; z-index: 10;
+      display: flex; justify-content: space-between; align-items: center;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.06); border-radius: 12px;
+    }
+    .progress-text { font-weight: bold; color: #0d47a1; font-size: 18px; }
+    .jump-btn {
+      background-color: #1565c0; color: white; border: none;
+      padding: 10px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;
+    }
+    .jump-btn:active { opacity: 0.85; }
+    
+    h2 {
+      font-size: 26px;
+      color: #0d47a1;
+      margin-bottom: 16px;
+      text-align: center;
+      font-weight: 800;
+    }
+
+    /* 학습 카드 스타일 */
+    .item { 
+      display: flex; align-items: flex-start; justify-content: space-between;
+      padding: 18px; margin-bottom: 14px; background: white; 
+      border: 1px solid #e2e8f0; border-radius: 14px;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.04); gap: 14px;
+    }
+    .item-check { padding-top: 4px; }
+    input[type="checkbox"] { width: 26px; height: 26px; cursor: pointer; accent-color: #0d47a1; }
+    .item-content { flex: 1; display: flex; flex-direction: column; gap: 8px; word-break: break-word; }
+
+    /* 글자 크기 및 두께 스타일 */
+    .jp-text { font-size: 22px; font-weight: bold; color: #111111; }      /* 일본어 원문 */
+    .reading-text { font-size: 18px; font-weight: bold; color: #1b5e20; }   /* 히라가나 읽기 */
+    .ko-text { font-size: 19px; font-weight: bold; color: #222222; margin-top: 2px; } /* 한국어 해석 */
+
+    .completed .jp-text, .completed .ko-text { text-decoration: line-through; color: #a0aec0; }
+    .completed .reading-text { color: #cbd5e1; }
+    
+    .btn {
+      background-color: #0d47a1; color: white; border: none;
+      padding: 12px 16px; border-radius: 8px; cursor: pointer; font-weight: bold;
+      flex-shrink: 0; font-size: 16px;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .btn:active { background-color: #0a3880; }
+
+    /* 페이지네이션 버튼 */
+    .pagination {
+      display: flex; justify-content: center; align-items: center;
+      gap: 8px; margin-top: 25px; margin-bottom: 30px; flex-wrap: wrap;
+    }
+    .page-btn {
+      background: white; border: 1px solid #cbd5e1; padding: 10px 16px;
+      border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;
+    }
+    .page-btn.active { background-color: #0d47a1; color: white; border-color: #0d47a1; }
+    .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+  </style>
+</head>
+<body>
+
+  <!-- 상단 네비게이션 바 -->
+<div class="nav-bar">
+  <a href="../../index.html" class="nav-btn">🏠 메인</a>
+  <a href="../../beginner/beginner.html" class="nav-btn direct">🌱 초급</a>
+  <a href="../index.html" class="nav-btn admin">🌳 고급메뉴</a>
+</div>
+
+  <!-- 공통 오디오 태그 -->
+  <audio id="player" preload="auto"></audio>
+
+  <!-- 진행률 및 이어하기 -->
+  <div class="progress-box">
+    <div id="progressText" class="progress-text">고급 진행률: 0 / 0 (0%)</div>
+    <button class="jump-btn" id="jumpBtn">📍 이어하기</button>
+  </div>
+
+  <h2>📖 3. 瀬戸内寂聴(세토우치작쿠쵸오) - 고급 일본어</h2>
+  <div id="list"></div>
+  <div class="pagination" id="pagination"></div>
+
+  <script>
+    var data = [
+      {
+        num: 1,
+        kanji: "人生が生まれてくるのは、必ず死ぬためです。",
+        kana: "じんせいがうまれてくるのは、かならずしぬためです。",
+        kr: "인간이 태어나는 것은, 반드시 죽기 위해서입니다.",
+        audio: "seto_01.mp3"
+      },
+      {
+        num: 2,
+        kanji: "現在、日本は世界一の長寿国になっています。",
+        kana: "げんざい、にほんはせかいいちのちょうじゅこくになっています。",
+        kr: "현재, 일본은 세계 제일의 장수국가가 되어 있습니다.",
+        audio: "seto_02.mp3"
+      },
+      {
+        num: 3,
+        kanji: "百歳以上の人は六万人を越えているそうです。",
+        kana: "ひゃくさいいじょうのひとはろくまんにんをこえているそうです。",
+        kr: "백세 이상의 사람은 6만 명이 넘는다고 합니다.",
+        audio: "seto_03.mp3"
+      },
+      {
+        num: 4,
+        kanji: "しかし、長寿の人が必ずしも健康体とは言えません。",
+        kana: "しかし、ちょうじゅのひとがかならずしもけんこうたいとはいえません。",
+        kr: "하지만, 장수한 사람이 반드시 건강한 몸이라고는 할 수 없습니다.",
+        audio: "seto_04.mp3"
+      },
+      {
+        num: 5,
+        kanji: "動けなくなり、下の始末も人任せになり、認知症になっている人もたくさんいます。",
+        kana: "うごけなくなり、したのしまつもひとまかせになり、にんちしょうになっているひともたくさんいます。",
+        kr: "움직이지 못하게 되고, 대소변 뒤처리도 남의 손에 맡기게 되며, 치매에 걸려 있는 사람도 많이 있습니다.",
+        audio: "seto_05.mp3"
+      },
+      {
+        num: 6,
+        kanji: "その介護に家族は泣かされています。",
+        kana: "そのかいごにかぞくはなかされています。",
+        kr: "그 간호에 가족은 시달리고(눈물 흘리고) 있습니다.",
+        audio: "seto_06.mp3"
+      },
+      {
+        num: 7,
+        kanji: "そうした逃れられない老いの行く手には、これもまた逃れられない、死が待ち受けています。",
+        kana: "そうしたのがれられないおいのゆくてには、これもまたのがれられない、しがまちうけています。",
+        kr: "그러한 피할 수 없는 늙음의 앞길에는, 이것 또한 피할 수 없는 죽음이 기다리고 있습니다.",
+        audio: "seto_07.mp3"
+      },
+      {
+        num: 8,
+        kanji: "医療は目覚ましい進歩を遂げ、たいていの病気を治す薬を発明し、手術も進化の一途をたどっています。",
+        kana: "いりょうはめざましいしんぽをとげ、たいていのびょうきになおすくすりをはつめいし、しゅじゅつもしんかのいっとをたどっています。",
+        kr: "의료는 눈부신 진보를 이루어, 웬만한 병을 고치는 약을 발명하고, 수술도 진화를 거듭하고 있습니다.",
+        audio: "seto_08.mp3"
+      },
+      {
+    "num": 9,
+    "kanji": "あらゆる宗教も、人間の老いと死を考えぬいた結果、生まれています。",
+    "kana": "あらゆるしゅうきょうも、にんげんのおいとしをかんがえぬいたけっか、うまれています。",
+    "kr": "모든 종교도, 인간의 늙음과 죽음을 깊이 생각한 결과, 생겨나고 있습니다.",
+    "audio": "seto_09.mp3"
+    },
+    {
+    "num": 10,
+    "kanji": "それでも人間は、必ず襲い来る老いと死に脅え、恐れ、惑わないではいられません。",
+    "kana": "それでもにんげんは、かならずおそいくるおいとしにおびえ、おそれ、まどわないではいられません。",
+    "kr": "그럼에도 인간은, 반드시 덮쳐오는 늙음과 죽음에 두려워하고, 무서워하며, 방황하지 않을 수 없습니다.",
+    "audio": "seto_10.mp3"
+  },
+  {
+    "num": 11,
+    "kanji": "私は、二〇一六年五月十五日に満九十四歳（数え九十五）になりました。",
+    "kana": "わたしは、にせんじゅうろくねんごがつじゅうごにちにまんきゅうじゅうよんさい（かぞえきゅうじゅうご）になりました。",
+    "kr": "저는, 2016년 5월 15일에 만 94세(한국 나이 95세)가 되었습니다.",
+    "audio": "seto_11.mp3"
+  },
+  {
+    "num": 12,
+    "kanji": "これまでにさまざまな病気にもかかっています。",
+    "kana": "これまでにさまざまなびょうきにもかかっています。",
+    "kr": "지금까지 여러 가지 병에도 걸렸습니다.",
+    "audio": "seto_12.mp3"
+  },
+  {
+    "num": 13,
+    "kanji": "最近では、九十二歳で胆のうガンの手術もしています。",
+    "kana": "さいきんでは、きゅうじゅうにさいでたんのうガンのしゅじゅつもしています。",
+    "kr": "최근에는, 92세에 쓸개암(담낭암) 수술도 받았습니다.",
+    "audio": "seto_13.mp3"
+  },
+  {
+    "num": 14,
+    "kanji": "足腰は相当不自由になりましたが、まだ一人で歩けるし、毎月、締め切りのある小説を書き続け、僧侶として月に何度か法話も続けています。",
+    "kana": "あしこしはそうとうふじゆうになりましたが、まだひとりであるけるし、まいつき、しめきりのあるしょうせつをかきつづけ、そうりょとしてつきになんどかほうわもつづけています。",
+    "kr": "하체는 상당히 불편해졌습니다만, 아직 혼자서 걸을 수 있고, 매월 마감이 있는 소설을 계속 쓰고 있으며, 승려로서 한 달에 몇 번인가 법문도 계속하고 있습니다.",
+    "audio": "seto_14.mp3"
+  },
+  {
+    "num": 15,
+    "kanji": "身の回りの肉親も友人、次々に波にさらわれるように慌ただしくあの世へ去っていきました。",
+    "kana": "みのまわりのにくしんもゆうじん、つぎつぎになみにさらわれるようにあわただしくあのよへさっていきました。",
+    "kr": "주변의 육친도 친구도, 차례차례 파도에 휩쓸려 가듯 황급히 저세상으로 떠나갔습니다.",
+    "audio": "seto_15.mp3"
+  },
+  {
+    "num": 16,
+    "kanji": "今夜死んでも不思議ではない自分の、老いと死を見つめ、どのように最期を迎えるかと考え続けています。",
+    "kana": "こんやしんでもふしぎではないじぶんの、おいとしをみつめ、どのようにさいごをむかえるかとかんがえつづけています。",
+    "kr": "오늘 밤 죽어도 이상하지 않은 자신의, 늙음과 죽음을 바라보며, 어떻게 임종을 맞이할 것인가를 계속 생각하고 있습니다.",
+    "audio": "seto_16.mp3"
+  },
+  {
+    "num": 17,
+    "kanji": "結論として、今のところ、「老いも病も死も、受け入れよう」という考えにたどりつきました。",
+    "kana": "けつろんとして、いまのところ、「おいもやまいもしも、うけいれよう」というかんがえにたどりつきました。",
+    "kr": "결론으로서, 현재로서는 「늙음도 병도 죽음도, 받아들이자」라는 생각에 다다랐습니다.",
+    "audio": "seto_17.mp3"
+  },
+  {
+    "num": 18,
+    "kanji": "闘うことも、免れる方法もあるかもしれません。",
+    "kana": "たたかうことも、まぬかれるほうほうもあるかもしれません。",
+    "kr": "싸우는 일도, 면하는 방법도 있을지 모릅니다.",
+    "audio": "seto_18.mp3"
+  },
+  {
+    "num": 19,
+    "kanji": "でも、私のいま行きついた気持ちは、それが持って生まれた人間の運命なら、すべてをすんなり受け入れようというものです。",
+    "kana": "でも、わたしのいまいきついたきもちは、それがもってうまれたにんげんのうんめいなら、すべてをすんなりうけいれようというものです。",
+    "kr": "하지만, 내가 지금 다다른 마음은, 그것이 타고난 인간의 운명이라면, 모든 것을 순순히 받아들이자는 것입니다.",
+    "audio": "seto_19.mp3"
+  },
+  {
+    "num": 20,
+    "kanji": "そしてそれは思いの外に、心の安まる結果を招いています。",
+    "kana": "そしてそれはおもいのほかに、こころのやすまるけっかをまねいています。",
+    "kr": "그리고 그것은 뜻밖에, 마음이 편안해지는 결과를 불러오고 있습니다.",
+    "audio": "seto_20.mp3"
+  },
+  {
+    "num": 21,
+    "kanji": "やがて必ず迎えられるあなたの老いと死の参考にしていただければ幸いと思います。",
+    "kana": "やがてかならずむかえられるあなたのおいとしのさんこうにしていただければさいわいとおもいます。",
+    "kr": "머지않아 반드시 맞이하게 될 당신의 늙음과 죽음에 참고가 되어 드린다면 다행이라고 생각합니다.",
+    "audio": "seto_21.mp3"
+  }
+    ];
+
+    // 고급용 설정: 5개씩 보기
+    var PAGE_SIZE = 5;
+    var currentPage = 1;
+    var listDiv = document.getElementById('list');
+    var progressText = document.getElementById('progressText');
+    var paginationDiv = document.getElementById('pagination');
+    var player = document.getElementById('player');
+
+    // 고급 전용 로컬 스토리지 키
+    var savedProgress = JSON.parse(localStorage.getItem('my_study_progress_advanced') || '{}');
+
+    function render() {
+      listDiv.innerHTML = '';
+      var completedCount = 0;
+
+      data.forEach(function(item, index) {
+        if (savedProgress[index]) completedCount++;
+      });
+
+      var startIndex = (currentPage - 1) * PAGE_SIZE;
+      var endIndex = Math.min(startIndex + PAGE_SIZE, data.length);
+      var pageData = data.slice(startIndex, endIndex);
+
+      pageData.forEach(function(item, i) {
+        var realIndex = startIndex + i;
+        var isChecked = savedProgress[realIndex] || false;
+
+        var div = document.createElement('div');
+        div.className = 'item' + (isChecked ? ' completed' : '');
+        
+        div.innerHTML = 
+          '<div class="item-check">' +
+            '<input type="checkbox" ' + (isChecked ? 'checked' : '') + ' data-index="' + realIndex + '">' +
+          '</div>' +
+          '<div class="item-content">' +
+            '<div class="jp-text">' + item.num + '. ' + item.kanji + '</div>' +
+            '<div class="reading-text">📖 ' + item.kana + '</div>' +
+            '<div class="ko-text">💡 ' + item.kr + '</div>' +
+          '</div>' +
+          '<button class="btn sound-btn" data-file="' + item.audio + '">🔊 소리</button>';
+
+        listDiv.appendChild(div);
+      });
+
+      var percent = Math.round((completedCount / data.length) * 100) || 0;
+      progressText.innerText = '고급 진행률: ' + completedCount + ' / ' + data.length + ' (' + percent + '%)';
+
+      renderPagination();
+    }
+
+    function renderPagination() {
+      paginationDiv.innerHTML = '';
+      var totalPages = Math.ceil(data.length / PAGE_SIZE);
+
+      if (totalPages <= 1) return;
+
+      var prevBtn = document.createElement('button');
+      prevBtn.className = 'page-btn';
+      prevBtn.innerText = '이전';
+      prevBtn.disabled = (currentPage === 1);
+      prevBtn.onclick = function() { currentPage--; render(); window.scrollTo(0, 0); };
+      paginationDiv.appendChild(prevBtn);
+
+      for (var p = 1; p <= totalPages; p++) {
+        (function(pageNum) {
+          var btn = document.createElement('button');
+          btn.className = 'page-btn' + (pageNum === currentPage ? ' active' : '');
+          btn.innerText = pageNum;
+          btn.onclick = function() {
+            currentPage = pageNum;
+            render();
+            window.scrollTo(0, 0);
+          };
+          paginationDiv.appendChild(btn);
+        })(p);
+      }
+
+      var nextBtn = document.createElement('button');
+      nextBtn.className = 'page-btn';
+      nextBtn.innerText = '다음';
+      nextBtn.disabled = (currentPage === totalPages);
+      nextBtn.onclick = function() { currentPage++; render(); window.scrollTo(0, 0); };
+      paginationDiv.appendChild(nextBtn);
+    }
+
+    document.addEventListener('click', function(e) {
+      if (e.target && e.target.classList.contains('sound-btn')) {
+        var rawFile = e.target.getAttribute('data-file');
+        var cleanFile = String(rawFile).replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '').trim();
+
+        player.pause();
+        
+        // japan/advanced/audio/ 폴더 안의 MP3 파일 연결
+        player.src = './audio/' + cleanFile;
+
+        player.load();
+        
+        var playPromise = player.play();
+        if (playPromise !== undefined) {
+          playPromise.catch(function(err) {
+            alert('오디오를 재생할 수 없습니다. audio 폴더에 ' + cleanFile + ' 파일이 있는지 확인해 주세요.');
+          });
+        }
+      }
+
+      if (e.target && e.target.type === 'checkbox') {
+        var idx = e.target.getAttribute('data-index');
+        savedProgress[idx] = !savedProgress[idx];
+        localStorage.setItem('my_study_progress_advanced', JSON.stringify(savedProgress));
+        render();
+      }
+    });
+
+    document.getElementById('jumpBtn').onclick = function() {
+      var targetIndex = -1;
+      for (var i = 0; i < data.length; i++) {
+        if (!savedProgress[i]) {
+          targetIndex = i;
+          break;
+        }
+      }
+
+      if (targetIndex !== -1) {
+        currentPage = Math.floor(targetIndex / PAGE_SIZE) + 1;
+        render();
+        window.scrollTo(0, 0);
+      } else {
+        alert('🎉 고급 과정의 모든 문장 공부를 완료하셨습니다!');
+      }
+    };
+
+    render();
+  </script>
+
+</body>
+</html>
