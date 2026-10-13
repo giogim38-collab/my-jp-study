@@ -195,7 +195,7 @@ HTML
     // [honto 주제 데이터 목록]
     // -------------------------------------------------------------
     var allTopics = [
-      // 0번째 주제 (0페이지)
+      //0번째 주제 (기본 표현)
       {
         topicNum: 0,
         title: "어디서나 통하는 기본 표현 TOP 20",
@@ -222,7 +222,7 @@ HTML
           { subNum: "20", jp: "また会いましょう。", reading: "またあいましょう。", ko: "또 만납시다.", hasKanji: true }
         ]
       },
-      // 1번째 주제 (1페이지)
+      // 1번째 주제 (UNIT-01)
       {
         topicNum: 1,
         title: "두근두근 일본으로",
@@ -237,7 +237,7 @@ HTML
           { subNum: "8", jp: "はい。", reading: "はい。", ko: "네.", hasKanji: false }
         ]
       },
-      // 2번째 주제 (2페이지)
+      // 2번째 주제 (UNIT-02)
       {
         topicNum: 2,
         title: "교통 및 이동 표현",
@@ -249,6 +249,90 @@ HTML
           { subNum: "5", jp: "どうもありがとうございました。", reading: "どうもありがとうございました。", ko: "정말 감사했습니다.", hasKanji: false },
           { subNum: "6", jp: "これ、もしよかったら持って行ってください。", reading: "これ、もしよかったらもっていってください。", ko: "이것, 괜찮으시다면 가져가세요.", hasKanji: true },
           { subNum: "7", jp: "いいですか。ありがとうございます。", reading: "いいですか。ありがとうございます。", ko: "괜찮나요? 감사합니다.", hasKanji: false }
+        ]
+      },
+// TOPIC 03
+      {
+        topicNum: 3,
+        title: "체크인, 체크아웃? 문제 없지!",
+        sentences: [
+          {
+            subNum: "1",
+            jp: "すみません、予約したキムといいます。",
+            reading: "すみません、よやくしたきむといいます。",
+            ko: "실례합니다, 예약한 김이라고 합니다.",
+            hasKanji: true
+          },
+          {
+            subNum: "2",
+            jp: "こちらにご記入お願いいたします。",
+            reading: "こちらにごきにゅうおねがいいたします。",
+            ko: "이쪽에 기재 부탁드립니다.",
+            hasKanji: true
+          },
+          {
+            subNum: "3",
+            jp: "本日は素泊まりですね。",
+            reading: "ほんじつはすどまりですね。",
+            ko: "오늘은 식사 없는 숙박(소도마리)이네요.",
+            hasKanji: true
+          },
+          {
+            subNum: "4",
+            jp: "お部屋は301号室でございます。",
+            reading: "おへやはさんまるいちごしつでございます。",
+            ko: "방은 301호입니다.",
+            hasKanji: true
+          },
+          {
+            subNum: "5",
+            jp: "はい、ありがとうございます。",
+            reading: "はい、ありがとうございます。",
+            ko: "네, 감사합니다.",
+            hasKanji: false
+          },
+          {
+            subNum: "6",
+            jp: "Wi-Fiのパスワードお願いします。",
+            reading: "Wi-Fiのパスワードおねがいします。",
+            ko: "와이파이 비밀번호 부탁드립니다.",
+            hasKanji: false
+          },
+          {
+            subNum: "7",
+            jp: "チェックアウトお願いします。",
+            reading: "チェックアウトおねがいします。",
+            ko: "체크아웃 부탁드립니다.",
+            hasKanji: false
+          },
+          {
+            subNum: "8",
+            jp: "あの、最寄り駅まで送迎可能ですか。",
+            reading: "あの、もよりえきまでそうげいかのうですか。",
+            ko: "저기, 가장 가까운 역까지 송영(픽업) 가능한가요?",
+            hasKanji: true
+          },
+          {
+            subNum: "9",
+            jp: "はい、可能です。",
+            reading: "はい、かのうです。",
+            ko: "네, 가능합니다.",
+            hasKanji: true
+          },
+          {
+            subNum: "10",
+            jp: "大阪方面に帰られますよね。",
+            reading: "おおさかほうめんにかえられますよね。",
+            ko: "오사카 방면으로 돌아가시지요?",
+            hasKanji: true
+          },
+          {
+            subNum: "11",
+            jp: "はい、そうです。",
+            reading: "はい、そうです。",
+            ko: "네, 그렇습니다.",
+            hasKanji: false
+          }
         ]
       }
     ];
@@ -309,7 +393,7 @@ HTML
       allTopics.forEach(function(topic, i) {
         var btn = document.createElement('button');
         btn.className = 'page-btn' + (i === currentTopicIndex ? ' active' : '');
-        btn.innerText = topic.topicNum + "페이지";
+        btn.innerText =  "UNIT-"+topic.topicNum ;
 
         btn.onclick = function() {
           renderTopic(i);
