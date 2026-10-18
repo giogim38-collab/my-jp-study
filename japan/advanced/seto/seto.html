@@ -74,6 +74,7 @@ HTML
       padding: 18px; margin-bottom: 14px; background: white; 
       border: 1px solid #e2e8f0; border-radius: 14px;
       box-shadow: 0 2px 6px rgba(0,0,0,0.04); gap: 14px;
+      transition: opacity 0.2s ease;
     }
     .item-check { padding-top: 4px; }
     input[type="checkbox"] { width: 26px; height: 26px; cursor: pointer; accent-color: #0d47a1; }
@@ -84,8 +85,12 @@ HTML
     .reading-text { font-size: 18px; font-weight: bold; color: #1b5e20; }
     .ko-text { font-size: 19px; font-weight: bold; color: #222222; margin-top: 2px; }
 
-    .completed .jp-text, .completed .ko-text { text-decoration: line-through; color: #a0aec0; }
-    .completed .reading-text { color: #cbd5e1; }
+    /* 체크 완료 시 흐려지는 효과 (취소선 대신 투명도 적용) */
+    .item.completed .jp-text, 
+    .item.completed .reading-text, 
+    .item.completed .ko-text { 
+      opacity: 0.35; 
+    }
     
     .btn {
       background-color: #0d47a1; color: white; border: none;
@@ -134,7 +139,7 @@ HTML
     var data = [
       {
         num: 1,
-        sectionTitle: "はじめに", // 첫 번째 섹션
+        sectionTitle: "はじめに",
         kanji: "人生が生まれてくるのは、必ず死ぬためです。",
         kana: "じんせいがうまれてくるのは、かならずしぬためです。",
         kr: "인간이 태어나는 것은, 반드시 죽기 위해서입니다.",
@@ -207,7 +212,7 @@ HTML
         num: 11,
         kanji: "私は、2016年5月15日に満94歳（数え九十五）になりました。",
         kana: "わたしは、にせんじゅうろくねんごがつじゅうごにちにまんきゅうじゅうよんさい（かぞえきゅうじゅうご）になりました。",
-        kr: "저는, 2016년 5월 15일에 만 94세(한국 나い 95세)가 되었습니다.",
+        kr: "저는, 2016년 5월 15일에 만 94세(한국 나이 95세)가 되었습니다.",
         audio: "seto_11.mp3"
       },
       {
@@ -282,7 +287,7 @@ HTML
       },
       {
         num: 22,
-        sectionTitle: "第一章　老いに挑戦ーその1　おいをうけいれる", // 두 번째 섹션
+        sectionTitle: "第一章 老いに挑戦ーその1 おいをうけいれる",
         kanji: "老いを受け入れる。",
         kana: "おいをうけいれる。",
         kr: "늙음을 받아 들이다.",
@@ -295,11 +300,11 @@ HTML
         kr: "처음으로 늙음을 의식했다.",
         audio: "seto_23.mp3"
       },
-{
+      {
         num: 24,
         kanji: "2014年4月15日に満92歳の誕生日を迎えた2週間後、背中と腰の激しい痛みに突然襲われました。",
         kana: "にせんじゅうよねんしがつじゅうごにちにまんきゅうじゅうにさいのたんじょうびをむかえたにしゅうかんご、せなかときょうのはげしいいたみにとつぜんおそわれました。",
-        kr: "2014년 4月 15일에 만 92세 생일을 맞이한 2주 후, 등과 허리의 심한 통증에 갑자기 휩싸였습니다.",
+        kr: "2014년 4월 15일에 만 92세 생일을 맞이한 2주 후, 등과 허리의 심한 통증에 갑자기 휩싸였습니다.",
         audio: "seto_24.mp3"
       },
       {
@@ -368,7 +373,7 @@ HTML
       {
         num: 34,
         kanji: "闘病中はたくさんの方が心配して電話を下さったのですが、私は声だけはいつも元気なので、みなさん「元気そうで安心しました」と言って下さるんです。",
-        kana: "とうびょうちゅうはたくさんのほうがしんぱいしてでんわをくださったのですが、わたしはこえだけはいつもげんきなので、みなさん「げんきそうであんしんしました」といってくださるんです。",
+        kana: "とうびょうちゅうはたくさんのほうがしんぱいしてでんわ를くださったのですが、わたしはこえだけはいつもげんきなので、みなさん「げんきそうであんしんしました」と言って下さるんです。",
         kr: "투병 중에는 많은 분이 걱정하며 전화를 주셨는데, 저는 목소리만큼은 항상 활기차서 다들 「건강해 보이셔서 안심했습니다」라고 말씀해 주시는 것입니다.",
         audio: "seto_34.mp3"
       },
