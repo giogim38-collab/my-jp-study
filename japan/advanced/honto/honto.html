@@ -167,6 +167,38 @@ HTML
       border-color: #0d47a1;
       box-shadow: 0 2px 6px rgba(13, 71, 161, 0.3);
     }
+
+/* 확인 버튼 스타일 */
+    .check-btn {
+      background-color: #e2e8f0;
+      color: #475569;
+      border: none;
+      padding: 5px 12px;
+      border-radius: 20px;
+      font-size: 13px;
+      font-weight: 700;
+      cursor: pointer;
+      display: inline-flex;
+      align-items: center;
+      margin-left: 4px;
+      transition: all 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .check-btn:active {
+      transform: scale(0.96);
+    }
+
+    /* ★ 확인을 눌렀을 때 문장이 흐려지고 버튼이 초록색으로 바뀌는 효과 */
+    .sentence-item.checked .jp-text,
+    .sentence-item.checked .sub-line,
+    .sentence-item.checked .sent-num {
+      opacity: 0.35;
+    }
+    .sentence-item.checked .check-btn {
+      background-color: #16a34a;
+      color: #ffffff;
+    }
+
   </style>
 </head>
 <body>
@@ -2400,25 +2432,34 @@ HTML
 
       listDiv.innerHTML = '';
 
-      topicData.sentences.forEach(function(item) {
-        var itemDiv = document.createElement('div');
-        itemDiv.className = 'sentence-item';
+topicData.sentences.forEach(function(item, index) {
+      var itemDiv = document.createElement('div');
+      itemDiv.className = 'sentence-item';
 
-        var numCode = prefixNum + "-" + item.subNum;
-        var audioFileName = numCode + ".mp3";
+      var numCode = prefixNum + "-" + item.subNum;
+      var audioFileName = numCode + ".mp3";
 
-        var subText = item.hasKanji ? '(' + item.reading + ' ' + item.ko + ')' : '(' + item.ko + ')';
+      // ★ localStorage에서 각 문장별 체크 상태 불러오기 (토픽 번호와 문장 인덱스 조합)
+      var storageKey = "honto_checked_" + prefixNum + "_" + index;
+      var isChecked = localStorage.getItem(storageKey) === 'true';
+      if (isChecked) {
+        itemDiv.classList.add('checked');
+      }
 
-        itemDiv.innerHTML = 
-          '<div class="main-line">' +
-            '<span class="sent-num">' + numCode + '</span>' +
-            '<span class="jp-text">' + item.jp + '</span>' +
-            '<button class="play-btn" data-file="' + audioFileName + '">▶ 소리</button>' +
-          '</div>' +
-          '<div class="sub-line">' + subText + '</div>';
+      var subText = item.hasKanji ? '(' + item.reading + ' ' + item.ko + ')' : '(' + item.ko + ')';
 
-        listDiv.appendChild(itemDiv);
-      });
+      // ★ [확인] 버튼 추가 및 storageKey 전달
+      itemDiv.innerHTML = 
+        '<div class="main-line">' +
+          '<span class="sent-num">' + numCode + '</span>' +
+          '<span class="jp-text">' + item.jp + '</span>' +
+          '<button class="play-btn" data-file="' + audioFileName + '">▶ 소리</button>' +
+          '<button class="check-btn" onclick="toggleCheck(this, \'' + storageKey + '\')">' + (isChecked ? '✓ 완료' : '확인') + '</button>' +
+        '</div>' +
+        '<div class="sub-line">' + subText + '</div>';
+
+      listDiv.appendChild(itemDiv);
+    });
 
       renderPagination();
     }
@@ -2455,7 +2496,20 @@ HTML
         }
       }
     });
-
+// ★ 확인 버튼 클릭 시 투명도 토글 및 저장 처리 함수
+    function toggleCheck(button, storageKey) {
+      var sentenceItem = button.closest('.sentence-item');
+      sentenceItem.classList.toggle('checked');
+      
+      var isNowChecked = sentenceItem.classList.contains('checked');
+      if (isNowChecked) {
+        button.innerText = '✓ 완료';
+        localStorage.setItem(storageKey, 'true');
+      } else {
+        button.innerText = '확인';
+        localStorage.setItem(storageKey, 'false');
+      }
+    }
     renderTopic(0);
   </script>
 
