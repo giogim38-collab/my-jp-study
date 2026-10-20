@@ -1,4 +1,3 @@
-HTML
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -16,23 +15,35 @@ HTML
       background-color: #f4f6f8;
     }
     
-    /* 상단 네비게이션 바 */
+    /* 상단 네비게이션 & 고정 바 */
     .nav-bar {
-      display: flex;
-      gap: 12px;
-      margin-bottom: 16px;
+      position: sticky; 
+      top: 0; 
+      background: rgba(255, 255, 255, 0.98); 
+      padding: 10px 12px;
+      border-bottom: 3px solid #0d47a1; 
+      margin-bottom: 20px; 
+      z-index: 10;
+      display: flex; 
+      align-items: center; 
+      justify-content: space-between;
+      gap: 8px;
+      box-shadow: 0 4px 8px rgba(0,0,0,0.06); 
+      border-radius: 12px;
     }
+
     .nav-btn {
-      flex: 1;
-      padding: 14px 10px;
+      padding: 8px 12px;
       text-align: center;
-      font-size: 18px;
+      font-size: 15px;
       font-weight: bold;
       text-decoration: none;
       color: #111111;
       background-color: #ffffff;
-      border: 2px solid #bbb;
-      border-radius: 12px;
+      border: 1.5px solid #bbb;
+      border-radius: 8px;
+      white-space: nowrap;
+      flex-shrink: 0;
       -webkit-tap-highlight-color: transparent;
     }
     .nav-btn.direct {
@@ -42,17 +53,31 @@ HTML
     }
     .nav-btn:active { opacity: 0.8; }
 
-    /* 상단 고정 진행률 바 */
-    .progress-box {
-      position: sticky; top: 0; background: rgba(255, 255, 255, 0.98); padding: 14px 12px;
-      border-bottom: 3px solid #0d47a1; margin-bottom: 20px; z-index: 10;
-      display: flex; justify-content: space-between; align-items: center;
-      box-shadow: 0 4px 8px rgba(0,0,0,0.06); border-radius: 12px;
+    .nav-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      flex-shrink: 0;
     }
-    .progress-text { font-weight: bold; color: #0d47a1; font-size: 18px; }
+
+    .progress-text { 
+      font-weight: bold; 
+      color: #0d47a1; 
+      font-size: 14px; 
+      white-space: nowrap;
+    }
+
     .jump-btn {
-      background-color: #1565c0; color: white; border: none;
-      padding: 10px 14px; border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;
+      background-color: #1565c0; 
+      color: white; 
+      border: none;
+      padding: 8px 12px; 
+      border-radius: 8px; 
+      cursor: pointer; 
+      font-weight: bold; 
+      font-size: 14px;
+      white-space: nowrap;
+      flex-shrink: 0;
     }
     .jump-btn:active { opacity: 0.85; }
     
@@ -76,8 +101,6 @@ HTML
       box-shadow: 0 2px 6px rgba(0,0,0,0.04); gap: 14px;
       transition: opacity 0.2s ease;
     }
-    .item-check { padding-top: 4px; }
-    input[type="checkbox"] { width: 26px; height: 26px; cursor: pointer; accent-color: #0d47a1; }
     .item-content { flex: 1; display: flex; flex-direction: column; gap: 8px; word-break: break-word; }
 
     /* 글자 크기 및 두께 스타일 */
@@ -85,20 +108,50 @@ HTML
     .reading-text { font-size: 18px; font-weight: bold; color: #1b5e20; }
     .ko-text { font-size: 19px; font-weight: bold; color: #222222; margin-top: 2px; }
 
-    /* 체크 완료 시 흐려지는 효과 (취소선 대신 투명도 적용) */
+    /* 확인 완료 시 흐려지는 효과 (투명도 적용) */
     .item.completed .jp-text, 
     .item.completed .reading-text, 
     .item.completed .ko-text { 
       opacity: 0.35; 
     }
     
+    /* 버튼 그룹 컨테이너 */
+    .btn-group {
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      flex-shrink: 0;
+    }
+
     .btn {
       background-color: #0d47a1; color: white; border: none;
-      padding: 12px 16px; border-radius: 8px; cursor: pointer; font-weight: bold;
-      flex-shrink: 0; font-size: 16px;
+      padding: 10px 14px; border-radius: 8px; cursor: pointer; font-weight: bold;
+      font-size: 15px; text-align: center;
       -webkit-tap-highlight-color: transparent;
     }
     .btn:active { background-color: #0a3880; }
+
+    /* 확인 버튼 스타일 */
+    .check-btn {
+      background-color: #e2e8f0;
+      color: #475569;
+      border: none;
+      padding: 10px 14px;
+      border-radius: 8px;
+      font-size: 15px;
+      font-weight: bold;
+      cursor: pointer;
+      text-align: center;
+      transition: all 0.15s ease;
+      -webkit-tap-highlight-color: transparent;
+    }
+    .check-btn:active {
+      transform: scale(0.96);
+    }
+    .item.completed .check-btn {
+      background-color: #16a34a;
+      color: #ffffff;
+    }
 
     /* 페이지네이션 버튼 */
     .pagination {
@@ -115,21 +168,17 @@ HTML
 </head>
 <body>
 
-  <!-- 상단 네비게이션 바 -->
+  <!-- 상단 네비게이션 & 고정 바 -->
   <div class="nav-bar">
     <a href="../../index.html" target="_self" class="nav-btn">🏠 메인</a>
-    <a href="../../beginner/beginner.html" target="_self" class="nav-btn direct">🌱 초급</a>
-    <a href="../index.html" target="_self" class="nav-btn admin">🌳 고급메뉴</a>
+    <div class="nav-right">
+      <span id="progressText" class="progress-text">고급-학습: 0 / 0 (0%)</span>
+      <button class="jump-btn" id="jumpBtn">📍 이어하기</button>
+    </div>
   </div>
 
   <!-- 공통 오디오 태그 -->
   <audio id="player" preload="auto"></audio>
-
-  <!-- 진행률 및 이어하기 -->
-  <div class="progress-box">
-    <div id="progressText" class="progress-text">고급 진행률: 0 / 0 (0%)</div>
-    <button class="jump-btn" id="jumpBtn">📍 이어하기</button>
-  </div>
 
   <!-- 문장 목록이 들어가는 공간 -->
   <div id="list"></div>
@@ -287,7 +336,7 @@ HTML
       },
       {
         num: 22,
-        sectionTitle: "第一章 老いに挑戦ーその1 おいをうけいれる",
+        sectionTitle: "第一章 老いに挑戦ーその1 老いを受け入れる\n●はじめて老いを意識した",
         kanji: "老いを受け入れる。",
         kana: "おいをうけいれる。",
         kr: "늙음을 받아 들이다.",
@@ -373,7 +422,7 @@ HTML
       {
         num: 34,
         kanji: "闘病中はたくさんの方が心配して電話を下さったのですが、私は声だけはいつも元気なので、みなさん「元気そうで安心しました」と言って下さるんです。",
-        kana: "とうびょうちゅうはたくさんのほうがしんぱいしてでんわ를くださったのですが、わたしはこえだけはいつもげんきなので、みなさん「げんきそうであんしんしました」と言って下さるんです。",
+        kana: "とうびょうちゅうはたくさんのほうがしんぱいしてでんわをくださったのですが、わたしはこえだけはいつもげんきなので、みなさん「げんきそうであんしんしました」と言って下さるんです。",
         kr: "투병 중에는 많은 분이 걱정하며 전화를 주셨는데, 저는 목소리만큼은 항상 활기차서 다들 「건강해 보이셔서 안심했습니다」라고 말씀해 주시는 것입니다.",
         audio: "seto_34.mp3"
       },
@@ -411,6 +460,275 @@ HTML
         kana: "ひまごのようにわかいスタッフはそのたび、「そういうのをてんねんボケというんですよ」などとへいぜんといいます。",
         kr: "증손주처럼 어린 스태프는 그때마다 「그런 걸 자연스러운 엉뚱함(천연 보케)이라고 하는 거예요」라고 태연하게 말합니다.",
         audio: "seto_39.mp3"
+      },
+      {
+        num: 40,
+　　　sectionTitle: "●診断は「老化現象」",
+        kanji: "診断は「老化現象」",
+        kana: "しんだんは「ろうかけんしょう」",
+        kr: "진단은 '노화 현상'",
+        audio: "seto_40.mp3"
+      },
+      {
+        num: 41,
+        kanji: "圧迫骨折は治り、身体の痛みも治まってきたはずなのに、二〇一五年の夏にまたあちこちが痛くなり、手足のしびれまで出てきました。",
+        kana: "あっぱくこっせつは나おり、しんたいのいたみもおさまってきたはずなのに、にせんじゅうごねんのなつにまたあちこちがいたくなり、てあしのしびれまででてきました。",
+        kr: "압박골절은 낫고 몸의 통증도 가라앉았을 터인데, 2015년 여름에 다시 여기저기가 아파지고 손발 마비(저림)까지 나타났습니다.",
+        audio: "seto_41.mp3"
+      },
+      {
+        num: 42,
+        kanji: "診察を受けたのですが、「一種の老化現象」と言われました。",
+        kana: "しんさつをうけたのですが、「いっしゅのろうかけんしょう」といわれました。",
+        kr: "진찰을 받았습니다만, '일종의 노화 현상'이라는 말을 들었습니다.",
+        audio: "seto_42.mp3"
+      },
+      {
+        num: 43,
+        kanji: "筋肉が凝り固まって動かなくなり、しびれが出ているということで、痛みを取る注射を通常の三倍もしてくれても痛みは取れません。",
+        kana: "きんにくがこりかたまってうごかなくなり、しびれがでているということで、いたみをとるちゅうしゃをつうじょうのさんばいもしてくれてもいたみはとれません。",
+        kr: "근육이 뭉쳐서 움직이지 않고 저림이 나타나는 것이라, 통증을 가라앉히는 주사를 평소의 3배나 맞았는데도 통증은 사라지지 않습니다.",
+        audio: "seto_43.mp3"
+      },
+      {
+        num: 44,
+        kanji: "血の巡りをよくするために動かしたり、マッサージをしたりするくらいしか、治療法はないそうです。",
+        kana: "ちのめぐりをよくするためにうごかしたり、マッサージをしたりするくらいしか、ちりょうほうはないそうです。",
+        kr: "혈액 순환을 좋게 하기 위해 움직이거나 마사지를 하는 정도밖에 치료법이 없다고 합니다.",
+        audio: "seto_44.mp3"
+      },
+      {
+        num: 45,
+        kanji: "痛み止めの飲み薬と塗り薬はもらっています。",
+        kana: "いたみどめののみぐすりとぬりぐすりはもらっています。",
+        kr: "진통제 먹는 약과 바르는 약은 받았습니다.",
+        audio: "seto_45.mp3"
+      },
+      {
+        num: 46,
+        kanji: "このまま指の力がなくなってペンが握れなくなると、小説が書けなくなるのが何より困ります。",
+        kana: "このままゆびのちからがなくなってペンがにぎれなくなると、しょうせつがかけなくなるのがなによりこまります。",
+        kr: "이대로 손가락 힘이 빠져 펜을 쥘 수 없게 되면, 소설을 쓸 수 없게 되는 것이 무엇보다 걱정입니다.",
+        audio: "seto_46.mp3"
+      },
+      {
+        num: 47,
+        kanji: "昔はできたことができなくなっていくのは、まさしく老衰です。",
+        kana: "むかしはできたことができなくなっていくのは、まさしくろうすいです。",
+        kr: "예전에는 할 수 있었던 일을 할 수 없게 되어가는 것은 그야말로 늙어감(노쇠)입니다.",
+        audio: "seto_47.mp3"
+      },
+      {
+        num: 48,
+        kanji: "九十四歳という現実を受け入れるしかありません。",
+        kana: "きゅうじゅうよんさいというげんじつをうけいれるしかありません。",
+        kr: "구십사 세라는 현실을 받아들일 수밖에 없습니다.",
+        audio: "seto_48.mp3"
+      },
+      {
+        num: 49,
+        kanji: "でも九十四歳で現役で小説を書いている人はいないんだからと、自分を慰めています。",
+        kana: "でもきゅうじゅうよんさいでげんえきでしょうせつをかいているひとはいないんだからと、じぶんをなぐさめています。",
+        kr: "하지만 구십사 세에 현역으로 소설을 쓰고 있는 사람은 없으니까라며, 스스로를 위로하고 있습니다.",
+        audio: "seto_49.mp3"
+      },
+      {
+        num: 50,
+        kanji: "昔はできたことが、できなくなる。それがまさしくおいるということ。",
+        kana: "むかしはできたことが、できなくなる。それがまさしくおいるということ。",
+        kr: "예전에는 할 수 있었던 것을, 할 수 없게 된다. 그것이 그야말로 늙어간다는 것.",
+        audio: "seto_50.mp3"
+      },
+      /* 새로 추가된 내용 (이미지 14, 16 내용) */
+      {
+        num: 51,
+        sectionTitle: "第一章 老いに挑戦-その 2 病院と仲良くしよう\n●加齢性黄斑変性症に",
+        kanji: "八十歳の時に白内障の手術をして、イヤというほど見えるようになりました。",
+        kana: "はちじゅっさいのときにはくないしょうの手術をして、イヤというほどみえるようになりました。",
+        kr: "80세 때 백내장 수술을 해서, 진절머리가 날 정도로 잘 보이게 되었습니다.",
+        audio: "seto_51.mp3"
+      },
+      {
+        num: 52,
+        kanji: "手術は痛みもかゆみもなく、三十分くらいで済みました。",
+        kana: "しゅじゅつはいたみもかゆみもなく、さんじっぷんくらいですみました。",
+        kr: "수술은 통증도 가려움도 없고, 30분 정도 만에 끝났습니다.",
+        audio: "seto_52.mp3"
+      },
+      {
+        num: 53,
+        kanji: "東京の病院だったのです。",
+        kana: "とうきょうのびょういんだったのです。",
+        kr: "도쿄의 병원이었습니다.",
+        audio: "seto_53.mp3"
+      },
+      {
+        num: 54,
+        kanji: "廊下から飛んできた秘書は平然と、",
+        kana: "ろうかからとんできたひしょはへいぜんと、",
+        kr: "복도에서 달려온 비서는 태연하게,",
+        audio: "seto_54.mp3"
+      },
+      {
+        num: 55,
+        kanji: "「見て、見て！ 鏡の中に八十の老婆がいるよ」",
+        kana: "「みて、みて！ かがみのなかにはちじゅうのろうばがいるよ」",
+        kr: "「봐봐, 봐! 거울 속에 80세 할머니가 있어」",
+        audio: "seto_55.mp3"
+      },
+      {
+        num: 56,
+        kanji: "「だって、八十の老婆ですもの」",
+        kana: "「だって、はちじゅうのろうばですもの」",
+        kr: "「だって、80세 할머니인걸요」",
+        audio: "seto_56.mp3"
+      },
+      {
+        num: 57,
+        kanji: "あれはショックでしたね。",
+        kana: "あれはショックでしたね。",
+        kr: "그건 충격이었지요.",
+        audio: "seto_57.mp3"
+      },
+      {
+        num: 58,
+        kanji: "見えていなかったものが、見えすぎでした。",
+        kana: "みえていなかったものが、みえすぎでした。",
+        kr: "보이지 않던 것이 너무 잘 보이게 되었습니다.",
+        audio: "seto_58.mp3"
+      },
+      {
+        num: 59,
+        kanji: "そして八十五歳で加齢性黄斑変性症になって、手術したのに右目はまったく見えなくなってしまいました。",
+        kana: "そしてはちじゅうごさいでかれいせいおうはんへんせいしょうになって、しゅじゅつしたのにみぎめはまったくみえなくなってしまいました。",
+        kr: "그리고 85세에 연령관련 황반변성증이 되어, 수술했는데도 오른쪽 눈은 전혀 보이지 않게 되어 버렸습니다.",
+        audio: "seto_59.mp3"
+      },
+      {
+        num: 60,
+        kanji: "もっと早く医者にかかればよかったって、手術したときは手遅れでした。",
+        kana: "もっとはやくいしゃにかかればよかったって、しゅじゅつしたときはておくれでした。",
+        kr: "좀 더 일찍 의사에게 진찰받았어야 했다고, 수술했을 때는 이미 때를 놓쳤습니다.",
+        audio: "seto_60.mp3"
+      },
+      {
+        num: 61,
+        kanji: "なぜって、診てもらうことにはすでに手遅れていたのです。",
+        kana: "なぜって、みてらうことにはすでにておくれていたのです。",
+        kr: "왜냐하면, 진찰받으러 가기에는 이미 때가 늦었기 때문입니다.",
+        audio: "seto_61.mp3"
+      },
+      {
+        num: 62,
+        kanji: "でも心配することはありません。",
+        kana: "でもしんぱいすることはありません。",
+        kr: "하지만 걱정할 것은 없습니다.",
+        audio: "seto_62.mp3"
+      },
+      {
+        num: 63,
+        kanji: "一年後に目の検査に行ったら、今度はたくさんの本を朝から晩まで、一・五倍で読んでいます。",
+        kana: "いちねんごのめのけんさにいったら、こんどはたくさんのほんをあさからばんまで、いちてんごばいでよんでいます。",
+        kr: "1년 뒤에 눈 검사를 하러 갔더니, 이번에는 많은 책을 아침부터 밤까지 1.5배로 읽고 있습니다.",
+        audio: "seto_63.mp3"
+      },
+      {
+        num: 64,
+        kanji: "ホント！",
+        kana: "ホント！",
+        kr: "정말이야!",
+        audio: "seto_64.mp3"
+      },
+      {
+        num: 65,
+        kanji: "左目だけで読みます。",
+        kana: "ひだりめだけでよみます。",
+        kr: "왼쪽 눈으로만 읽습니다.",
+        audio: "seto_65.mp3"
+      },
+      {
+        num: 66,
+        kanji: "今も新聞は眼鏡かけないで読めるんです。",
+        kana: "いまもしんぶんはいめがねかけないでよめるんです。",
+        kr: "지금도 신문은 안경을 쓰지 않고 읽을 수 있습니다.",
+        audio: "seto_66.mp3"
+      },
+      {
+        num: 67,
+        kanji: "片方だけは使っているから、鍛えられているから、",
+        kana: "かたほうだけはつかっているから、きたえられているから、",
+        kr: "한쪽만 쓰고 있으니까, 단련되어 있으니까,",
+        audio: "seto_67.mp3"
+      },
+      {
+        num: 68,
+        kanji: "力がなくなったんでしょうか、医者もびっくりしていました。",
+        kana: "ちからがなくなったんでしょうか、いしゃもびっくりしていました。",
+        kr: "힘이 없어진 걸까요, 의사도 깜짝 놀라 있었습니다.",
+        audio: "seto_68.mp3"
+      },
+      {
+        num: 69,
+        kanji: "読めなくなったら、もう仕事はできないし、本が読めなくなったら、生きている目が見えなくて、生きられない。",
+        kana: "よめなくなったら、もうしごとはできないし、ほんがよめなくなったら、いきていめがみえなくて、いきられない。",
+        kr: "읽을 수 없게 되면, 더는 일도 할 수 없고, 책을 읽을 수 없게 되면, 살아 있는 눈이 보이지 않아 살아갈 수 없습니다.",
+        audio: "seto_69.mp3"
+      },
+      {
+        num: 70,
+        kanji: "この目の病気は日本ではあまりなかったらしいですが、これも老いの一つの現実ですね。",
+        kana: "このめのびょうきはにほんではあまりなかったらしいですが、これもおいの一つのげんじつですね。",
+        kr: "이 눈의 병은 일본에서는 별로 없었다고 합니다만, 이것도 늙음의 하나의 현실이군요.",
+        audio: "seto_70.mp3"
+      },
+      {
+        num: 71,
+        kanji: "高齢化と生活の変化のせいと言われているそうです。",
+        kana: "こうれいかとせいかつのへんかのせいと言われているそうです。",
+        kr: "고령화와 생활 변화 때문이라고 일컬어지고 있다고 합니다.",
+        audio: "seto_71.mp3"
+      },
+      {
+        num: 72,
+        kanji: "老化は着々と押し寄せてくる。異変を感じたら即、病院へ。",
+        kana: "ろうかは ちゃくちゃくと おしよせてくる。 いへんを かんじたら そく、 びょういんへ。",
+        kr: "노화는 착착 밀려온다. 이변을 느낀다면 즉시, 병원으로.",
+        audio: "seto_72.mp3"
+      },
+      {
+        num: 73,
+        kanji: "耳が遠くなりだしたのは、七十歳前かしら。",
+        kana: "みみがとおくなりだしたのは、ななじゅうさいまえかしら。",
+        kr: "귀가 어두워지기 시작한 것은, 70세 전일까나.",
+        audio: "seto_73.mp3"
+      },
+      {
+        num: 74,
+        kanji: "目よりも早かったのです。",
+        kana: "めよりもはやかったのです。",
+        kr: "눈보다 빨랐습니다.",
+        audio: "seto_74.mp3"
+      },
+      {
+        num: 75,
+        kanji: "私自身はそのことでも不自由していませんが、うっかりしていて私がしょっちゅうなくすので、外国製の高価な補聴器を持っています。",
+        kana: "わたしじしんはそのことでもふじゆうしていませんが、うっかりしていて私がしょっちゅうなくすので、がいこくせいのこうかなほちょうきをもっています。",
+        kr: "저 자신은 그 점에서도 부자유스럽지 않습니다만, 깜박해서 제가 자주 잃어버리기 때문에, 외국산 고가의 보청기를 가지고 있습니다.",
+        audio: "seto_75.mp3"
+      },
+      {
+        num: 76,
+        kanji: "恐れずにまず病院と仲良くしましょう。",
+        kana: "おそれずにまずびょういんとなかよくしましょう。",
+        kr: "두려워하지 말고 먼저 병원과 친해집시다.",
+        audio: "seto_76.mp3"
+      },
+      {
+        num: 77,
+        kanji: "こうして着々と老いは押し寄せているのです。",
+        kana: "こうしてちゃくちゃくとおいはおしよせているのです。",
+        kr: "이렇게 착착 늙음은 밀려오고 있는 것입니다.",
+        audio: "seto_77.mp3"
       }
     ];
 
@@ -450,6 +768,7 @@ HTML
       if (activeTitle) {
         var topH2 = document.createElement('h2');
         topH2.className = 'section-header';
+        topH2.style.whiteSpace = 'pre-line'; // 줄바꿈 반영
         topH2.innerText = activeTitle;
         listDiv.appendChild(topH2);
       }
@@ -463,6 +782,7 @@ HTML
         if (i > 0 && item.sectionTitle) {
           var midH2 = document.createElement('h2');
           midH2.className = 'section-header';
+          midH2.style.whiteSpace = 'pre-line';
           midH2.innerText = item.sectionTitle;
           listDiv.appendChild(midH2);
         }
@@ -471,21 +791,21 @@ HTML
         div.className = 'item' + (isChecked ? ' completed' : '');
         
         div.innerHTML = 
-          '<div class="item-check">' +
-            '<input type="checkbox" ' + (isChecked ? 'checked' : '') + ' data-index="' + realIndex + '">' +
-          '</div>' +
           '<div class="item-content">' +
             '<div class="jp-text">' + item.num + '. ' + item.kanji + '</div>' +
             '<div class="reading-text">📖 ' + item.kana + '</div>' +
             '<div class="ko-text">💡 ' + item.kr + '</div>' +
           '</div>' +
-          '<button class="btn sound-btn" data-file="' + item.audio + '">🔊 소리</button>';
+          '<div class="btn-group">' +
+            '<button class="btn sound-btn" data-file="' + item.audio + '">🔊 소리</button>' +
+            '<button class="check-btn" data-index="' + realIndex + '">' + (isChecked ? '✓ 완료' : '확인') + '</button>' +
+          '</div>';
 
         listDiv.appendChild(div);
       });
 
       var percent = Math.round((completedCount / data.length) * 100) || 0;
-      progressText.innerText = '고급 진행률: ' + completedCount + ' / ' + data.length + ' (' + percent + '%)';
+      progressText.innerText = '고급-학습: ' + completedCount + ' / ' + data.length + ' (' + percent + '%)';
 
       renderPagination();
     }
@@ -526,6 +846,7 @@ HTML
     }
 
     document.addEventListener('click', function(e) {
+      // 오디오 재생 버튼 클릭 시
       if (e.target && e.target.classList.contains('sound-btn')) {
         var rawFile = e.target.getAttribute('data-file');
         var cleanFile = String(rawFile).replace(/[\u200B-\u200D\uFEFF\u00A0]/g, '').trim();
@@ -542,7 +863,8 @@ HTML
         }
       }
 
-      if (e.target && e.target.type === 'checkbox') {
+      // 확인 버튼 클릭 시 (토글 및 저장)
+      if (e.target && e.target.classList.contains('check-btn')) {
         var idx = e.target.getAttribute('data-index');
         savedProgress[idx] = !savedProgress[idx];
         localStorage.setItem('my_study_progress_advanced', JSON.stringify(savedProgress));
@@ -559,13 +881,7 @@ HTML
         }
       }
 
-      if (targetIndex !== -1) {
-        currentPage = Math.floor(targetIndex / PAGE_SIZE) + 1;
-        render();
-        window.scrollTo(0, 0);
-      } else {
-        alert('🎉 고급 과정의 모든 문장 공부를 완료하셨습니다!');
-      }
+      (targetIndex !== -1) ? (currentPage = Math.floor(targetIndex / PAGE_SIZE) + 1, render(), window.scrollTo(0, 0)) : alert('🎉 고급 과정의 모든 문장 공부를 완료하셨습니다!');
     };
 
     render();
