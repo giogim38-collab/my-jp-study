@@ -1,3 +1,4 @@
+HTML
 <!DOCTYPE html>
 <html lang="ko">
 <head>
@@ -114,11 +115,13 @@
 
     .pagination {
       display: flex; justify-content: center; align-items: center;
-      gap: 8px; margin-top: 25px; margin-bottom: 30px; flex-wrap: wrap;
+      gap: 6px; margin-top: 25px; margin-bottom: 30px; flex-wrap: wrap;
     }
+    /* 버튼 폭을 기존보다 약 4분의 1 정도 줄이도록 패딩 및 최소 너비 조정 */
     .page-btn {
-      background: white; border: 1px solid #cbd5e1; padding: 10px 16px;
-      border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;
+      background: white; border: 1px solid #cbd5e1; padding: 8px 8px;
+      border-radius: 6px; cursor: pointer; font-weight: bold; font-size: 15px;
+      min-width: 30px; text-align: center;
     }
     .page-btn.active { background-color: #1b5e20; color: white; border-color: #1b5e20; }
     .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
@@ -166,7 +169,7 @@
       { num: "10-2", jp: "今日は休みます。", reading: "きょうはやすみます。", pron: "쿄-와 야스미마스", ko: "오늘은 쉬겠습니다.", file: "10-2.mp3" },
       { num: "11-1", jp: "夏休み", reading: "なつやすみ", pron: "나쯔야스미", ko: "여름휴가, 여름방학", file: "11-1.mp3" },
       { num: "11-2", jp: "夏休みに旅行します。", reading: "なつやすみにりょこうします。", pron: "나쯔야스미니 료코-시마스", ko: "여름휴가/방학에 여행합니다.", file: "11-2.mp3" },
-      { num: "12-1", jp: "冬休み", reading: "ふゆやすみ", pron: "후유야ส미", ko: "겨울휴가, 겨울방학", file: "12-1.mp3" },
+      { num: "12-1", jp: "冬休み", reading: "ふゆやすみ", pron: "후유야스미", ko: "겨울휴가, 겨울방학", file: "12-1.mp3" },
       { num: "12-2", jp: "冬休みは短いです。", reading: "ふゆやすみはみじかいです。", pron: "후유야스미와 미지카이데스", ko: "겨울휴가/방학은 짧습니다.", file: "12-2.mp3" },
       { num: "13-1", jp: "春", reading: "はる", pron: "하루", ko: "봄", file: "13-1.mp3" },
       { num: "13-2", jp: "春になりました。", reading: "はるになりました。", pron: "하루니 나리마시타", ko: "봄이 되었습니다.", file: "13-2.mp3" },
@@ -262,7 +265,7 @@
       { num: "59-1", jp: "凄い", reading: "すごい", pron: "스고이", ko: "대단하다. 훌륭하다.", file: "59-1-1.mp3" },
       { num: "59-2", jp: "彼の日本語の通訳能力は本当に凄いです。", reading: "かれの にほんごの つうやく のうりょくは ほんとうに すごいです。", pron: "카레노 니홍고노 쯔우야쿠 노오료쿠와 혼토니 스고이데스", ko: "그의 일본어 통역 능력은 정말 대단합니다.", file: "59-1.mp3" },
       { num: "60-1", jp: "酷い", reading: "ひどい", pron: "히도이", ko: "형편없다. 나쁘다.", file: "59-2-1.mp3" },
-      { num: "60-2", jp: "昨日は風邪の症状が酷くて、一日中寝ていました。", reading: "きのうは かぜの しょうじょうが ひどくて、いちにちじゅう ねていました。", pron: "키노오와 카제노 쇼오죠오가 히도쿠테, 이치니치주우 네테이마시타.", ko: "어제는 감기 증상이 심해서 하루 종일 누워 있었어요.", file: "59-2.mp3" },
+      { num: "60-2", jp: "昨日は風邪の症状が酷くて、一日中寝ていました。", reading: "きのうは かぜの しょうじょうが ひどくて、いちにちじゅう ねていました。", pron: "키노오와 카제노 쇼오죠오가 히도쿠테, 이치นิ치주우 네테이마시타.", ko: "어제는 감기 증상이 심해서 하루 종일 누워 있었어요.", file: "59-2.mp3" },
       { num: "61-1", jp: "ようこそ", reading: "ようこそ", pron: "요오코소", ko: "잘 오셨습니다. 환영합니다.", file: "60-1.mp3" },
       { num: "61-2", jp: "お会いできて嬉しいです", reading: "おあいできてうれしいです", pron: "오아이데키테 우레시이데스", ko: "만나서 반가워요.", file: "60-2.mp3" },
       { num: "62-1", jp: "びっくりしました。", reading: "びっくりしました。", pron: "빗꾸리시마시타.", ko: "깜짝 놀랐어요.", file: "62-1.mp3" },
@@ -295,13 +298,10 @@
       { num: "77-1", jp: "今、何してる？", reading: "いま、なにしてる？", pron: "이마, 나니시떼루?", ko: "지금 뭐해?", file: "77-1.mp3"},
       { num: "77-2", jp: "今、何をしてますか。", reading: "いま、なにをしてますか。", pron: "이마, 나니오시떼마스까?", ko: "지금 무엇을 하고 있어요?", file: "77-2.mp3"},
       { num: "78-1", jp: "何故かここに惹かれる。", reading: "なぜかここにひかれる。", pron: "나제까 코코니 히까레루", ko: "웬지 모르게 여기에 마음이 끌린다.", file: "78-1.mp3"},
-{ num: "79-1", jp: "あの店の新しいメニューがとても気になるので、今度食べに行きたいです。", reading: "あの店の新しいメニューがとてもきになるので、こんどたべにいきたいです。", pron: "아노 미세노 아타라시- 메뉴-가 토테모 키니나루노데, 콘도 타베니 이키타이데스.", ko: "저 가게의 새 메뉴가 아주 궁금해서(마음이 쓰여서), 다음에 먹으러 가고 싶어요.", file: "79-1.mp3" },
+      { num: "79-1", jp: "あの店の新しいメニューがとても気になるので、今度食べに行きたいです。", reading: "あの店の新しいメニューがとてもきになるので、こんどたべにいきたいです。", pron: "아노 미세노 아타라시- 메뉴-가 토테모 키니나루노데, 콘도 타베니 이키타이데스.", ko: "저 가게의 새 메뉴가 아주 궁금해서(마음이 쓰여서), 다음에 먹으러 가고 싶어요.", file: "79-1.mp3" },
       { num: "79-2", jp: "これからも一緒に楽しく日本語の勉強を頑張りましょう。", reading: "これからもいっしょにたのしくにほんごのべんきょうをがんばりましょう。", pron: "코레카라모 잇쇼니 타노시쿠 니혼고노 벤쿄-오 감바리마쇼-.", ko: "앞으로도 함께 즐겁게 일본어 공부를 힘내서 합시다(화이팅합시다).", file: "79-2.mp3" },
-{ num: "80-1", jp: "最近さつまいもを蒸して食べるとすごく美味しいです。", reading: "さいきんさつまいもをむしてたべるとすごくおいしいです。", pron: "사이킨 사츠마이모오 무시테 타베루토 스고쿠 오이시-데스.", ko: "요즘 고구마를 쪄서 먹으면 정말 맛있습니다.", file: "80-1.mp3" }
-
-
-
-    ];
+      { num: "80-1", jp: "最近さつまいもを蒸して食べるとすごく美味しいです。", reading: "さいきんさつまいもをむしてたべるとすごくおいしいです。", pron: "사이킨 사츠마이모오 무시테 타베루토 스고쿠 오이시-데스.", ko: "요즘 고구마를 쪄서 먹으면 정말 맛있습니다.", file: "80-1.mp3" },
+      { num: "81-1", jp: "もうすぐ雪が降るでしょうね。", reading: "もうすぐゆきがふるでしょうね。", pron: "모오스구유키가후루데쇼오네.", ko: "곧 눈이 내릴 것 같네요.", file: "81-1.mp3" }
 
     var PAGE_SIZE = 10;
     var currentPage = 1;
@@ -358,14 +358,25 @@
 
       if (totalPages <= 1) return;
 
+      var BLOCK_SIZE = 10; // 10개씩 페이지 그룹 묶기
+      var currentBlock = Math.ceil(currentPage / BLOCK_SIZE);
+      var startPage = (currentBlock - 1) * BLOCK_SIZE + 1;
+      var endPage = Math.min(startPage + BLOCK_SIZE - 1, totalPages);
+
+      // '이전' 버튼
       var prevBtn = document.createElement('button');
       prevBtn.className = 'page-btn';
       prevBtn.innerText = '이전';
       prevBtn.disabled = (currentPage === 1);
-      prevBtn.onclick = function() { currentPage--; render(); window.scrollTo(0, 0); };
+      prevBtn.onclick = function() { 
+        currentPage--; 
+        render(); 
+        window.scrollTo(0, 0); 
+      };
       paginationDiv.appendChild(prevBtn);
 
-      for (var p = 1; p <= totalPages; p++) {
+      // 해당 블록의 페이지 번호들 (예: 1~10)
+      for (var p = startPage; p <= endPage; p++) {
         (function(pageNum) {
           var btn = document.createElement('button');
           btn.className = 'page-btn' + (pageNum === currentPage ? ' active' : '');
@@ -379,11 +390,16 @@
         })(p);
       }
 
+      // '다음' 버튼
       var nextBtn = document.createElement('button');
       nextBtn.className = 'page-btn';
       nextBtn.innerText = '다음';
       nextBtn.disabled = (currentPage === totalPages);
-      nextBtn.onclick = function() { currentPage++; render(); window.scrollTo(0, 0); };
+      nextBtn.onclick = function() { 
+        currentPage++; 
+        render(); 
+        window.scrollTo(0, 0); 
+      };
       paginationDiv.appendChild(nextBtn);
     }
 
