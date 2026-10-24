@@ -176,12 +176,12 @@
       word-break: keep-all;
     }
 
-    /* 하단 주제 페이지 이동 버튼 */
+    /* 하단 주제 페이지 이동 버튼 (폭을 기존보다 약 4분의 1 정도 줄임) */
     .pagination {
       display: flex;
       justify-content: center;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
       margin-top: 28px;
       margin-bottom: 20px;
       flex-wrap: wrap;
@@ -189,12 +189,14 @@
     .page-btn {
       background: #ffffff;
       border: 1px solid #cbd5e1;
-      padding: 10px 18px;
-      border-radius: 10px;
+      padding: 8px 8px;
+      border-radius: 8px;
       cursor: pointer;
       font-weight: 700;
-      font-size: 15px;
+      font-size: 14px;
       color: #334155;
+      min-width: 36px;
+      text-align: center;
       box-shadow: 0 1px 2px rgba(0,0,0,0.03);
       transition: all 0.2s ease;
     }
@@ -203,6 +205,10 @@
       color: #ffffff;
       border-color: #0d47a1;
       box-shadow: 0 2px 6px rgba(13, 71, 161, 0.3);
+    }
+    .page-btn:disabled {
+      opacity: 0.3;
+      cursor: not-allowed;
     }
 
     /* 확인 버튼 스타일 */
@@ -301,7 +307,7 @@
           { subNum: "1", jp: "すみません、両替所はどこにありますか。", reading: "すみません、りょうがえじょはどこにありますか。", ko: "저기요, 환전소는 어디에 있나요?", hasKanji: true },
           { subNum: "2", jp: "そちらにございます。", reading: "そちらにございます。", ko: "저쪽에 있습니다.", hasKanji: false },
           { subNum: "3", jp: "すみません、韓国ウォンで10万ウォンあるんですけど、日本円に両替できますか。", reading: "すみません、かんこくウォンでじゅうまんウォンあるんですけど、にほんえんにりょうがえできますか。", ko: "저기요, 한국 돈으로 10만 원이 있는데, 일본 엔화로 환전할 수 있나요?", hasKanji: true },
-          { subNum: "4", jp: "はい、ウォンから円でしたらこちらになりますけども…", reading: "はい、ウォンからえんでしたらこちらになりますけども…", ko: "네, 원화에서 엔화라면 이쪽이 됩니다만…", hasKanji: true },
+          { subNum: "4", jp: "はい、ウォンから円でしたらこちらになりますけども…", reading: "はい、ウォンからえ่นでしたらこちらになりますけども…", ko: "네, 원화에서 엔화라면 이쪽이 됩니다만…", hasKanji: true },
           { subNum: "5", jp: "はい、大丈夫です。", reading: "はい、だいじょうぶです。", ko: "네, 괜찮습니다.", hasKanji: true },
           { subNum: "6", jp: "9380円になります。", reading: "きゅうせんさんひゃくはちじゅうえんになります。", ko: "9,380엔이 됩니다.", hasKanji: true },
           { subNum: "7", jp: "こちらにご住所、お名前、電話番号を書いてください。", reading: "こちらにごじゅうしょ、おなまえ、でんわばんごうをかいてください。", ko: "이곳에 주소, 성함, 전화번호를 적어 주세요.", hasKanji: true },
@@ -1990,7 +1996,7 @@
           {
             subNum: "6",
             jp: "人は一回千円ですね。展望台は900円ですけどね。",
-            reading: "ひとはいっかいせんえんですね。てんぼうだいはきゅうひゃくえんですけどね。",
+            reading: "ひ人はいっかいせんえんですね。てんぼうだいはきゅうひゃくえんですけどね。",
             ko: "1인 1회에 천 엔입니다. 전망대는 900엔고요.",
             hasKanji: true
           },
@@ -2518,21 +2524,60 @@
       renderPagination();
     }
 
+    // 5개씩 페이지 버튼을 묶어서 보여주고 '이전'/'다음'으로 이동하는 함수
     function renderPagination() {
       paginationDiv.innerHTML = '';
+      var totalPages = allTopics.length;
 
-      allTopics.forEach(function(topic, i) {
-        var btn = document.createElement('button');
-        btn.className = 'page-btn' + (i === currentTopicIndex ? ' active' : '');
-        btn.innerText = "UNIT-" + topic.topicNum;
+      if (totalPages <= 1) return;
 
-        btn.onclick = function() {
-          renderTopic(i);
+      var BLOCK_SIZE = 5; // 한 번에 보여줄 페이지 버튼 개수 (5개)
+      var currentBlock = Math.ceil((currentTopicIndex + 1) / BLOCK_SIZE);
+      var startPage = (currentBlock - 1) * BLOCK_SIZE;
+      var endPage = Math.min(startPage + BLOCK_SIZE, totalPages);
+
+      // '이전' 버튼
+      var prevBtn = document.createElement('button');
+      prevBtn.className = 'page-btn';
+      prevBtn.innerText = '이전';
+      prevBtn.disabled = (currentTopicIndex === 0);
+      prevBtn.onclick = function() {
+        if (currentTopicIndex > 0) {
+          renderTopic(currentTopicIndex - 1);
           window.scrollTo(0, 0);
-        };
+        }
+      };
+      paginationDiv.appendChild(prevBtn);
 
-        paginationDiv.appendChild(btn);
-      });
+      // 5개 단위 페이지 번호 버튼들
+      for (var i = startPage; i < endPage; i++) {
+        (function(index) {
+          var topic = allTopics[index];
+          var btn = document.createElement('button');
+          btn.className = 'page-btn' + (index === currentTopicIndex ? ' active' : '');
+          btn.innerText = topic.topicNum;
+
+          btn.onclick = function() {
+            renderTopic(index);
+            window.scrollTo(0, 0);
+          };
+
+          paginationDiv.appendChild(btn);
+        })(i);
+      }
+
+      // '다음' 버튼
+      var nextBtn = document.createElement('button');
+      nextBtn.className = 'page-btn';
+      nextBtn.innerText = '다음';
+      nextBtn.disabled = (currentTopicIndex === totalPages - 1);
+      nextBtn.onclick = function() {
+        if (currentTopicIndex < totalPages - 1) {
+          renderTopic(currentTopicIndex + 1);
+          window.scrollTo(0, 0);
+        }
+      };
+      paginationDiv.appendChild(nextBtn);
     }
 
     document.addEventListener('click', function(e) {
