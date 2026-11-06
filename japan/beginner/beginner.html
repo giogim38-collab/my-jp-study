@@ -315,7 +315,13 @@ HTML
 
 
      ];
-    var PAGE_SIZE = 10;
+
+
+
+
+
+
+var PAGE_SIZE = 10;
     var currentPage = 1;
     var listDiv = document.getElementById('list');
     var progressText = document.getElementById('progressText');
@@ -324,20 +330,24 @@ HTML
 
     var savedProgress = JSON.parse(localStorage.getItem('my_study_progress_basic') || '{}');
 
+    // 화면 표시용 역순 데이터 (최신 데이터가 앞쪽으로 오도록 배치)
+    var displayData = data.slice().reverse();
+
     function render() {
       listDiv.innerHTML = '';
       var completedCount = 0;
 
+      // 전체 완료 개수는 원본 data 기준으로 계산[cite: 1]
       data.forEach(function(item, index) {
         if (savedProgress[index]) completedCount++;
       });
 
       var startIndex = (currentPage - 1) * PAGE_SIZE;
-      var endIndex = Math.min(startIndex + PAGE_SIZE, data.length);
-      var pageData = data.slice(startIndex, endIndex);
+      var endIndex = Math.min(startIndex + PAGE_SIZE, displayData.length);
+      var pageData = displayData.slice(startIndex, endIndex);
 
       pageData.forEach(function(item, i) {
-        var realIndex = startIndex + i;
+        var realIndex = data.indexOf(item); // 원본 데이터의 인덱스 찾아 매칭 (체크박스 저장용)[cite: 1]
         var isChecked = savedProgress[realIndex] || false;
 
         var div = document.createElement('div');
@@ -364,9 +374,9 @@ HTML
       renderPagination();
     }
 
-    function renderPagination() {
+function renderPagination() {
       paginationDiv.innerHTML = '';
-      var totalPages = Math.ceil(data.length / PAGE_SIZE);
+      var totalPages = Math.ceil(displayData.length / PAGE_SIZE);
 
       if (totalPages <= 1) return;
 
@@ -375,19 +385,21 @@ HTML
       var startPage = (currentBlock - 1) * BLOCK_SIZE + 1;
       var endPage = Math.min(startPage + BLOCK_SIZE - 1, totalPages);
 
-      // '이전' 버튼
+      // '이전' 버튼: 이전 블록의 첫 페이지로 이동 (예: 11~20페이지에서 누르면 10페이지가 속한 블록의 시작으로)
       var prevBtn = document.createElement('button');
       prevBtn.className = 'page-btn';
       prevBtn.innerText = '이전';
-      prevBtn.disabled = (currentPage === 1);
+      prevBtn.disabled = (currentBlock === 1);
       prevBtn.onclick = function() { 
-        currentPage--; 
+        var prevBlockStart = startPage - BLOCK_SIZE;
+        if (prevBlockStart < 1) prevBlockStart = 1;
+        currentPage = prevBlockStart; 
         render(); 
         window.scrollTo(0, 0); 
       };
       paginationDiv.appendChild(prevBtn);
 
-      // 해당 블록의 페이지 번호들 (예: 1~10)
+      // 해당 블록의 페이지 번호들 (예: 1~10, 11~20)
       for (var p = startPage; p <= endPage; p++) {
         (function(pageNum) {
           var btn = document.createElement('button');
@@ -402,13 +414,15 @@ HTML
         })(p);
       }
 
-      // '다음' 버튼
+      // '다음' 버튼: 다음 블록의 첫 페이지로 바로 점프 (예: 1~10페이지에서 누르면 11페이지로)
       var nextBtn = document.createElement('button');
       nextBtn.className = 'page-btn';
       nextBtn.innerText = '다음';
-      nextBtn.disabled = (currentPage === totalPages);
+      nextBtn.disabled = (endPage >= totalPages);
       nextBtn.onclick = function() { 
-        currentPage++; 
+        var nextBlockStart = startPage + BLOCK_SIZE;
+        if (nextBlockStart > totalPages) nextBlockStart = totalPages;
+        currentPage = nextBlockStart; 
         render(); 
         window.scrollTo(0, 0); 
       };
@@ -440,23 +454,38 @@ HTML
       }
     });
 
-    document.getElementById('jumpBtn').onclick = function() {
-      var targetIndex = -1;
+
+
+document.getElementById('jumpBtn').onclick = function() {
+      var targetRealIndex = -1;
+      
+      // 1. 원본 데이터(오래된 순서, 1-1부터 90-1까지) 중에서 체크되지 않은 첫 번째 항목 찾기
       for (var i = 0; i < data.length; i++) {
         if (!savedProgress[i]) {
-          targetIndex = i;
+          targetRealIndex = i; // 안 풀린 원본 단어의 번호(인덱스)
           break;
         }
       }
 
-      if (targetIndex !== -1) {
-        currentPage = Math.floor(targetIndex / PAGE_SIZE) + 1;
-        render();
-        window.scrollTo(0, 0);
+      if (targetRealIndex !== -1) {
+        var targetItem = data[targetRealIndex];
+        
+        // 2. 그 단어가 현재 최신순(displayData) 화면에서 몇 번째에 위치하는지 찾기
+        var displayIndex = displayData.indexOf(targetItem);
+        
+        if (displayIndex !== -1) {
+          // 3. 해당 위치가 속한 페이지 계산 후 이동
+          currentPage = Math.floor(displayIndex / PAGE_SIZE) + 1;
+          render();
+          window.scrollTo(0, 0);
+        }
       } else {
         alert('🎉 초급 과정의 모든 단어 공부를 완료하셨습니다!');
       }
     };
+
+
+
 
     render();
   </script>
