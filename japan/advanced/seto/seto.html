@@ -1172,7 +1172,8 @@
       }
      ];
 
-    var PAGE_SIZE = 5;
+
+var PAGE_SIZE = 5;
     var currentPage = 1;
     var listDiv = document.getElementById('list');
     var progressText = document.getElementById('progressText');
@@ -1181,11 +1182,14 @@
 
     var savedProgress = JSON.parse(localStorage.getItem('my_study_progress_advanced') || '{}');
 
-    // 특정 인덱스 이전까지의 최신 섹션 타이틀을 찾는 함수
+    // 화면 표시용 역순 데이터 (최신 데이터가 앞쪽으로 오도록 배치)
+    var displayData = data.slice().reverse();
+
+    // 특정 인덱스 이전까지의 최신 섹션 타이틀을 찾는 함수[cite: 3]
     function findCurrentSectionTitle(targetIdx) {
       for (var i = targetIdx; i >= 0; i--) {
-        if (data[i] && data[i].sectionTitle) {
-          return data[i].sectionTitle;
+        if (displayData[i] && displayData[i].sectionTitle) {
+          return displayData[i].sectionTitle;
         }
       }
       return null;
@@ -1195,30 +1199,30 @@
       listDiv.innerHTML = '';
       var completedCount = 0;
 
+      // 전체 완료 개수는 원본 data 기준으로 계산[cite: 3]
       data.forEach(function(item, index) {
         if (savedProgress[index]) completedCount++;
       });
 
       var startIndex = (currentPage - 1) * PAGE_SIZE;
-      var endIndex = Math.min(startIndex + PAGE_SIZE, data.length);
-      var pageData = data.slice(startIndex, endIndex);
+      var endIndex = Math.min(startIndex + PAGE_SIZE, displayData.length);
+      var pageData = displayData.slice(startIndex, endIndex);
 
-      // 1) 현재 페이지의 첫 문장에서 유효한 섹션 제목을 추적하여 생성
+      // 1) 현재 페이지의 첫 문장에서 유효한 섹션 제목을 추적하여 생성[cite: 3]
       var activeTitle = findCurrentSectionTitle(startIndex);
       if (activeTitle) {
         var topH2 = document.createElement('h2');
         topH2.className = 'section-header';
-        topH2.style.whiteSpace = 'pre-line'; // 줄바꿈 반영
+        topH2.style.whiteSpace = 'pre-line'; 
         topH2.innerText = activeTitle;
         listDiv.appendChild(topH2);
       }
 
-      // 2) 페이지 아이템들 출력
+      // 2) 페이지 아이템들 출력[cite: 3]
       pageData.forEach(function(item, i) {
-        var realIndex = startIndex + i;
+        var realIndex = data.indexOf(item); // 원본 데이터의 인덱스 매칭[cite: 3]
         var isChecked = savedProgress[realIndex] || false;
 
-        // 첫 번째 문장이 아니고, 중간에 새로운 sectionTitle이 나오는 경우에만 추가로 헤더 표시
         if (i > 0 && item.sectionTitle) {
           var midH2 = document.createElement('h2');
           midH2.className = 'section-header';
@@ -1249,7 +1253,6 @@
 
       renderPagination();
     }
-
   
 
 function renderPagination() {
@@ -1258,24 +1261,26 @@ function renderPagination() {
 
       if (totalPages <= 1) return;
 
-      var BLOCK_SIZE = 10; // 한 번에 보여줄 페이지 번호 개수 (10개씩)
+      var BLOCK_SIZE = 10; // 10개씩 페이지 그룹 묶기
       var currentBlock = Math.ceil(currentPage / BLOCK_SIZE);
       var startPage = (currentBlock - 1) * BLOCK_SIZE + 1;
       var endPage = Math.min(startPage + BLOCK_SIZE - 1, totalPages);
 
-      // '이전' 버튼
+      // '이전' 버튼: 이전 블록의 첫 페이지로 이동 (예: 11~20페이지에서 누르면 10페이지가 속한 블록의 시작으로)
       var prevBtn = document.createElement('button');
       prevBtn.className = 'page-btn';
       prevBtn.innerText = '이전';
-      prevBtn.disabled = (currentPage === 1);
+      prevBtn.disabled = (currentBlock === 1);
       prevBtn.onclick = function() { 
-        currentPage--; 
+        var prevBlockStart = startPage - BLOCK_SIZE;
+        if (prevBlockStart < 1) prevBlockStart = 1;
+        currentPage = prevBlockStart; 
         render(); 
         window.scrollTo(0, 0); 
       };
       paginationDiv.appendChild(prevBtn);
 
-      // 해당 블록의 페이지 번호 버튼들 (예: 1~10)
+      // 해당 블록의 페이지 번호들 (예: 1~10, 11~20)
       for (var p = startPage; p <= endPage; p++) {
         (function(pageNum) {
           var btn = document.createElement('button');
@@ -1290,13 +1295,15 @@ function renderPagination() {
         })(p);
       }
 
-      // '다음' 버튼
+      // '다음' 버튼: 다음 블록의 첫 페이지로 바로 점프 (예: 1~10페이지에서 누르면 11페이지로)
       var nextBtn = document.createElement('button');
       nextBtn.className = 'page-btn';
       nextBtn.innerText = '다음';
-      nextBtn.disabled = (currentPage === totalPages);
+      nextBtn.disabled = (endPage >= totalPages);
       nextBtn.onclick = function() { 
-        currentPage++; 
+        var nextBlockStart = startPage + BLOCK_SIZE;
+        if (nextBlockStart > totalPages) nextBlockStart = totalPages;
+        currentPage = nextBlockStart; 
         render(); 
         window.scrollTo(0, 0); 
       };
@@ -1333,16 +1340,31 @@ function renderPagination() {
       }
     });
 
-    document.getElementById('jumpBtn').onclick = function() {
-      var targetIndex = -1;
+document.getElementById('jumpBtn').onclick = function() {
+      var targetRealIndex = -1;
+      
+      // 1. 원본 데이터(오래된 순서) 중에서 체크되지 않은 첫 번째 항목 찾기
       for (var i = 0; i < data.length; i++) {
         if (!savedProgress[i]) {
-          targetIndex = i;
+          targetRealIndex = i;
           break;
         }
       }
 
-      (targetIndex !== -1) ? (currentPage = Math.floor(targetIndex / PAGE_SIZE) + 1, render(), window.scrollTo(0, 0)) : alert('🎉 고급 과정의 모든 문장 공부를 완료하셨습니다!');
+      if (targetRealIndex !== -1) {
+        var targetItem = data[targetRealIndex];
+        
+        // 2. 그 단어가 현재 최신순(displayData) 화면에서 몇 번째에 위치하는지 찾기
+        var displayIndex = displayData.indexOf(targetItem);
+        
+        if (displayIndex !== -1) {
+          currentPage = Math.floor(displayIndex / PAGE_SIZE) + 1;
+          render();
+          window.scrollTo(0, 0);
+        }
+      } else {
+        alert('🎉 고급 과정의 모든 문장 공부를 완료하셨습니다!');
+      }
     };
 
     render();
