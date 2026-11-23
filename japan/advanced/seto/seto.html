@@ -5,9 +5,9 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=2.0, user-scalable=yes">
   <title>🌳 고급 일본어 학습</title>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
+* { box-sizing: border-box; margin: 0; padding: 0; }
     body { 
-      font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", "맑은 고딕", sans-serif; 
+      font-family: "Nanum Myeongjo", "Batang", "Apple Myungjo", "MS PMincho", "Hiragino Mincho Pro", serif; 
       padding: 16px; 
       line-height: 1.6; 
       max-width: 700px; 
@@ -45,11 +45,6 @@
       white-space: nowrap;
       flex-shrink: 0;
       -webkit-tap-highlight-color: transparent;
-    }
-    .nav-btn.direct {
-      background-color: #1b5e20;
-      color: #ffffff;
-      border: none;
     }
     .nav-btn:active { opacity: 0.8; }
 
@@ -91,6 +86,7 @@
       border-left: 6px solid #0d47a1;
       border-radius: 8px;
       font-weight: 800;
+      font-family: "Nanum Myeongjo", "Batang", "Apple Myungjo", serif;
     }
 
     /* 학습 카드 스타일 */
@@ -103,12 +99,12 @@
     }
     .item-content { flex: 1; display: flex; flex-direction: column; gap: 8px; word-break: break-word; }
 
-    /* 글자 크기 및 두께 스타일 */
-    .jp-text { font-size: 22px; font-weight: bold; color: #111111; }
-    .reading-text { font-size: 18px; font-weight: bold; color: #1b5e20; }
+    /* 글자 크기 및 명조체 스타일 적용 */
+    .jp-text { font-size: 22px; font-weight: bold; color: #111111; font-family: "Nanum Myeongjo", "Batang", "MS PMincho", serif; }
+    .reading-text { font-size: 18px; font-weight: bold; color: #1b5e20; font-family: "Nanum Myeongjo", "Batang", "MS PMincho", serif; }
     .ko-text { font-size: 19px; font-weight: bold; color: #222222; margin-top: 2px; }
 
-    /* 확인 완료 시 흐려지는 효과 (투명도 적용) */
+    /* 확인 완료 시 흐려지는 효과 */
     .item.completed .jp-text, 
     .item.completed .reading-text, 
     .item.completed .ko-text { 
@@ -122,7 +118,7 @@
       gap: 6px;
       flex-shrink: 0;
     }
-   .btn {
+    .btn {
       background-color: #0d47a1; color: white; border: none;
       padding: 10px 14px; border-radius: 8px; cursor: pointer; font-weight: bold;
       font-size: 15px; text-align: center;
@@ -163,13 +159,12 @@
       border-radius: 8px; cursor: pointer; font-weight: bold; font-size: 16px;
       min-width: 32px; text-align: center;
     }
-
-
-
-
     .page-btn.active { background-color: #0d47a1; color: white; border-color: #0d47a1; }
     .page-btn:disabled { opacity: 0.3; cursor: not-allowed; }
   </style>
+
+
+
 </head>
 <body>
 
@@ -1169,6 +1164,127 @@
         kana: "げんきをだすためには、すきなものをたべで、たいりょくをつけることがひつようです。",
         kr: "기운을 내기 위해서는 좋아하는 것을 먹고 체력을 키우는 것이 필요합니다.",
         audio: "seto_138.mp3"
+      },
+      {
+        num: 139,
+        sectionTitle: "第一章 老いに挑戦-その 6 常識の非常識\n●肉は頭脳の栄養",
+        kanji: "健康の基本は、何でも食べることだと思います。",
+        kana: "けんこうのきほんは、なんでもたべることだとおもいます。",
+        kr: "건강의 기본은 무엇이든지 먹어야 하는 것이라고 생각합니다. ",
+        audio: "seto_139.mp3"
+      },
+  {
+        num: 140,
+        kanji: "年寄りは野菜や魚を食べていればいいと昔は言われていましたが、今は逆に年寄りほど肉を食べなさい、とも言われています。",
+        kana: "としよりはやさいやさかなをたべていればいいとむかしはいわれていましたが、いまはぎゃくにとしよりほどにくをたべなさい、ともいわれています。",
+        kr: "노인은 채소나 생선을 먹고 있으면 된다고 옛날에는 말했지만, 지금은 반대로 노인일수록 고기를 먹으라는 말도 듣고 있습니다.",
+        audio: "seto_140.mp3"
+      },
+      {
+        num: 141,
+        kanji: "常識は変わるものです。",
+        kana: "じょうしきはかわるものです。",
+        kr: "상식은 변하는 것입니다.",
+        audio: "seto_141.mp3"
+      },
+      {
+        num: 142,
+        kanji: "昔、親しくしていただいた荒畑寒村さんと里見弴さんが、「作家は牛肉を食べないと頭が悪くなる。",
+        kana: "むかし、したしくしていただいたあらはたかんそんさんとさとみとんさんが、「さっかはぎゅうにくをたべないとあたまがわるくなる。",
+        kr: "옛날에 친하게 지내 주신 아라하타 간손 씨와 사토미 톤 씨가 「작가는 소고기를 먹지 않으면 머리가 나빠진다.",
+        audio: "seto_142.mp3"
+      },
+      {
+        num: 143,
+        kanji: "少しでも良いから毎日食べるように」と教えてくれました。",
+        kana: "すこしでもいいからまいにちたべるように」とおしえてくれました。",
+        kr: "조금이라도 좋으니 매일 먹도록 해」라고 가르쳐 주셨습니다.",
+        audio: "seto_143.mp3"
+      },
+      {
+        num: 144,
+        kanji: "里見さんは九十四歳まで、荒畑さんは九十三歳までお元気で、亡くなるまで頭もボケませんでした。",
+        kana: "さとみさんはきゅうじゅうよんさいまで、あらはたさんはきゅうじゅうさんさいまでおげんきで、なくなるまであたまもボケませんでした。",
+        kr: "사토미 씨는 94세까지, 아라하타 씨는 93세까지 정정하셨고, 돌아가실 때까지 치매에도 걸리지 않으셨습니다.",
+        audio: "seto_144.mp3"
+      },
+      {
+        num: 145,
+        kanji: "お釈迦さまは肉を食べてはいけない、とは言っていないんです。",
+        kana: "おしゃかさまはにくをたべてはいけない、とはいっていないんです。",
+        kr: "석가모니께서는 고기를 먹어서는 안 된다고는 말씀하지 않으셨습니다.",
+        audio: "seto_145.mp3"
+      },
+      {
+        num: 146,
+        kanji: "「殺すなかれ」という戒律がありますが、それは肉を食べるために自分で殺してはいけないという意味で、信者たちにいただいたものは、弟子たちを連れてありがたくご馳走になっています。",
+        kana: "「ころすなかれ」というかいりつがありますが、それはにくをたべるためにじぶんでころしてはいけないといういみで、しんじゃたちにいただいたものは、でしたちをつれてありがたくごちそうになっています。",
+        kr: "「살생하지 말라」는 계율이 있지만, 그것은 고기를 먹기 위해 스스로 죽여서는 안 된다는 뜻으로, 신도들에게 받은 것은 제자들을 데리고 감사히 대접받으셨습니다.",
+        audio: "seto_146.mp3"
+      },
+      {
+        num: 147,
+        kanji: "お釈迦さまの死因は、鍛冶屋のチュンダがご馳走してくれた肉が傷んでいて、おなかを壊して死に至った、という説があるくらいです。",
+        kana: "おしゃかさまのしいんは、かじやのチュンダがごちそうしてくれたにくがいたんでいて、おなかをこわしてしにいたった、というせつがあるくらいです。",
+        kr: "석가모니의 사인은 대장장이 춘다가 대접해 준 고기가 상해 있어서, 배탈이 나 죽음에 이르렀다는 설이 있을 정도입니다.",
+        audio: "seto_147.mp3"
+      },
+      {
+        num: 148,
+        kanji: "日本に仏教が入って来たのは中国からですが、その時に肉を食べちゃいけないと精進料理になったんでしょうね。",
+        kana: "にほんにぶっきょうがはいってきたのはちゅうごくからですが、そのときににくをたべちゃいけないとしょうじんりょうりになったんでしょうね。",
+        kr: "일본에 불교가 들어온 것은 중국으로부터인데, 그때 고기를 먹으면 안 된다며 정진 요리(사찰 음식)가 되었겠지요.",
+        audio: "seto_148.mp3"
+      },
+      {
+        num: 149,
+        kanji: "私は元々そんなに肉を好きではなかったけれど、小説を書くようになったら、身体が必要とするようになったんです。",
+        kana: "わたしはもともとそんなににくをすきではなかったけれど、しょうせつをかくようになったら、しんたいがひつようとするようになったんです。",
+        kr: "저는 원래 그다지 고기를 좋아하지 않았지만, 소설을 쓰게 되면서 몸이 필요로 하게 되었습니다.",
+        audio: "seto_149.mp3"
+      },
+      {
+        num: 150,
+        kanji: "ものすごく偏食で野菜も肉も魚も食べなかったのに、九十四歳まで元気なんですから不思議ですね。",
+        kana: "ものすごくへんしょくでやさいもにくもさかなもたべなかったのに、きゅうじゅうよんさいまでげんきなんですからふしぎですね。",
+        kr: "엄청난 편식으로 채소도 고기도 생선도 먹지 않았는데, 94세까지 건강하니 신기하네요.",
+        audio: "seto_150.mp3"
+      },
+      {
+        num: 151,
+        kanji: "それから、断食をいつでもできるのが、私の健康の元かもしれません。",
+        kana: "それから、だんじきをいつでもできるのが、わたしのけんこうのもとかもしれません。",
+        kr: "그리고 단식을 언제든 할 수 있는 것이 제 건강의 비결일지도 모릅니다.",
+        audio: "seto_151.mp3"
+      },
+      {
+        num: 152,
+        sectionTitle: "●常識にとらわれなくていい",
+        kanji: "結局、それぞれの人が、自分の身体が必要とする物を食べた方がいいのではないでしょうか。",
+        kana: "けっきょく、それぞれのひとが、じぶんのしんたいがひつようとするものをたべたほうがいいのではないでしょうか。",
+        kr: "결국 각자 자신의 몸이 필요로 하는 것을 먹는 편이 좋지 않을까요.",
+        audio: "seto_152.mp3"
+      },
+      {
+        num: 153,
+        kanji: "年寄りは野菜、なんていう常識は疑っていい。その人の身体にふさわしい食べ方があるはずですから、欲する物を食べて気分よくいる方がいい。",
+        kana: "としよりはやさい、なんていうじょうしきはうたがっていい。そのひとのしんたいにふさわしいたべかたがあるはずですから、ほっするものをたべてきぶんよくいるほうがいい。",
+        kr: "노인은 채소라는 식의 상식은 의심해도 좋습니다. 그 사람의 몸에 어울리는 식사법이 있을 테니, 원하는 것을 먹고 기분 좋게 지내는 편이 낫습니다.",
+        audio: "seto_153.mp3"
+      },
+      {
+        num: 154,
+        kanji: "だからと言ってお酒を二日酔いするくらいまで呑むのは老人ボケです。",
+        kana: "だからといっておさけをふつかよいするくらいまでのむのはろうじんボケです。",
+        kr: "그렇다고 해서 술을 숙취가 생길 정도까지 마시는 것은 노망입니다.",
+        audio: "seto_154.mp3"
+      },
+      {
+        num: 155,
+        kanji: "私にとって肉は頭脳の栄養です。人それぞれ、自分の身体にふさわしい食べ方をしましょう。",
+        kana: "わたしにとってにくはずのうのえいようです。ひとそれぞれ、じぶんのしんたいにふさわしいたべかたをしましょう。",
+        kr: "저에게 고기는 두뇌의 영양입니다. 사람마다 각자 자신의 몸에 맞는 식사를 합시다.",
+        audio: "seto_155.mp3"
       }
      ];
 
