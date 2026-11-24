@@ -190,7 +190,7 @@
 <body>
   <header>
     <h1>🐝 다중 양봉장 관리</h1>
-    <div id="syncStatus" style="font-size:13px;">로컬 저장 모드 · 폴더: beekeeper</div>
+    <div id="syncStatus" style="font-size:13px;">로컬 저장 모드 · 폴더: beekeeper (최근 10개 유지)</div>
   </header>
 
   <div class="panel">
@@ -305,6 +305,7 @@
 
   <script>
     const STORAGE_KEY = 'beekeeper_multi_apiary_v1';
+    const MAX_BACKUP_FILES = 10;
     let state = loadState();
     let currentApiaryId = state.apiaries[0].id;
     let editingHiveIndex = null;
@@ -552,20 +553,63 @@
 
     async function ensureBeekeeperFolder() {
       if (!window.showDirectoryPicker) return null;
+
       if (beekeeperDirHandle) {
-        const perm = await beekeeperDirHandle.queryPermission({ mode: 'readwrite' });
-        if (perm === 'granted') return beekeeperDirHandle;
-        const req = await beekeeperDirHandle.requestPermission({ mode: 'readwrite' });
-        if (req === 'granted') return beekeeperDirHandle;
+        try {
+          const perm = await beekeeperDirHandle.queryPermission({ mode: 'readwrite' });
+          if (perm === 'granted') {
+            for await (const _ of beekeeperDirHandle.entries()) {
+              break;
+            }
+            return beekeeperDirHandle;
+          }
+          const req = await beekeeperDirHandle.requestPermission({ mode: 'readwrite' });
+          if (req === 'granted') return beekeeperDirHandle;
+        } catch (err) {
+          beekeeperDirHandle = null;
+        }
       }
+
       const rootHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
       if (rootHandle.name.toLowerCase() === 'beekeeper') {
         beekeeperDirHandle = rootHandle;
       } else {
         beekeeperDirHandle = await rootHandle.getDirectoryHandle('beekeeper', { create: true });
       }
-      document.getElementById('syncStatus').textContent = '로컬 저장 모드 · 폴더: beekeeper 연결됨';
+      document.getElementById('syncStatus').textContent = '로컬 저장 모드 · 폴더: beekeeper 연결됨 (최근 10개 유지)';
       return beekeeperDirHandle;
+    }
+
+    async function pruneOldBackups(dirHandle, keepCount = MAX_BACKUP_FILES) {
+      if (!dirHandle || typeof dirHandle.entries !== 'function') return 0;
+      const backupFiles = [];
+
+      for await (const [name, handle] of dirHandle.entries()) {
+        if (
+          handle &&
+          handle.kind === 'file' &&
+          name.startsWith('apiary-backup-') &&
+          name.endsWith('.json')
+        ) {
+          backupFiles.push(name);
+        }
+      }
+
+      // 파일명에 YYYY-MM-DD_HHmmss 형식이 들어가므로 내림차순 정렬 시 최신 파일이 앞에 옴
+      backupFiles.sort((a, b) => b.localeCompare(a));
+
+      const toDelete = backupFiles.slice(keepCount);
+      let deletedCount = 0;
+
+      for (const oldName of toDelete) {
+        try {
+          await dirHandle.removeEntry(oldName);
+          deletedCount += 1;
+        } catch (err) {
+          // 개별 오래된 파일 삭제 실패 시 전체 백업을 막지 않음
+        }
+      }
+      return deletedCount;
     }
 
     function makeBackupFilename() {
@@ -597,7 +641,10 @@
           const writable = await fileHandle.createWritable();
           await writable.write(jsonText);
           await writable.close();
-          alert(`beekeeper 폴더에 '${filename}' 파일로 저장했습니다.`);
+
+          const deletedCount = await pruneOldBackups(dirHandle, MAX_BACKUP_FILES);
+          const extraMsg = deletedCount > 0 ? `\n오래된 백업 ${deletedCount}개를 자동 정리해 최근 ${MAX_BACKUP_FILES}개만 남겼습니다.` : '';
+          alert(`beekeeper 폴더에 '${filename}' 파일로 저장했습니다.${extraMsg}`);
           return;
         }
       } catch (err) {
