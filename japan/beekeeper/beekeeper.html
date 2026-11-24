@@ -1,0 +1,892 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>양봉장 통합 관리</title>
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
+      background: #f4f6f3;
+      color: #1e293b;
+      padding: 16px;
+      max-width: 960px;
+      margin: 0 auto;
+    }
+    header {
+      background: #1b5e20;
+      color: #fff;
+      padding: 16px 20px;
+      border-radius: 12px;
+      margin-bottom: 16px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    h1 { font-size: 20px; }
+    .panel {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 10px;
+      padding: 12px 14px;
+      margin-bottom: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .add-apiary-box {
+      display: none;
+      width: 100%;
+      padding-top: 10px;
+      margin-top: 4px;
+      border-top: 1px dashed #cbd5e1;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: center;
+    }
+    .add-apiary-box.open {
+      display: flex;
+    }
+    select, input, textarea, button {
+      font-family: inherit;
+      font-size: 14px;
+      padding: 8px 12px;
+      border-radius: 8px;
+      border: 1px solid #cbd5e1;
+    }
+    button {
+      background: #2e7d32;
+      color: #fff;
+      border: none;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    button:active { opacity: 0.85; }
+    button.secondary { background: #475569; }
+    button.danger { background: #dc2626; }
+    button.outline-green {
+      background: #e8f5e9;
+      color: #1b5e20;
+      border: 1px solid #2e7d32;
+    }
+    button.tab-btn {
+      background: #e2e8f0;
+      color: #1e293b;
+    }
+    button.tab-btn.active {
+      background: #1b5e20;
+      color: #fff;
+    }
+    .divider {
+      width: 1px;
+      height: 24px;
+      background: #cbd5e1;
+      margin: 0 4px;
+    }
+    .summary {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      gap: 10px;
+      margin-bottom: 16px;
+    }
+    .stat {
+      background: #fff;
+      padding: 12px 14px;
+      border-radius: 10px;
+      border: 1px solid #e2e8f0;
+    }
+    .stat span { display: block; font-size: 12px; color: #64748b; }
+    .stat strong { font-size: 20px; color: #1b5e20; }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      gap: 10px;
+    }
+    .hive-card {
+      background: #fff;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      padding: 12px;
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .hive-card:hover { transform: translateY(-2px); border-color: #2e7d32; }
+    .hive-card.alert { border-color: #dc2626; background: #fef2f2; }
+    .hive-card.caution { border-color: #d97706; background: #fffbeb; }
+    .hive-num { font-weight: 800; font-size: 16px; margin-bottom: 4px; }
+    .hive-meta { font-size: 12px; color: #475569; line-height: 1.45; }
+
+    .stats-wrap { display: grid; gap: 14px; }
+    .stats-card {
+      background: #fff;
+      border: 1px solid #e2e8f0;
+      border-radius: 12px;
+      padding: 16px;
+    }
+    .stats-card h3 {
+      font-size: 16px;
+      color: #1b5e20;
+      margin-bottom: 12px;
+    }
+    .stat-row {
+      padding: 10px 0;
+      border-bottom: 1px solid #f1f5f9;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    .stat-row:last-child { border-bottom: none; }
+    .stat-row-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      font-weight: 700;
+    }
+    .bar-bg {
+      width: 100%;
+      height: 10px;
+      background: #e2e8f0;
+      border-radius: 999px;
+      overflow: hidden;
+    }
+    .bar-fill {
+      height: 100%;
+      background: #2e7d32;
+      border-radius: 999px;
+    }
+    .bar-fill.warn { background: #d97706; }
+    .bar-fill.alert { background: #dc2626; }
+    .hive-list-text {
+      font-size: 12px;
+      color: #475569;
+    }
+
+    .modal-backdrop {
+      position: fixed; inset: 0; background: rgba(0,0,0,0.45);
+      display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50;
+    }
+    .modal {
+      background: #fff; width: 100%; max-width: 520px; border-radius: 12px;
+      padding: 20px; max-height: 90vh; overflow-y: auto;
+    }
+    .field { margin-bottom: 12px; }
+    .field label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .field input, .field select, .field textarea { width: 100%; }
+    .modal-actions {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .modal-actions-right { display: flex; gap: 8px; }
+    .backup-list {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      margin: 12px 0;
+      max-height: 280px;
+      overflow-y: auto;
+    }
+    .backup-item {
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      padding: 10px 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+      background: #f8fafc;
+    }
+    .backup-item-name { font-weight: 700; font-size: 13px; word-break: break-all; }
+    .backup-item-sub { font-size: 12px; color: #64748b; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>🐝 다중 양봉장 관리</h1>
+    <div id="syncStatus" style="font-size:13px;">로컬 저장 모드 · 폴더: beekeeper</div>
+  </header>
+
+  <div class="panel">
+    <label for="apiarySelect"><strong>현재 봉장:</strong></label>
+    <select id="apiarySelect"></select>
+    <button type="button" class="secondary" id="renameApiaryBtn">이름 변경</button>
+
+    <button type="button" class="secondary" id="insertHiveBtn">+ 벌통 추가</button>
+
+    <div class="divider"></div>
+
+    <button type="button" class="tab-btn active" id="viewGridBtn">벌통 카드 보기</button>
+    <button type="button" class="tab-btn" id="viewStatsBtn">항목별 통계 보기</button>
+  </div>
+
+  <div class="panel">
+    <button type="button" class="outline-green" id="toggleAddApiaryBtn">
+      전체 봉장: <span id="apiaryCountLabel">1</span>개 · + 새 봉장 추가
+    </button>
+    <button type="button" class="danger" id="deleteApiaryBtn">현재 봉장 삭제</button>
+
+    <div class="divider"></div>
+
+    <button type="button" class="secondary" id="exportBtn">백업(beekeeper)</button>
+    <button type="button" class="secondary" id="importBtn">복원(목록 선택)</button>
+    <input type="file" id="importFile" accept=".json" style="display:none;" />
+
+    <div class="add-apiary-box" id="addApiaryBox">
+      <input type="text" id="newApiaryName" placeholder="새 봉장 이름 (예: 제2봉장)" />
+      <label for="newApiaryCount" style="font-size:13px;"><strong>군수:</strong></label>
+      <input type="number" id="newApiaryCount" value="20" min="1" max="500" style="width:82px;" title="봉장 군수" />
+      <button type="button" id="addApiaryBtn">추가 확정</button>
+      <button type="button" class="secondary" id="cancelAddApiaryBtn">취소</button>
+    </div>
+  </div>
+
+  <div class="summary" id="summaryBox"></div>
+  <div class="grid" id="hiveGrid"></div>
+  <div class="stats-wrap" id="statsWrap" style="display:none;"></div>
+
+  <!-- 벌통 내검 모달 -->
+  <div class="modal-backdrop" id="modalBackdrop">
+    <div class="modal">
+      <h2 id="modalTitle" style="font-size:18px; margin-bottom:14px;">벌통 내검 기록</h2>
+      <div class="field">
+        <label>벌통 번호 / 표기</label>
+        <input type="text" id="fNum" placeholder="예: 1 또는 1-A" />
+      </div>
+      <div class="field">
+        <label>여왕벌 상태</label>
+        <select id="fQueen">
+          <option value="정상 산란">정상 산란</option>
+          <option value="신왕/처녀왕">신왕/처녀왕</option>
+          <option value="왕대 발견">왕대 발견</option>
+          <option value="무왕군(주의)">무왕군(주의)</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>소비 숫자 (매)</label>
+        <input type="number" id="fFrames" min="0" max="30" step="0.5" />
+      </div>
+      <div class="field">
+        <label>착봉 상황</label>
+        <select id="fCoverage">
+          <option value="양호(밀착)">양호(밀착)</option>
+          <option value="보통">보통</option>
+          <option value="약군/부족">약군/부족</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>산란 상황</label>
+        <select id="fBrood">
+          <option value="양호(집중 봉판)">양호(집중 봉판)</option>
+          <option value="보통">보통</option>
+          <option value="산란 부진/없음">산란 부진/없음</option>
+        </select>
+      </div>
+      <div class="field">
+        <label>먹이 상황 (저밀·화분·사양)</label>
+        <input type="text" id="fFeed" list="feedPresets" placeholder="예: 저밀 충분, 화분떡 공급" />
+        <datalist id="feedPresets">
+          <option value="저밀 충분"></option>
+          <option value="보통"></option>
+          <option value="먹이 부족(사양 필요)"></option>
+          <option value="화분떡 공급"></option>
+        </datalist>
+      </div>
+      <div class="field">
+        <label>질병 및 약재 사용 현황</label>
+        <input type="text" id="fTreatment" list="treatmentPresets" placeholder="예: 이상 없음 / 옥살산·플루발리네이트 처리" />
+        <datalist id="treatmentPresets">
+          <option value="이상 없음"></option>
+          <option value="응애 방제 필요"></option>
+          <option value="옥살산 처리"></option>
+          <option value="플루발리네이트 처리"></option>
+          <option value="질병 의심(주의)"></option>
+        </datalist>
+      </div>
+      <div class="field">
+        <label>전체 군 상황 및 메모</label>
+        <textarea id="fNote" rows="3" placeholder="내검일, 특이사항 기록"></textarea>
+      </div>
+      <div class="modal-actions">
+        <button class="danger" id="deleteHiveBtn">이 벌통 삭제</button>
+        <div class="modal-actions-right">
+          <button class="secondary" id="closeModalBtn">취소</button>
+          <button id="saveHiveBtn">저장</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 백업 파일 선택 복원 모달 -->
+  <div class="modal-backdrop" id="restoreBackdrop">
+    <div class="modal">
+      <h2 style="font-size:18px; margin-bottom:6px;">백업 파일 선택 복원</h2>
+      <p id="restoreHint" style="font-size:13px; color:#64748b; margin-bottom:10px;">
+        복원할 백업 파일을 선택하세요.
+      </p>
+      <div class="backup-list" id="backupListBox"></div>
+      <div class="modal-actions">
+        <button class="secondary" id="pickExternalFileBtn">다른 파일 직접 선택</button>
+        <button class="secondary" id="closeRestoreBtn">닫기</button>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    const STORAGE_KEY = 'beekeeper_multi_apiary_v1';
+    const BACKUP_META_KEY = 'beekeeper_backup_history_v1';
+    let state = loadState();
+    let backupHistory = loadBackupHistory();
+    let currentApiaryId = state.apiaries[0].id;
+    let editingHiveIndex = null;
+    let viewMode = 'grid';
+    let beekeeperDirHandle = null;
+
+    function createSingleHive(num) {
+      return {
+        num: String(num),
+        queen: '정상 산란',
+        frames: 6,
+        coverage: '양호(밀착)',
+        brood: '양호(집중 봉판)',
+        feed: '저밀 충분',
+        treatment: '이상 없음',
+        note: '',
+        updatedAt: ''
+      };
+    }
+
+    function createHives(count) {
+      return Array.from({ length: count }, (_, i) => createSingleHive(i + 1));
+    }
+
+    function renumberHives(apiary) {
+      apiary.hives.forEach((h, idx) => {
+        h.num = String(idx + 1);
+      });
+    }
+
+    function loadState() {
+      const raw = localStorage.getItem(STORAGE_KEY);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed.apiaries) && parsed.apiaries.length) return parsed;
+        } catch (e) {}
+      }
+      return {
+        apiaries: [
+          { id: 'apiary-1', name: '제1봉장', hives: createHives(20) }
+        ]
+      };
+    }
+
+    function loadBackupHistory() {
+      const raw = localStorage.getItem(BACKUP_META_KEY);
+      if (raw) {
+        try {
+          const parsed = JSON.parse(raw);
+          if (Array.isArray(parsed)) return parsed;
+        } catch (e) {}
+      }
+      return [];
+    }
+
+    function saveBackupHistory() {
+      localStorage.setItem(BACKUP_META_KEY, JSON.stringify(backupHistory.slice(0, 50)));
+    }
+
+    function saveState() {
+      localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+      render();
+    }
+
+    function getCurrentApiary() {
+      return state.apiaries.find(a => a.id === currentApiaryId) || state.apiaries[0];
+    }
+
+    function groupByField(hives, selector, barTypeFn) {
+      const map = new Map();
+      hives.forEach(h => {
+        const key = selector(h);
+        if (!map.has(key)) map.set(key, []);
+        map.get(key).push(h.num + '번');
+      });
+      return Array.from(map.entries()).map(([label, nums]) => ({
+        label,
+        count: nums.length,
+        percent: hives.length ? Math.round((nums.length / hives.length) * 100) : 0,
+        numsText: nums.join(', '),
+        barType: barTypeFn ? barTypeFn(label) : ''
+      }));
+    }
+
+    function renderStats(apiary) {
+      const hives = apiary.hives;
+      const total = hives.length;
+
+      const queenStats = groupByField(
+        hives,
+        h => h.queen || '미기재',
+        label => label.includes('무왕') ? 'alert' : (label.includes('왕대') || label.includes('신왕')) ? 'warn' : ''
+      );
+
+      const frameStats = groupByField(
+        hives,
+        h => `${Number(h.frames || 0)}매`,
+        () => ''
+      ).sort((a, b) => parseFloat(a.label) - parseFloat(b.label));
+
+      const frameNums = hives.map(h => Number(h.frames || 0));
+      const minFrames = frameNums.length ? Math.min(...frameNums) : 0;
+      const maxFrames = frameNums.length ? Math.max(...frameNums) : 0;
+
+      const coverageStats = groupByField(
+        hives,
+        h => h.coverage || '미기재',
+        label => label.includes('약군') ? 'warn' : ''
+      );
+
+      const broodStats = groupByField(
+        hives,
+        h => h.brood || '미기재',
+        label => label.includes('부진') || label.includes('없음') ? 'warn' : ''
+      );
+
+      const feedStats = groupByField(
+        hives,
+        h => (h.feed && h.feed.trim()) ? h.feed.trim() : '미기재',
+        label => label.includes('부족') ? 'alert' : label.includes('공급') ? 'warn' : ''
+      );
+
+      const treatmentStats = groupByField(
+        hives,
+        h => (h.treatment && h.treatment.trim()) ? h.treatment.trim() : '미기재',
+        label => (label.includes('질병') || label.includes('의심')) ? 'alert'
+               : (label.includes('응애') || label.includes('방제') || label.includes('처리')) ? 'warn' : ''
+      );
+
+      function renderRows(rows) {
+        if (!rows.length) return '<div class="hive-list-text">데이터 없음</div>';
+        return rows.map(r => `
+          <div class="stat-row">
+            <div class="stat-row-top">
+              <span>${r.label}</span>
+              <span>${r.count}군 (${r.percent}% / 전체 ${total}군)</span>
+            </div>
+            <div class="bar-bg">
+              <div class="bar-fill ${r.barType}" style="width:${r.percent}%;"></div>
+            </div>
+            <div class="hive-list-text">해당 벌통: ${r.numsText}</div>
+          </div>
+        `).join('');
+      }
+
+      document.getElementById('statsWrap').innerHTML = `
+        <div class="stats-card">
+          <h3>👑 여왕벌 상태 분포</h3>
+          ${renderRows(queenStats)}
+        </div>
+        <div class="stats-card">
+          <h3>🍯 소비 수 분포 (최소 ${minFrames}매 · 최대 ${maxFrames}매)</h3>
+          ${renderRows(frameStats)}
+        </div>
+        <div class="stats-card">
+          <h3>🌾 먹이 상황 분포</h3>
+          ${renderRows(feedStats)}
+        </div>
+        <div class="stats-card">
+          <h3>🩺 질병 및 약제 사용 현황 분포</h3>
+          ${renderRows(treatmentStats)}
+        </div>
+        <div class="stats-card">
+          <h3>🐝 착봉 상황 분포</h3>
+          ${renderRows(coverageStats)}
+        </div>
+        <div class="stats-card">
+          <h3>🐣 산란 상황 분포</h3>
+          ${renderRows(broodStats)}
+        </div>
+      `;
+    }
+
+    function render() {
+      document.getElementById('apiaryCountLabel').textContent = state.apiaries.length;
+
+      const select = document.getElementById('apiarySelect');
+      select.innerHTML = '';
+      state.apiaries.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a.id;
+        opt.textContent = `${a.name} (현재봉장군수: ${a.hives.length}군)`;
+        if (a.id === currentApiaryId) opt.selected = true;
+        select.appendChild(opt);
+      });
+
+      document.getElementById('viewGridBtn').classList.toggle('active', viewMode === 'grid');
+      document.getElementById('viewStatsBtn').classList.toggle('active', viewMode === 'stats');
+      document.getElementById('hiveGrid').style.display = viewMode === 'grid' ? 'grid' : 'none';
+      document.getElementById('statsWrap').style.display = viewMode === 'stats' ? 'grid' : 'none';
+
+      const apiary = getCurrentApiary();
+      const totalAllHives = state.apiaries.reduce((sum, a) => sum + a.hives.length, 0);
+      const alertCount = apiary.hives.filter(h =>
+        h.queen.includes('무왕') || h.treatment.includes('응애') || h.treatment.includes('질병') || h.treatment.includes('의심')
+      ).length;
+      const avgFrames = apiary.hives.length
+        ? (apiary.hives.reduce((s, h) => s + Number(h.frames || 0), 0) / apiary.hives.length).toFixed(1)
+        : 0;
+
+      document.getElementById('summaryBox').innerHTML = `
+        <div class="stat"><span>전체 봉장 군수</span><strong>${totalAllHives}군</strong></div>
+        <div class="stat"><span>현재봉장군수 (${apiary.name})</span><strong>${apiary.hives.length}군</strong></div>
+        <div class="stat"><span>평균 소비 수</span><strong>${avgFrames}매</strong></div>
+        <div class="stat"><span>점검 필요 벌통</span><strong>${alertCount}군</strong></div>
+      `;
+
+      const grid = document.getElementById('hiveGrid');
+      grid.innerHTML = '';
+      apiary.hives.forEach((h, idx) => {
+        const card = document.createElement('div');
+        let cls = 'hive-card';
+        if (h.queen.includes('무왕') || h.treatment.includes('질병') || h.treatment.includes('의심')) cls += ' alert';
+        else if (h.queen.includes('왕대') || h.coverage.includes('약군') || h.feed.includes('부족')) cls += ' caution';
+        card.className = cls;
+
+        card.innerHTML = `
+          <div class="hive-num">${h.num}번 벌통</div>
+          <div class="hive-meta">
+            여왕: ${h.queen}<br/>
+            소비: ${h.frames}매 · 착봉: ${h.coverage}<br/>
+            산란: ${h.brood}<br/>
+            먹이: ${h.feed}<br/>
+            약제/병해충: ${h.treatment}
+          </div>
+        `;
+
+        card.onclick = () => openModal(idx);
+        grid.appendChild(card);
+      });
+
+      renderStats(apiary);
+    }
+
+    document.getElementById('renameApiaryBtn').onclick = () => {
+      const apiary = getCurrentApiary();
+      const nextName = prompt('새 봉장 이름을 입력하세요.', apiary.name);
+      if (nextName === null) return;
+      const trimmed = nextName.trim();
+      if (!trimmed) {
+        alert('봉장 이름을 비워 둘 수 없습니다.');
+        return;
+      }
+      apiary.name = trimmed;
+      saveState();
+    };
+
+    document.getElementById('toggleAddApiaryBtn').onclick = () => {
+      const box = document.getElementById('addApiaryBox');
+      box.classList.toggle('open');
+      if (box.classList.contains('open')) {
+        document.getElementById('newApiaryName').focus();
+      }
+    };
+
+    document.getElementById('cancelAddApiaryBtn').onclick = () => {
+      document.getElementById('addApiaryBox').classList.remove('open');
+    };
+
+    async function ensureBeekeeperFolder() {
+      if (!window.showDirectoryPicker) return null;
+      if (beekeeperDirHandle) {
+        const perm = await beekeeperDirHandle.queryPermission({ mode: 'readwrite' });
+        if (perm === 'granted') return beekeeperDirHandle;
+        const req = await beekeeperDirHandle.requestPermission({ mode: 'readwrite' });
+        if (req === 'granted') return beekeeperDirHandle;
+      }
+      const rootHandle = await window.showDirectoryPicker({ mode: 'readwrite' });
+      if (rootHandle.name.toLowerCase() === 'beekeeper') {
+        beekeeperDirHandle = rootHandle;
+      } else {
+        beekeeperDirHandle = await rootHandle.getDirectoryHandle('beekeeper', { create: true });
+      }
+      document.getElementById('syncStatus').textContent = '로컬 저장 모드 · 폴더: beekeeper 연결됨';
+      return beekeeperDirHandle;
+    }
+
+    function makeBackupFilename() {
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      const stamp = `${now.getFullYear()}-${pad(now.getMonth()+1)}-${pad(now.getDate())}_${pad(now.getHours())}${pad(now.getMinutes())}${pad(now.getSeconds())}`;
+      return `apiary-backup-${stamp}.json`;
+    }
+
+    function applyRestoredData(parsed, labelText) {
+      if (!parsed || !Array.isArray(parsed.apiaries) || !parsed.apiaries.length) {
+        alert('올바른 백업 파일이 아닙니다.');
+        return;
+      }
+      state = parsed;
+      currentApiaryId = state.apiaries[0].id;
+      saveState();
+      document.getElementById('restoreBackdrop').style.display = 'none';
+      alert(`${labelText || '백업 파일'}에서 복원했습니다.`);
+    }
+
+    document.getElementById('exportBtn').onclick = async () => {
+      const filename = makeBackupFilename();
+      const jsonText = JSON.stringify(state, null, 2);
+      const totalHives = state.apiaries.reduce((s, a) => s + a.hives.length, 0);
+
+      try {
+        const dirHandle = await ensureBeekeeperFolder();
+        if (dirHandle) {
+          const fileHandle = await dirHandle.getFileHandle(filename, { create: true });
+          const writable = await fileHandle.createWritable();
+          await writable.write(jsonText);
+          await writable.close();
+
+          backupHistory.unshift({
+            name: filename,
+            savedAt: new Date().toLocaleString('ko-KR'),
+            apiaryCount: state.apiaries.length,
+            hiveCount: totalHives,
+            data: state
+          });
+          saveBackupHistory();
+          alert(`beekeeper 폴더에 '${filename}' 파일로 저장했습니다.`);
+          return;
+        }
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+      }
+
+      const blob = new Blob([jsonText], { type: 'application/json' });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = filename;
+      a.click();
+      URL.revokeObjectURL(url);
+
+      backupHistory.unshift({
+        name: filename,
+        savedAt: new Date().toLocaleString('ko-KR'),
+        apiaryCount: state.apiaries.length,
+        hiveCount: totalHives,
+        data: state
+      });
+      saveBackupHistory();
+      alert(`'${filename}' 파일을 내려받았습니다.\n(브라우저 보안상 폴더 직접 생성이 제한된 환경에서는 다운로드 폴더에 저장됩니다.)`);
+    };
+
+    document.getElementById('importBtn').onclick = async () => {
+      const listBox = document.getElementById('backupListBox');
+      const hint = document.getElementById('restoreHint');
+      listBox.innerHTML = '';
+
+      let folderFiles = [];
+      try {
+        const dirHandle = await ensureBeekeeperFolder();
+        if (dirHandle) {
+          for await (const [name, handle] of dirHandle.entries()) {
+            if (handle.kind === 'file' && name.endsWith('.json')) {
+              const file = await handle.getFile();
+              folderFiles.push({ name, file, lastModified: file.lastModified });
+            }
+          }
+          folderFiles.sort((a, b) => b.lastModified - a.lastModified);
+        }
+      } catch (err) {
+        if (err && err.name === 'AbortError') return;
+      }
+
+      if (folderFiles.length > 0) {
+        hint.textContent = 'beekeeper 폴더의 백업 파일 목록입니다. 복원할 파일을 누르세요.';
+        folderFiles.forEach(item => {
+          const row = document.createElement('div');
+          row.className = 'backup-item';
+          const dt = new Date(item.lastModified).toLocaleString('ko-KR');
+          row.innerHTML = `
+            <div>
+              <div class="backup-item-name">${item.name}</div>
+              <div class="backup-item-sub">수정일: ${dt}</div>
+            </div>
+            <button type="button">복원</button>
+          `;
+          row.querySelector('button').onclick = async () => {
+            try {
+              const text = await item.file.text();
+              applyRestoredData(JSON.parse(text), item.name);
+            } catch (e) {
+              alert('파일을 읽는 중 오류가 발생했습니다.');
+            }
+          };
+          listBox.appendChild(row);
+        });
+      } else if (backupHistory.length > 0) {
+        hint.textContent = '저장된 백업 기록 목록입니다. 복원할 횟수를 선택하세요.';
+        backupHistory.forEach(entry => {
+          const row = document.createElement('div');
+          row.className = 'backup-item';
+          row.innerHTML = `
+            <div>
+              <div class="backup-item-name">${entry.name}</div>
+              <div class="backup-item-sub">${entry.savedAt} · ${entry.apiaryCount}봉장 / ${entry.hiveCount}군</div>
+            </div>
+            <button type="button">복원</button>
+          `;
+          row.querySelector('button').onclick = () => {
+            applyRestoredData(entry.data, entry.name);
+          };
+          listBox.appendChild(row);
+        });
+      } else {
+        hint.textContent = '표시할 백업 파일이 없습니다. 아래에서 파일을 직접 선택하세요.';
+      }
+
+      document.getElementById('restoreBackdrop').style.display = 'flex';
+    };
+
+    document.getElementById('closeRestoreBtn').onclick = () => {
+      document.getElementById('restoreBackdrop').style.display = 'none';
+    };
+
+    document.getElementById('pickExternalFileBtn').onclick = () => {
+      document.getElementById('importFile').click();
+    };
+
+    document.getElementById('importFile').onchange = (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = () => {
+        try {
+          applyRestoredData(JSON.parse(reader.result), file.name);
+        } catch (err) {
+          alert('올바른 백업 파일이 아닙니다.');
+        }
+      };
+      reader.readAsText(file);
+      e.target.value = '';
+    };
+
+    document.getElementById('viewGridBtn').onclick = () => {
+      viewMode = 'grid';
+      render();
+    };
+
+    document.getElementById('viewStatsBtn').onclick = () => {
+      viewMode = 'stats';
+      render();
+    };
+
+    document.getElementById('insertHiveBtn').onclick = () => {
+      const apiary = getCurrentApiary();
+      const maxPos = apiary.hives.length + 1;
+      const answer = prompt(
+        `몇 번 위치에 새 벌통을 넣을까요? (1 ~ ${maxPos} 입력)\n※ ${maxPos}을 입력하거나 그대로 확인을 누르면 맨 뒤에 추가됩니다.`,
+        String(maxPos)
+      );
+      if (answer === null) return;
+
+      const pos = Number(answer.trim());
+      if (!Number.isInteger(pos) || pos < 1 || pos > maxPos) {
+        alert(`1부터 ${maxPos} 사이의 번호를 입력해 주세요.`);
+        return;
+      }
+
+      apiary.hives.splice(pos - 1, 0, createSingleHive(pos));
+      renumberHives(apiary);
+      saveState();
+    };
+
+    function openModal(idx) {
+      editingHiveIndex = idx;
+      const h = getCurrentApiary().hives[idx];
+      document.getElementById('modalTitle').textContent = `${getCurrentApiary().name} - ${h.num}번 벌통 기록`;
+      document.getElementById('fNum').value = h.num;
+      document.getElementById('fQueen').value = h.queen;
+      document.getElementById('fFrames').value = h.frames;
+      document.getElementById('fCoverage').value = h.coverage;
+      document.getElementById('fBrood').value = h.brood;
+      document.getElementById('fFeed').value = h.feed;
+      document.getElementById('fTreatment').value = h.treatment;
+      document.getElementById('fNote').value = h.note;
+      document.getElementById('modalBackdrop').style.display = 'flex';
+    }
+
+    document.getElementById('closeModalBtn').onclick = () => {
+      document.getElementById('modalBackdrop').style.display = 'none';
+    };
+
+    document.getElementById('saveHiveBtn').onclick = () => {
+      const h = getCurrentApiary().hives[editingHiveIndex];
+      h.num = document.getElementById('fNum').value.trim() || h.num;
+      h.queen = document.getElementById('fQueen').value;
+      h.frames = document.getElementById('fFrames').value;
+      h.coverage = document.getElementById('fCoverage').value;
+      h.brood = document.getElementById('fBrood').value;
+      h.feed = document.getElementById('fFeed').value;
+      h.treatment = document.getElementById('fTreatment').value;
+      h.note = document.getElementById('fNote').value;
+      h.updatedAt = new Date().toISOString();
+      document.getElementById('modalBackdrop').style.display = 'none';
+      saveState();
+    };
+
+    document.getElementById('deleteHiveBtn').onclick = () => {
+      const apiary = getCurrentApiary();
+      if (apiary.hives.length <= 1) {
+        alert('최소 1군은 남아 있어야 합니다.');
+        return;
+      }
+      const targetHive = apiary.hives[editingHiveIndex];
+      if (confirm(`${targetHive.num}번 벌통을 삭제하고 뒷번호를 앞으로 당길까요?`)) {
+        apiary.hives.splice(editingHiveIndex, 1);
+        renumberHives(apiary);
+        document.getElementById('modalBackdrop').style.display = 'none';
+        saveState();
+      }
+    };
+
+    document.getElementById('apiarySelect').onchange = (e) => {
+      currentApiaryId = e.target.value;
+      render();
+    };
+
+    document.getElementById('addApiaryBtn').onclick = () => {
+      const nameInput = document.getElementById('newApiaryName');
+      const countInput = document.getElementById('newApiaryCount');
+      const name = nameInput.value.trim() || `제${state.apiaries.length + 1}봉장`;
+      const count = Math.max(1, Math.min(500, Number(countInput.value) || 20));
+      const newId = 'apiary-' + Date.now();
+      state.apiaries.push({ id: newId, name, hives: createHives(count) });
+      currentApiaryId = newId;
+      nameInput.value = '';
+      document.getElementById('addApiaryBox').classList.remove('open');
+      saveState();
+    };
+
+    document.getElementById('deleteApiaryBtn').onclick = () => {
+      if (state.apiaries.length <= 1) {
+        alert('최소 1개의 봉장은 남아 있어야 합니다.');
+        return;
+      }
+      const apiary = getCurrentApiary();
+      if (confirm(`'${apiary.name}' 전체 기록을 삭제할까요?`)) {
+        state.apiaries = state.apiaries.filter(a => a.id !== apiary.id);
+        currentApiaryId = state.apiaries[0].id;
+        saveState();
+      }
+    };
+
+    render();
+  </script>
+</body>
