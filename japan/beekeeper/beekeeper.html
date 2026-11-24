@@ -115,9 +115,30 @@
       transition: transform 0.1s;
     }
     .hive-card:hover { transform: translateY(-2px); border-color: #2e7d32; }
+    .hive-card.inspect-needed {
+      border-color: #2563eb;
+      background: #eff6ff;
+      box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
+    }
     .hive-card.alert { border-color: #dc2626; background: #fef2f2; }
     .hive-card.caution { border-color: #d97706; background: #fffbeb; }
-    .hive-num { font-weight: 800; font-size: 16px; margin-bottom: 4px; }
+    .hive-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      margin-bottom: 6px;
+    }
+    .hive-num { font-weight: 800; font-size: 16px; }
+    .inspect-badge {
+      font-size: 11px;
+      font-weight: 700;
+      padding: 2px 7px;
+      border-radius: 999px;
+      background: #2563eb;
+      color: #fff;
+      white-space: nowrap;
+    }
     .hive-meta { font-size: 12px; color: #475569; line-height: 1.45; }
 
     .stats-wrap { display: grid; gap: 14px; }
@@ -159,6 +180,7 @@
       background: #2e7d32;
       border-radius: 999px;
     }
+    .bar-fill.info { background: #2563eb; }
     .bar-fill.warn { background: #d97706; }
     .bar-fill.alert { background: #dc2626; }
     .hive-list-text {
@@ -240,6 +262,13 @@
         <input type="text" id="fNum" placeholder="예: 1 또는 1-A" />
       </div>
       <div class="field">
+        <label>내검 여부</label>
+        <select id="fInspection">
+          <option value="불필요">불필요</option>
+          <option value="필요">필요</option>
+        </select>
+      </div>
+      <div class="field">
         <label>여왕벌 상태</label>
         <select id="fQueen">
           <option value="정상 산란">정상 산란</option>
@@ -317,6 +346,7 @@
     function createSingleHive(num) {
       return {
         num: String(num),
+        inspection: '불필요',
         queen: '정상 산란',
         frames: 6,
         coverage: '양호(밀착)',
@@ -382,6 +412,12 @@
       const hives = apiary.hives;
       const total = hives.length;
 
+      const inspectionStats = groupByField(
+        hives,
+        h => h.inspection || '불필요',
+        label => label === '필요' ? 'info' : ''
+      );
+
       const queenStats = groupByField(
         hives,
         h => h.queen || '미기재',
@@ -441,6 +477,10 @@
 
       document.getElementById('statsWrap').innerHTML = `
         <div class="stats-card">
+          <h3>🔎 내검 여부 분포</h3>
+          ${renderRows(inspectionStats)}
+        </div>
+        <div class="stats-card">
           <h3>👑 여왕벌 상태 분포</h3>
           ${renderRows(queenStats)}
         </div>
@@ -488,7 +528,11 @@
       const apiary = getCurrentApiary();
       const totalAllHives = state.apiaries.reduce((sum, a) => sum + a.hives.length, 0);
       const alertCount = apiary.hives.filter(h =>
-        h.queen.includes('무왕') || h.treatment.includes('응애') || h.treatment.includes('질병') || h.treatment.includes('의심')
+        h.inspection === '필요' ||
+        h.queen.includes('무왕') ||
+        h.treatment.includes('응애') ||
+        h.treatment.includes('질병') ||
+        h.treatment.includes('의심')
       ).length;
       const avgFrames = apiary.hives.length
         ? (apiary.hives.reduce((s, h) => s + Number(h.frames || 0), 0) / apiary.hives.length).toFixed(1)
@@ -505,14 +549,20 @@
       grid.innerHTML = '';
       apiary.hives.forEach((h, idx) => {
         const card = document.createElement('div');
+        const isInspectNeeded = h.inspection === '필요';
         let cls = 'hive-card';
         if (h.queen.includes('무왕') || h.treatment.includes('질병') || h.treatment.includes('의심')) cls += ' alert';
         else if (h.queen.includes('왕대') || h.coverage.includes('약군') || h.feed.includes('부족')) cls += ' caution';
+        else if (isInspectNeeded) cls += ' inspect-needed';
         card.className = cls;
 
         card.innerHTML = `
-          <div class="hive-num">${h.num}번 벌통</div>
+          <div class="hive-header">
+            <div class="hive-num">${h.num}번 벌통</div>
+            ${isInspectNeeded ? '<span class="inspect-badge">내검 필요</span>' : ''}
+          </div>
           <div class="hive-meta">
+            내검: ${h.inspection || '불필요'}<br/>
             여왕: ${h.queen}<br/>
             소비: ${h.frames}매 · 착봉: ${h.coverage}<br/>
             산란: ${h.brood}<br/>
@@ -718,6 +768,7 @@
       const h = getCurrentApiary().hives[idx];
       document.getElementById('modalTitle').textContent = `${getCurrentApiary().name} - ${h.num}번 벌통 기록`;
       document.getElementById('fNum').value = h.num;
+      document.getElementById('fInspection').value = h.inspection || '불필요';
       document.getElementById('fQueen').value = h.queen;
       document.getElementById('fFrames').value = h.frames;
       document.getElementById('fCoverage').value = h.coverage;
@@ -735,6 +786,7 @@
     document.getElementById('saveHiveBtn').onclick = () => {
       const h = getCurrentApiary().hives[editingHiveIndex];
       h.num = document.getElementById('fNum').value.trim() || h.num;
+      h.inspection = document.getElementById('fInspection').value;
       h.queen = document.getElementById('fQueen').value;
       h.frames = document.getElementById('fFrames').value;
       h.coverage = document.getElementById('fCoverage').value;
