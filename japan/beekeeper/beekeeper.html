@@ -244,7 +244,8 @@
         <select id="fQueen">
           <option value="정상 산란">정상 산란</option>
           <option value="구왕">구왕</option>
-          <option value="신왕/처녀왕">신왕/처녀왕</option>
+          <option value="신왕">신왕</option>
+          <option value="처녀왕">처녀왕</option>
           <option value="왕대 발견">왕대 발견</option>
           <option value="무왕군(주의)">무왕군(주의)</option>
         </select>
@@ -384,7 +385,7 @@
       const queenStats = groupByField(
         hives,
         h => h.queen || '미기재',
-        label => label.includes('무왕') ? 'alert' : (label.includes('왕대') || label.includes('신왕') || label === '구왕') ? 'warn' : ''
+        label => label.includes('무왕') ? 'alert' : (label.includes('왕대') || label === '처녀왕' || label === '구왕') ? 'warn' : ''
       );
 
       const frameStats = groupByField(
