@@ -216,7 +216,7 @@
 
     <button type="button" class="secondary" id="exportBtn">백업(beekeeper)</button>
     <button type="button" class="secondary" id="importBtn">복원</button>
-    <input type="file" id="importFile" accept=".json,application/json" style="display:none;" />
+    <input type="file" id="importFile" style="display:none;" />
 
     <div class="add-apiary-box" id="addApiaryBox">
       <input type="text" id="newApiaryName" placeholder="새 봉장 이름 (예: 제2봉장)" />
@@ -614,31 +614,25 @@
       alert(`'${filename}' 파일을 내려받았습니다.`);
     };
 
-    // 복원 버튼 클릭 시 바로 파일 선택창 열기
     document.getElementById('importBtn').onclick = () => {
       document.getElementById('importFile').click();
     };
 
-    document.getElementById('importFile').onchange = (e) => {
-      const file = e.target.files[0];
-      if (!file) return;
-      const reader = new FileReader();
-      reader.onerror = () => {
-        alert('파일을 읽는 중 오류가 발생했습니다.\n원인: FileReader 읽기 실패');
-      };
-      reader.onload = () => {
-        try {
-          const parsed = JSON.parse(reader.result);
-          applyRestoredData(parsed, file.name);
-        } catch (err) {
-          alert(
-            '파일을 읽는 중 오류가 발생했습니다.\n' +
-            '원인: ' + (err && err.name ? err.name : 'Error') + ' - ' + (err && err.message ? err.message : String(err))
-          );
-        }
-      };
-      reader.readAsText(file);
+    document.getElementById('importFile').onchange = async (e) => {
+      const file = e.target.files && e.target.files[0];
       e.target.value = '';
+      if (!file) return;
+
+      try {
+        const text = await file.text();
+        const parsed = JSON.parse(text);
+        applyRestoredData(parsed, file.name);
+      } catch (err) {
+        alert(
+          '파일을 읽는 중 오류가 발생했습니다.\n' +
+          '원인: ' + (err && err.name ? err.name : 'Error') + ' - ' + (err && err.message ? err.message : String(err))
+        );
+      }
     };
 
     document.getElementById('viewGridBtn').onclick = () => {
