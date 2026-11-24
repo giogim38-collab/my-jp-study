@@ -185,26 +185,6 @@
       margin-top: 16px;
     }
     .modal-actions-right { display: flex; gap: 8px; }
-    .backup-list {
-      display: flex;
-      flex-direction: column;
-      gap: 8px;
-      margin: 12px 0;
-      max-height: 280px;
-      overflow-y: auto;
-    }
-    .backup-item {
-      border: 1px solid #cbd5e1;
-      border-radius: 8px;
-      padding: 10px 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      background: #f8fafc;
-    }
-    .backup-item-name { font-weight: 700; font-size: 13px; word-break: break-all; }
-    .backup-item-sub { font-size: 12px; color: #64748b; }
   </style>
 </head>
 <body>
@@ -235,8 +215,8 @@
     <div class="divider"></div>
 
     <button type="button" class="secondary" id="exportBtn">백업(beekeeper)</button>
-    <button type="button" class="secondary" id="importBtn">복원(목록 선택)</button>
-    <input type="file" id="importFile" accept=".json" style="display:none;" />
+    <button type="button" class="secondary" id="importBtn">복원</button>
+    <input type="file" id="importFile" accept=".json,application/json" style="display:none;" />
 
     <div class="add-apiary-box" id="addApiaryBox">
       <input type="text" id="newApiaryName" placeholder="새 봉장 이름 (예: 제2봉장)" />
@@ -323,26 +303,9 @@
     </div>
   </div>
 
-  <!-- 백업 파일 선택 복원 모달 -->
-  <div class="modal-backdrop" id="restoreBackdrop">
-    <div class="modal">
-      <h2 style="font-size:18px; margin-bottom:6px;">백업 파일 선택 복원</h2>
-      <p id="restoreHint" style="font-size:13px; color:#64748b; margin-bottom:10px;">
-        복원할 백업 파일을 선택하세요.
-      </p>
-      <div class="backup-list" id="backupListBox"></div>
-      <div class="modal-actions">
-        <button class="secondary" id="pickExternalFileBtn">다른 파일 직접 선택</button>
-        <button class="secondary" id="closeRestoreBtn">닫기</button>
-      </div>
-    </div>
-  </div>
-
   <script>
     const STORAGE_KEY = 'beekeeper_multi_apiary_v1';
-    const BACKUP_META_KEY = 'beekeeper_backup_history_v1';
     let state = loadState();
-    let backupHistory = loadBackupHistory();
     let currentApiaryId = state.apiaries[0].id;
     let editingHiveIndex = null;
     let viewMode = 'grid';
@@ -385,21 +348,6 @@
           { id: 'apiary-1', name: '제1봉장', hives: createHives(20) }
         ]
       };
-    }
-
-    function loadBackupHistory() {
-      const raw = localStorage.getItem(BACKUP_META_KEY);
-      if (raw) {
-        try {
-          const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed)) return parsed;
-        } catch (e) {}
-      }
-      return [];
-    }
-
-    function saveBackupHistory() {
-      localStorage.setItem(BACKUP_META_KEY, JSON.stringify(backupHistory.slice(0, 50)));
     }
 
     function saveState() {
@@ -635,14 +583,12 @@
       state = parsed;
       currentApiaryId = state.apiaries[0].id;
       saveState();
-      document.getElementById('restoreBackdrop').style.display = 'none';
       alert(`${labelText || '백업 파일'}에서 복원했습니다.`);
     }
 
     document.getElementById('exportBtn').onclick = async () => {
       const filename = makeBackupFilename();
       const jsonText = JSON.stringify(state, null, 2);
-      const totalHives = state.apiaries.reduce((s, a) => s + a.hives.length, 0);
 
       try {
         const dirHandle = await ensureBeekeeperFolder();
@@ -651,15 +597,6 @@
           const writable = await fileHandle.createWritable();
           await writable.write(jsonText);
           await writable.close();
-
-          backupHistory.unshift({
-            name: filename,
-            savedAt: new Date().toLocaleString('ko-KR'),
-            apiaryCount: state.apiaries.length,
-            hiveCount: totalHives,
-            data: state
-          });
-          saveBackupHistory();
           alert(`beekeeper 폴더에 '${filename}' 파일로 저장했습니다.`);
           return;
         }
@@ -674,91 +611,11 @@
       a.download = filename;
       a.click();
       URL.revokeObjectURL(url);
-
-      backupHistory.unshift({
-        name: filename,
-        savedAt: new Date().toLocaleString('ko-KR'),
-        apiaryCount: state.apiaries.length,
-        hiveCount: totalHives,
-        data: state
-      });
-      saveBackupHistory();
-      alert(`'${filename}' 파일을 내려받았습니다.\n(브라우저 보안상 폴더 직접 생성이 제한된 환경에서는 다운로드 폴더에 저장됩니다.)`);
+      alert(`'${filename}' 파일을 내려받았습니다.`);
     };
 
-    document.getElementById('importBtn').onclick = async () => {
-      const listBox = document.getElementById('backupListBox');
-      const hint = document.getElementById('restoreHint');
-      listBox.innerHTML = '';
-
-      let folderFiles = [];
-      try {
-        const dirHandle = await ensureBeekeeperFolder();
-        if (dirHandle) {
-          for await (const [name, handle] of dirHandle.entries()) {
-            if (handle.kind === 'file' && name.endsWith('.json')) {
-              const file = await handle.getFile();
-              folderFiles.push({ name, file, lastModified: file.lastModified });
-            }
-          }
-          folderFiles.sort((a, b) => b.lastModified - a.lastModified);
-        }
-      } catch (err) {
-        if (err && err.name === 'AbortError') return;
-      }
-
-      if (folderFiles.length > 0) {
-        hint.textContent = 'beekeeper 폴더의 백업 파일 목록입니다. 복원할 파일을 누르세요.';
-        folderFiles.forEach(item => {
-          const row = document.createElement('div');
-          row.className = 'backup-item';
-          const dt = new Date(item.lastModified).toLocaleString('ko-KR');
-          row.innerHTML = `
-            <div>
-              <div class="backup-item-name">${item.name}</div>
-              <div class="backup-item-sub">수정일: ${dt}</div>
-            </div>
-            <button type="button">복원</button>
-          `;
-          row.querySelector('button').onclick = async () => {
-            try {
-              const text = await item.file.text();
-              applyRestoredData(JSON.parse(text), item.name);
-            } catch (e) {
-              alert('파일을 읽는 중 오류가 발생했습니다.');
-            }
-          };
-          listBox.appendChild(row);
-        });
-      } else if (backupHistory.length > 0) {
-        hint.textContent = '저장된 백업 기록 목록입니다. 복원할 횟수를 선택하세요.';
-        backupHistory.forEach(entry => {
-          const row = document.createElement('div');
-          row.className = 'backup-item';
-          row.innerHTML = `
-            <div>
-              <div class="backup-item-name">${entry.name}</div>
-              <div class="backup-item-sub">${entry.savedAt} · ${entry.apiaryCount}봉장 / ${entry.hiveCount}군</div>
-            </div>
-            <button type="button">복원</button>
-          `;
-          row.querySelector('button').onclick = () => {
-            applyRestoredData(entry.data, entry.name);
-          };
-          listBox.appendChild(row);
-        });
-      } else {
-        hint.textContent = '표시할 백업 파일이 없습니다. 아래에서 파일을 직접 선택하세요.';
-      }
-
-      document.getElementById('restoreBackdrop').style.display = 'flex';
-    };
-
-    document.getElementById('closeRestoreBtn').onclick = () => {
-      document.getElementById('restoreBackdrop').style.display = 'none';
-    };
-
-    document.getElementById('pickExternalFileBtn').onclick = () => {
+    // 복원 버튼 클릭 시 바로 파일 선택창 열기
+    document.getElementById('importBtn').onclick = () => {
       document.getElementById('importFile').click();
     };
 
@@ -766,11 +623,18 @@
       const file = e.target.files[0];
       if (!file) return;
       const reader = new FileReader();
+      reader.onerror = () => {
+        alert('파일을 읽는 중 오류가 발생했습니다.\n원인: FileReader 읽기 실패');
+      };
       reader.onload = () => {
         try {
-          applyRestoredData(JSON.parse(reader.result), file.name);
+          const parsed = JSON.parse(reader.result);
+          applyRestoredData(parsed, file.name);
         } catch (err) {
-          alert('올바른 백업 파일이 아닙니다.');
+          alert(
+            '파일을 읽는 중 오류가 발생했습니다.\n' +
+            '원인: ' + (err && err.name ? err.name : 'Error') + ' - ' + (err && err.message ? err.message : String(err))
+          );
         }
       };
       reader.readAsText(file);
