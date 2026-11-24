@@ -103,7 +103,7 @@
     .stat strong { font-size: 20px; color: #1b5e20; }
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(175px, 1fr));
+      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
       gap: 10px;
     }
     .hive-card {
@@ -127,17 +127,49 @@
       justify-content: space-between;
       align-items: center;
       gap: 6px;
-      margin-bottom: 6px;
+      margin-bottom: 8px;
     }
     .hive-num { font-weight: 800; font-size: 16px; }
-    .inspect-badge {
+    .inspect-control {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      user-select: none;
+    }
+    .inspect-label {
       font-size: 11px;
       font-weight: 700;
-      padding: 2px 7px;
+      color: #475569;
+    }
+    .inspect-toggle {
+      display: inline-grid;
+      grid-template-columns: 1fr 1fr;
+      width: 36px;
+      height: 18px;
+      padding: 2px;
       border-radius: 999px;
+      background: #e2e8f0;
+      border: 1px solid #cbd5e1;
+      cursor: pointer;
+      align-items: center;
+      gap: 2px;
+    }
+    .inspect-toggle.is-active {
+      background: #dbeafe;
+      border-color: #2563eb;
+    }
+    .inspect-dot {
+      width: 100%;
+      height: 100%;
+      border-radius: 999px;
+      background: transparent;
+      transition: background-color 0.12s ease;
+    }
+    .inspect-toggle:not(.is-active) .inspect-dot.left {
+      background: #94a3b8;
+    }
+    .inspect-toggle.is-active .inspect-dot.right {
       background: #2563eb;
-      color: #fff;
-      white-space: nowrap;
     }
     .hive-meta { font-size: 12px; color: #475569; line-height: 1.45; }
 
@@ -392,6 +424,16 @@
       return state.apiaries.find(a => a.id === currentApiaryId) || state.apiaries[0];
     }
 
+    function toggleHiveInspection(idx, event) {
+      if (event) event.stopPropagation();
+      const apiary = getCurrentApiary();
+      const h = apiary.hives[idx];
+      if (!h) return;
+      h.inspection = (h.inspection === '필요') ? '불필요' : '필요';
+      h.updatedAt = new Date().toISOString();
+      saveState();
+    }
+
     function groupByField(hives, selector, barTypeFn) {
       const map = new Map();
       hives.forEach(h => {
@@ -559,10 +601,22 @@
         card.innerHTML = `
           <div class="hive-header">
             <div class="hive-num">${h.num}번 벌통</div>
-            ${isInspectNeeded ? '<span class="inspect-badge">내검 필요</span>' : ''}
+            <div class="inspect-control">
+              <span class="inspect-label">내검대상</span>
+              <span
+                role="button"
+                tabindex="0"
+                class="inspect-toggle ${isInspectNeeded ? 'is-active' : ''}"
+                aria-label="${h.num}번 벌통 내검대상 전환"
+                aria-pressed="${isInspectNeeded ? 'true' : 'false'}"
+                data-hive-idx="${idx}"
+              >
+                <span class="inspect-dot left"></span>
+                <span class="inspect-dot right"></span>
+              </span>
+            </div>
           </div>
           <div class="hive-meta">
-            내검: ${h.inspection || '불필요'}<br/>
             여왕: ${h.queen}<br/>
             소비: ${h.frames}매 · 착봉: ${h.coverage}<br/>
             산란: ${h.brood}<br/>
@@ -570,6 +624,15 @@
             약제/병해충: ${h.treatment}
           </div>
         `;
+
+        const toggleBtn = card.querySelector('.inspect-toggle');
+        toggleBtn.onclick = (ev) => toggleHiveInspection(idx, ev);
+        toggleBtn.onkeydown = (ev) => {
+          if (ev.key === 'Enter' || ev.key === ' ') {
+            ev.preventDefault();
+            toggleHiveInspection(idx, ev);
+          }
+        };
 
         card.onclick = () => openModal(idx);
         grid.appendChild(card);
