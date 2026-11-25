@@ -775,26 +775,23 @@
       alert(`'${filename}' 파일을 내려받았습니다.`);
     };
 
-    document.getElementById('importBtn').onclick = () => {
-      document.getElementById('importFile').click();
-    };
+  document.getElementById('importFile').onchange = async (e) => {
+  const file = e.target.files && e.target.files[0];
+  e.target.value = '';
+  if (!file) return;
 
-    document.getElementById('importFile').onchange = async (e) => {
-      const file = e.target.files && e.target.files[0];
-      e.target.value = '';
-      if (!file) return;
-
-      try {
-        const text = await file.text();
-        const parsed = JSON.parse(text);
-        applyRestoredData(parsed, file.name);
-      } catch (err) {
-        alert(
-          '파일을 읽는 중 오류가 발생했습니다.\n' +
-          '원인: ' + (err && err.name ? err.name : 'Error') + ' - ' + (err && err.message ? err.message : String(err))
-        );
-      }
-    };
+  try {
+    let text = await file.text();
+    text = text.replace(/^\uFEFF/, '').trim();
+    const parsed = JSON.parse(text);
+    applyRestoredData(parsed, file.name);
+  } catch (err) {
+    alert(
+      `[${file.name}] 파일을 읽지 못했습니다.\n` +
+      '원인: ' + (err && err.name ? err.name : 'Error') + ' - ' + (err && err.message ? err.message : String(err))
+    );
+  }
+};
 
     document.getElementById('viewGridBtn').onclick = () => {
       viewMode = 'grid';
