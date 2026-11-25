@@ -153,6 +153,12 @@
     .apiary-sub {
       font-size: 13px;
       color: #475569;
+      font-weight: 600;
+      line-height: 1.45;
+    }
+    .apiary-sub.has-issue {
+      color: #b45309;
+      font-weight: 700;
     }
     .apiary-alert-text {
       margin-top: 4px;
@@ -182,13 +188,17 @@
 
     .summary {
       display: grid;
-      grid-template-columns: repeat(2, 1fr);
+      grid-template-columns: 1fr 2.2fr 1fr;
       gap: 8px;
       margin-bottom: 12px;
     }
-    @media (min-width: 640px) {
+    @media (max-width: 520px) {
       .summary {
-        grid-template-columns: repeat(4, 1fr);
+        grid-template-columns: repeat(2, 1fr);
+      }
+      .summary .stat.wide-stat {
+        grid-column: 1 / -1;
+        order: 3;
       }
     }
     .stat {
@@ -197,8 +207,16 @@
       border-radius: 10px;
       border: 1px solid #cbd5e1;
     }
-    .stat span { display: block; font-size: 12px; color: #475569; font-weight: 700; }
+    .stat span { display: block; font-size: 12px; color: #475569; font-weight: 700; margin-bottom: 2px; }
     .stat strong { font-size: 19px; color: #1b5e20; }
+    .stat strong.status-detail {
+      font-size: 14px;
+      line-height: 1.45;
+      display: block;
+      word-break: keep-all;
+    }
+    .stat strong.danger-text { color: #dc2626; }
+    .stat strong.warn-text { color: #b45309; }
 
     /* 벌통 카드: 핸드폰에서 한 줄에 2개 배치 */
     .grid {
@@ -396,8 +414,10 @@
     <div id="syncStatus" class="sub-status">로컬 저장 모드 · 폴더: beekeeper (최근 10개 유지)</div>
   </header>
 
-  <!-- 1. 앞 화면: 봉장 선택 및 관리/백업/복원 -->
+  <!-- 1. 앞 화면: 전체 요약 + 봉장 선택 및 관리/백업/복원 -->
   <section id="apiaryScreen" class="screen active">
+    <div class="summary" id="frontSummaryBox"></div>
+
     <div class="panel">
       <div class="panel-title">봉장 선택 (누르면 벌통 카드를 봅니다)</div>
       <div id="apiaryListBox" class="apiary-list"></div>
@@ -641,13 +661,49 @@
       return state.apiaries.find(a => a.id === currentApiaryId) || state.apiaries[0];
     }
 
+    function isDiseaseHive(h) {
+      const tr = String(h.treatment || '').trim();
+      return Boolean(tr && tr !== '이상 없음');
+    }
+
+    function getSpecialCounts(hives) {
+      let virgin = 0;
+      let queenCell = 0;
+      let queenless = 0;
+      let disease = 0;
+
+      hives.forEach(h => {
+        const q = String(h.queen || '');
+        if (q.includes('처녀왕')) virgin += 1;
+        if (q.includes('왕대')) queenCell += 1;
+        if (q.includes('무왕')) queenless += 1;
+        if (isDiseaseHive(h)) disease += 1;
+      });
+
+      return { virgin, queenCell, queenless, disease };
+    }
+
+    function formatSpecialSummary(counts, compact = false) {
+      const items = [
+        { label: '처녀왕', count: counts.virgin },
+        { label: '왕대', count: counts.queenCell },
+        { label: '무왕', count: counts.queenless },
+        { label: '질병이상', count: counts.disease }
+      ];
+
+      if (compact) {
+        const active = items.filter(it => it.count > 0);
+        if (!active.length) return '특이사항 없음';
+        return active.map(it => `${it.label}: ${it.count}군`).join(' · ');
+      }
+
+      return items.map(it => `${it.label}: ${it.count}군`).join(' · ');
+    }
+
     function countAlertHives(apiary) {
       return apiary.hives.filter(h =>
         h.inspection === '필요' ||
-        String(h.queen || '').includes('무왕') ||
-        String(h.treatment || '').includes('응애') ||
-        String(h.treatment || '').includes('질병') ||
-        String(h.treatment || '').includes('의심')
+        String(h.queen || '').includes('무왕')
       ).length;
     }
 
@@ -739,7 +795,7 @@
         hives,
         h => (h.treatment && h.treatment.trim()) ? h.treatment.trim() : '미기재',
         label => (label.includes('질병') || label.includes('의심')) ? 'alert'
-               : (label.includes('응애') || label.includes('방제') || label.includes('처리')) ? 'warn' : ''
+               : (label !== '이상 없음' && label !== '미기재') ? 'warn' : ''
       );
 
       function renderRows(rows) {
@@ -807,9 +863,9 @@
 
       state.apiaries.forEach(a => {
         const alertCnt = countAlertHives(a);
-        const avg = a.hives.length
-          ? (a.hives.reduce((s, h) => s + Number(h.frames || 0), 0) / a.hives.length).toFixed(1)
-          : 0;
+        const counts = getSpecialCounts(a.hives);
+        const hasIssue = (counts.virgin + counts.queenCell + counts.queenless + counts.disease) > 0;
+        const subText = formatSpecialSummary(counts, true);
 
         const card = document.createElement('div');
         card.className = 'apiary-card';
@@ -818,7 +874,7 @@
             <div class="apiary-name">${a.name}</div>
             <div class="apiary-badge">${a.hives.length}군</div>
           </div>
-          <div class="apiary-sub">평균 ${avg}매 · 열기</div>
+          <div class="apiary-sub ${hasIssue ? 'has-issue' : ''}">${subText}</div>
           ${alertCnt > 0 ? `<div class="apiary-alert-text">점검 ${alertCnt}군</div>` : ''}
         `;
         card.onclick = () => openHiveScreen(a.id);
@@ -833,6 +889,18 @@
       document.getElementById('apiaryScreen').classList.toggle('active', screenMode === 'apiaries');
       document.getElementById('hiveScreen').classList.toggle('active', screenMode === 'hives');
 
+      const allHives = state.apiaries.flatMap(a => a.hives);
+      const totalAllHives = allHives.length;
+      const allCounts = getSpecialCounts(allHives);
+      const totalAllAlertHives = state.apiaries.reduce((sum, a) => sum + countAlertHives(a), 0);
+      const hasAnyAllIssue = (allCounts.virgin + allCounts.queenCell + allCounts.queenless + allCounts.disease) > 0;
+
+      document.getElementById('frontSummaryBox').innerHTML = `
+        <div class="stat"><span>전체 봉장</span><strong>${totalAllHives}군</strong></div>
+        <div class="stat wide-stat"><span>여왕 · 질병 현황</span><strong class="status-detail ${hasAnyAllIssue ? 'warn-text' : ''}">${formatSpecialSummary(allCounts, false)}</strong></div>
+        <div class="stat"><span>점검 필요</span><strong>${totalAllAlertHives}군</strong></div>
+      `;
+
       renderApiaryCards();
 
       const apiary = getCurrentApiary();
@@ -843,16 +911,13 @@
       document.getElementById('hiveGrid').style.display = viewMode === 'grid' ? 'grid' : 'none';
       document.getElementById('statsWrap').style.display = viewMode === 'stats' ? 'grid' : 'none';
 
-      const totalAllHives = state.apiaries.reduce((sum, a) => sum + a.hives.length, 0);
       const alertCount = countAlertHives(apiary);
-      const avgFrames = apiary.hives.length
-        ? (apiary.hives.reduce((s, h) => s + Number(h.frames || 0), 0) / apiary.hives.length).toFixed(1)
-        : 0;
+      const apiaryCounts = getSpecialCounts(apiary.hives);
+      const hasApiaryIssue = (apiaryCounts.virgin + apiaryCounts.queenCell + apiaryCounts.queenless + apiaryCounts.disease) > 0;
 
       document.getElementById('summaryBox').innerHTML = `
         <div class="stat"><span>현재 봉장</span><strong>${apiary.hives.length}군</strong></div>
-        <div class="stat"><span>전체 봉장</span><strong>${totalAllHives}군</strong></div>
-        <div class="stat"><span>평균 소비</span><strong>${avgFrames}매</strong></div>
+        <div class="stat wide-stat"><span>여왕 · 질병 현황</span><strong class="status-detail ${hasApiaryIssue ? 'warn-text' : ''}">${formatSpecialSummary(apiaryCounts, false)}</strong></div>
         <div class="stat"><span>점검 필요</span><strong>${alertCount}군</strong></div>
       `;
 
@@ -869,7 +934,7 @@
 
         let cls = 'hive-card';
         if (queenText.includes('무왕') || treatmentText.includes('질병') || treatmentText.includes('의심')) cls += ' alert';
-        else if (queenText.includes('왕대') || coverageText.includes('약군') || feedText.includes('부족')) cls += ' caution';
+        else if (queenText.includes('왕대') || queenText.includes('처녀왕') || coverageText.includes('약군') || feedText.includes('부족') || isDiseaseHive(h)) cls += ' caution';
         else if (isInspectNeeded) cls += ' inspect-needed';
         card.className = cls;
 
@@ -1095,7 +1160,7 @@
       for (const fn of attempts) {
         try {
           const text = await fn();
-          if (typeof text === 'string' && text.replace(/^\uFEFF/, '').trim().length > 0) {
+          if (typeof text === 'string' && text.replace(/^﻿/, '').trim().length > 0) {
             return text;
           }
         } catch (err) {
@@ -1118,7 +1183,8 @@
           await writable.close();
 
           const deletedCount = await pruneOldBackups(dirHandle, MAX_BACKUP_FILES);
-          const extraMsg = deletedCount > 0 ? `\n오래된 백업 ${deletedCount}개를 자동 정리해 최근 ${MAX_BACKUP_FILES}개만 남겼습니다.` : '';
+          const extraMsg = deletedCount > 0 ? `
+오래된 백업 ${deletedCount}개를 자동 정리해 최근 ${MAX_BACKUP_FILES}개만 남겼습니다.` : '';
           alert(`beekeeper 폴더에 '${filename}' 파일로 저장했습니다.${extraMsg}`);
           return;
         }
@@ -1150,15 +1216,18 @@
 
       try {
         const rawText = await readBackupFileText(file);
-        const cleaned = String(rawText || '').replace(/^\uFEFF/, '').trim();
+        const cleaned = String(rawText || '').replace(/^﻿/, '').trim();
         const parsed = JSON.parse(cleaned);
         applyRestoredData(parsed, fileName);
       } catch (err) {
         document.getElementById('pasteRestoreBox').classList.add('open');
         document.getElementById('pasteJsonInput').focus();
         alert(
-          `[${fileName}] 파일 읽기/복원 실패\n` +
-          `원인: ${err && err.message ? err.message : String(err)}\n\n` +
+          `[${fileName}] 파일 읽기/복원 실패
+` +
+          `원인: ${err && err.message ? err.message : String(err)}
+
+` +
           `아래 '붙여넣기 복원' 창에 JSON 내용을 붙여넣어 복원해 주세요.`
         );
       }
@@ -1177,7 +1246,7 @@
     };
 
     document.getElementById('runPasteRestoreBtn').onclick = () => {
-      const raw = document.getElementById('pasteJsonInput').value.replace(/^\uFEFF/, '').trim();
+      const raw = document.getElementById('pasteJsonInput').value.replace(/^﻿/, '').trim();
       if (!raw) {
         alert('붙여넣은 JSON 내용이 없습니다.');
         return;
@@ -1208,7 +1277,8 @@
       const apiary = getCurrentApiary();
       const maxPos = apiary.hives.length + 1;
       const answer = prompt(
-        `몇 번 위치에 새 벌통을 넣을까요? (1 ~ ${maxPos} 입력)\n※ ${maxPos}을 입력하거나 그대로 확인을 누르면 맨 뒤에 추가됩니다.`,
+        `몇 번 위치에 새 벌통을 넣을까요? (1 ~ ${maxPos} 입력)
+※ ${maxPos}을 입력하거나 그대로 확인을 누르면 맨 뒤에 추가됩니다.`,
         String(maxPos)
       );
       if (answer === null) return;
@@ -1291,3 +1361,4 @@
     render();
   </script>
 </body>
+</html>
