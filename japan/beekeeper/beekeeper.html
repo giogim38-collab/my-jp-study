@@ -10,65 +10,78 @@
       font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
       background: #f4f6f3;
       color: #1e293b;
-      padding: 16px;
+      padding: 14px;
       max-width: 960px;
       margin: 0 auto;
+      font-size: 15px;
+      line-height: 1.45;
     }
     header {
       background: #1b5e20;
       color: #fff;
-      padding: 16px 20px;
+      padding: 16px 18px;
       border-radius: 12px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     h1 { font-size: 20px; }
+    .sub-status { font-size: 13px; opacity: 0.92; }
+
+    .screen { display: none; }
+    .screen.active { display: block; }
+
     .panel {
       background: #fff;
-      border: 1px solid #e2e8f0;
-      border-radius: 10px;
-      padding: 12px 14px;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 14px;
       margin-bottom: 14px;
+    }
+    .panel-title {
+      font-size: 16px;
+      font-weight: 800;
+      color: #1b5e20;
+      margin-bottom: 10px;
+    }
+    .btn-row {
       display: flex;
       flex-wrap: wrap;
       gap: 8px;
       align-items: center;
     }
-    .add-apiary-box, .paste-restore-box {
+    .collapsible-box {
       display: none;
       width: 100%;
-      padding-top: 10px;
-      margin-top: 4px;
+      margin-top: 12px;
+      padding-top: 12px;
       border-top: 1px dashed #cbd5e1;
       flex-wrap: wrap;
       gap: 8px;
       align-items: center;
     }
-    .add-apiary-box.open, .paste-restore-box.open {
-      display: flex;
-    }
-    select, input, textarea, button, .btn-label {
+    .collapsible-box.open { display: flex; }
+
+    select, input, textarea, button {
       font-family: inherit;
-      font-size: 14px;
-      padding: 8px 12px;
-      border-radius: 8px;
+      font-size: 15px;
+      padding: 10px 14px;
+      border-radius: 9px;
       border: 1px solid #cbd5e1;
     }
-    button, .btn-label {
+    button {
       background: #2e7d32;
       color: #fff;
       border: none;
       font-weight: 700;
       cursor: pointer;
-      display: inline-block;
       user-select: none;
     }
-    button:active, .btn-label:active { opacity: 0.85; }
-    button.secondary, .btn-label.secondary { background: #475569; }
+    button:active { opacity: 0.85; }
+    button.secondary { background: #475569; }
     button.danger { background: #dc2626; }
     button.outline-green {
       background: #e8f5e9;
@@ -91,36 +104,101 @@
       height: 1px;
       opacity: 0.01;
     }
-    .divider {
-      width: 1px;
-      height: 24px;
-      background: #cbd5e1;
-      margin: 0 4px;
+
+    /* 봉장 선택 카드 목록 */
+    .apiary-list {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
+      gap: 12px;
+      margin-bottom: 14px;
     }
+    .apiary-card {
+      background: #fff;
+      border: 2px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 16px;
+      cursor: pointer;
+      transition: transform 0.1s, border-color 0.1s;
+    }
+    .apiary-card:hover {
+      transform: translateY(-2px);
+      border-color: #2e7d32;
+    }
+    .apiary-card-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      margin-bottom: 8px;
+    }
+    .apiary-name {
+      font-size: 18px;
+      font-weight: 800;
+      color: #0f172a;
+    }
+    .apiary-badge {
+      background: #e8f5e9;
+      color: #1b5e20;
+      font-weight: 800;
+      font-size: 14px;
+      padding: 4px 10px;
+      border-radius: 999px;
+    }
+    .apiary-sub {
+      font-size: 14px;
+      color: #475569;
+    }
+    .apiary-alert-text {
+      margin-top: 6px;
+      font-size: 14px;
+      font-weight: 700;
+      color: #dc2626;
+    }
+
+    /* 벌통 화면 상단 바 */
+    .top-nav {
+      background: #fff;
+      border: 1px solid #cbd5e1;
+      border-radius: 12px;
+      padding: 12px 14px;
+      margin-bottom: 12px;
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: space-between;
+      align-items: center;
+      gap: 10px;
+    }
+    .current-apiary-title {
+      font-size: 19px;
+      font-weight: 800;
+      color: #1b5e20;
+    }
+
     .summary {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
       gap: 10px;
-      margin-bottom: 16px;
+      margin-bottom: 14px;
     }
     .stat {
       background: #fff;
       padding: 12px 14px;
       border-radius: 10px;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #cbd5e1;
     }
-    .stat span { display: block; font-size: 12px; color: #64748b; }
-    .stat strong { font-size: 20px; color: #1b5e20; }
+    .stat span { display: block; font-size: 13px; color: #475569; }
+    .stat strong { font-size: 21px; color: #1b5e20; }
+
+    /* 벌통 카드: 줄바꿈으로 한눈에 보기 쉽게 */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(185px, 1fr));
-      gap: 10px;
+      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+      gap: 12px;
     }
     .hive-card {
       background: #fff;
       border: 2px solid #cbd5e1;
-      border-radius: 10px;
-      padding: 12px;
+      border-radius: 12px;
+      padding: 14px;
       cursor: pointer;
       transition: transform 0.1s;
     }
@@ -132,34 +210,37 @@
     }
     .hive-card.alert { border-color: #dc2626; background: #fef2f2; }
     .hive-card.caution { border-color: #d97706; background: #fffbeb; }
+
     .hive-header {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 6px;
-      margin-bottom: 8px;
+      gap: 8px;
+      padding-bottom: 8px;
+      margin-bottom: 10px;
+      border-bottom: 1px solid #e2e8f0;
     }
-    .hive-num { font-weight: 800; font-size: 16px; }
+    .hive-num { font-weight: 800; font-size: 18px; color: #0f172a; }
     .inspect-control {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 6px;
       user-select: none;
     }
     .inspect-label {
-      font-size: 11px;
+      font-size: 13px;
       font-weight: 700;
-      color: #475569;
+      color: #334155;
     }
     .inspect-toggle {
       display: inline-grid;
       grid-template-columns: 1fr 1fr;
-      width: 36px;
-      height: 18px;
+      width: 42px;
+      height: 22px;
       padding: 2px;
       border-radius: 999px;
       background: #e2e8f0;
-      border: 1px solid #cbd5e1;
+      border: 1px solid #94a3b8;
       cursor: pointer;
       align-items: center;
       gap: 2px;
@@ -176,22 +257,52 @@
       transition: background-color 0.12s ease;
     }
     .inspect-toggle:not(.is-active) .inspect-dot.left {
-      background: #94a3b8;
+      background: #64748b;
     }
     .inspect-toggle.is-active .inspect-dot.right {
       background: #2563eb;
     }
-    .hive-meta { font-size: 12px; color: #475569; line-height: 1.45; }
+
+    .hive-lines {
+      display: flex;
+      flex-direction: column;
+      gap: 5px;
+      font-size: 15px;
+      color: #1e293b;
+    }
+    .hive-line {
+      display: flex;
+      justify-content: space-between;
+      gap: 8px;
+    }
+    .hive-line-key {
+      color: #64748b;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .hive-line-val {
+      font-weight: 700;
+      text-align: right;
+      word-break: break-word;
+    }
+    .hive-note-box {
+      margin-top: 6px;
+      padding-top: 6px;
+      border-top: 1px dashed #cbd5e1;
+      font-size: 14px;
+      color: #334155;
+      word-break: break-word;
+    }
 
     .stats-wrap { display: grid; gap: 14px; }
     .stats-card {
       background: #fff;
-      border: 1px solid #e2e8f0;
+      border: 1px solid #cbd5e1;
       border-radius: 12px;
       padding: 16px;
     }
     .stats-card h3 {
-      font-size: 16px;
+      font-size: 17px;
       color: #1b5e20;
       margin-bottom: 12px;
     }
@@ -207,12 +318,12 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 14px;
+      font-size: 15px;
       font-weight: 700;
     }
     .bar-bg {
       width: 100%;
-      height: 10px;
+      height: 11px;
       background: #e2e8f0;
       border-radius: 999px;
       overflow: hidden;
@@ -226,20 +337,21 @@
     .bar-fill.warn { background: #d97706; }
     .bar-fill.alert { background: #dc2626; }
     .hive-list-text {
-      font-size: 12px;
+      font-size: 13px;
       color: #475569;
+      line-height: 1.4;
     }
 
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(0,0,0,0.45);
-      display: none; align-items: center; justify-content: center; padding: 16px; z-index: 50;
+      display: none; align-items: center; justify-content: center; padding: 14px; z-index: 50;
     }
     .modal {
       background: #fff; width: 100%; max-width: 520px; border-radius: 12px;
       padding: 20px; max-height: 90vh; overflow-y: auto;
     }
     .field { margin-bottom: 12px; }
-    .field label { display: block; font-size: 13px; font-weight: 700; margin-bottom: 4px; }
+    .field label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
     .field input, .field select, .field textarea { width: 100%; }
     .modal-actions {
       display: flex;
@@ -253,54 +365,73 @@
 </head>
 <body>
   <header>
-    <h1>🐝 다중 양봉장 관리</h1>
-    <div id="syncStatus" style="font-size:13px;">로컬 저장 모드 · 폴더: beekeeper (최근 10개 유지)</div>
+    <h1>🐝 양봉장 통합 관리</h1>
+    <div id="syncStatus" class="sub-status">로컬 저장 모드 · 폴더: beekeeper (최근 10개 유지)</div>
   </header>
 
-  <div class="panel">
-    <label for="apiarySelect"><strong>현재 봉장:</strong></label>
-    <select id="apiarySelect"></select>
-    <button type="button" class="secondary" id="renameApiaryBtn">이름 변경</button>
+  <!-- 1. 앞 화면: 봉장 선택 및 관리/백업/복원 -->
+  <section id="apiaryScreen" class="screen active">
+    <div class="panel">
+      <div class="panel-title">봉장 선택 (누르면 벌통 카드를 봅니다)</div>
+      <div id="apiaryListBox" class="apiary-list"></div>
+      <div class="btn-row">
+        <button type="button" class="outline-green" id="toggleAddApiaryBtn">+ 새 봉장 추가</button>
+        <button type="button" class="secondary" id="renameApiaryBtn">봉장 이름 변경</button>
+        <button type="button" class="danger" id="deleteApiaryBtn">봉장 삭제</button>
+      </div>
 
-    <button type="button" class="secondary" id="insertHiveBtn">+ 벌통 추가</button>
+      <div class="collapsible-box" id="addApiaryBox">
+        <input type="text" id="newApiaryName" placeholder="새 봉장 이름 (예: 제4봉장)" />
+        <label for="newApiaryCount" style="font-size:14px;"><strong>군수:</strong></label>
+        <input type="number" id="newApiaryCount" value="20" min="1" max="500" style="width:90px;" />
+        <button type="button" id="addApiaryBtn">추가 확정</button>
+        <button type="button" class="secondary" id="cancelAddApiaryBtn">취소</button>
+      </div>
 
-    <div class="divider"></div>
-
-    <button type="button" class="tab-btn active" id="viewGridBtn">벌통 카드 보기</button>
-    <button type="button" class="tab-btn" id="viewStatsBtn">항목별 통계 보기</button>
-  </div>
-
-  <div class="panel">
-    <button type="button" class="outline-green" id="toggleAddApiaryBtn">
-      전체 봉장: <span id="apiaryCountLabel">1</span>개 · + 새 봉장 추가
-    </button>
-    <button type="button" class="danger" id="deleteApiaryBtn">현재 봉장 삭제</button>
-
-    <div class="divider"></div>
-
-    <button type="button" class="secondary" id="exportBtn">백업(beekeeper)</button>
-    <button type="button" class="secondary" id="importBtn">복원</button>
-    <button type="button" class="outline-green" id="togglePasteRestoreBtn">붙여넣기 복원</button>
-    <input type="file" id="importFile" class="visually-hidden-file" />
-
-    <div class="add-apiary-box" id="addApiaryBox">
-      <input type="text" id="newApiaryName" placeholder="새 봉장 이름 (예: 제2봉장)" />
-      <label for="newApiaryCount" style="font-size:13px;"><strong>군수:</strong></label>
-      <input type="number" id="newApiaryCount" value="20" min="1" max="500" style="width:82px;" title="봉장 군수" />
-      <button type="button" id="addApiaryBtn">추가 확정</button>
-      <button type="button" class="secondary" id="cancelAddApiaryBtn">취소</button>
+      <div class="collapsible-box" id="manageApiaryBox">
+        <label for="manageApiarySelect" style="font-size:14px;"><strong>대상 봉장:</strong></label>
+        <select id="manageApiarySelect"></select>
+        <button type="button" class="secondary" id="confirmRenameApiaryBtn">이름 바꾸기</button>
+        <button type="button" class="danger" id="confirmDeleteApiaryBtn">이 봉장 삭제</button>
+        <button type="button" class="secondary" id="closeManageApiaryBtn">닫기</button>
+      </div>
     </div>
 
-    <div class="paste-restore-box" id="pasteRestoreBox">
-      <textarea id="pasteJsonInput" rows="5" style="width:100%;" placeholder="백업 .json 파일 내용을 여기에 붙여넣으세요"></textarea>
-      <button type="button" id="runPasteRestoreBtn">내용으로 복원</button>
-      <button type="button" class="secondary" id="clearPasteRestoreBtn">지우기/닫기</button>
-    </div>
-  </div>
+    <div class="panel">
+      <div class="panel-title">백업 및 복원</div>
+      <div class="btn-row">
+        <button type="button" class="secondary" id="exportBtn">백업(beekeeper)</button>
+        <button type="button" class="secondary" id="importBtn">파일 복원</button>
+        <button type="button" class="outline-green" id="togglePasteRestoreBtn">붙여넣기 복원</button>
+        <input type="file" id="importFile" class="visually-hidden-file" />
+      </div>
 
-  <div class="summary" id="summaryBox"></div>
-  <div class="grid" id="hiveGrid"></div>
-  <div class="stats-wrap" id="statsWrap" style="display:none;"></div>
+      <div class="collapsible-box" id="pasteRestoreBox">
+        <textarea id="pasteJsonInput" rows="5" style="width:100%;" placeholder="백업 .json 파일 내용을 여기에 붙여넣으세요"></textarea>
+        <button type="button" id="runPasteRestoreBtn">내용으로 복원</button>
+        <button type="button" class="secondary" id="clearPasteRestoreBtn">지우기/닫기</button>
+      </div>
+    </div>
+  </section>
+
+  <!-- 2. 봉장 상세 화면: 벌통 카드 / 항목별 통계 -->
+  <section id="hiveScreen" class="screen">
+    <div class="top-nav">
+      <div class="btn-row">
+        <button type="button" class="secondary" id="backToApiariesBtn">← 봉장 목록</button>
+        <span id="currentApiaryHeading" class="current-apiary-title">제1봉장</span>
+      </div>
+      <div class="btn-row">
+        <button type="button" class="secondary" id="insertHiveBtn">+ 벌통 추가</button>
+        <button type="button" class="tab-btn active" id="viewGridBtn">벌통 카드</button>
+        <button type="button" class="tab-btn" id="viewStatsBtn">항목별 통계</button>
+      </div>
+    </div>
+
+    <div class="summary" id="summaryBox"></div>
+    <div class="grid" id="hiveGrid"></div>
+    <div class="stats-wrap" id="statsWrap" style="display:none;"></div>
+  </section>
 
   <!-- 벌통 내검 모달 -->
   <div class="modal-backdrop" id="modalBackdrop">
@@ -388,6 +519,7 @@
     const MAX_BACKUP_FILES = 10;
     let state = loadState();
     let currentApiaryId = state.apiaries[0].id;
+    let screenMode = 'apiaries'; // 'apiaries' | 'hives'
     let editingHiveIndex = null;
     let viewMode = 'grid';
     let beekeeperDirHandle = null;
@@ -474,6 +606,30 @@
 
     function getCurrentApiary() {
       return state.apiaries.find(a => a.id === currentApiaryId) || state.apiaries[0];
+    }
+
+    function countAlertHives(apiary) {
+      return apiary.hives.filter(h =>
+        h.inspection === '필요' ||
+        String(h.queen || '').includes('무왕') ||
+        String(h.treatment || '').includes('응애') ||
+        String(h.treatment || '').includes('질병') ||
+        String(h.treatment || '').includes('의심')
+      ).length;
+    }
+
+    function openApiaryScreen() {
+      screenMode = 'apiaries';
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    function openHiveScreen(apiaryId) {
+      currentApiaryId = apiaryId;
+      screenMode = 'hives';
+      viewMode = 'grid';
+      render();
+      window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 
     function toggleHiveInspection(idx, event) {
@@ -601,40 +757,64 @@
       `;
     }
 
-    function render() {
-      document.getElementById('apiaryCountLabel').textContent = state.apiaries.length;
+    function renderApiaryCards() {
+      const listBox = document.getElementById('apiaryListBox');
+      listBox.innerHTML = '';
 
-      const select = document.getElementById('apiarySelect');
-      select.innerHTML = '';
+      state.apiaries.forEach(a => {
+        const alertCnt = countAlertHives(a);
+        const avg = a.hives.length
+          ? (a.hives.reduce((s, h) => s + Number(h.frames || 0), 0) / a.hives.length).toFixed(1)
+          : 0;
+
+        const card = document.createElement('div');
+        card.className = 'apiary-card';
+        card.innerHTML = `
+          <div class="apiary-card-top">
+            <div class="apiary-name">${a.name}</div>
+            <div class="apiary-badge">${a.hives.length}군</div>
+          </div>
+          <div class="apiary-sub">평균 소비 ${avg}매 · 눌러서 열기</div>
+          ${alertCnt > 0 ? `<div class="apiary-alert-text">점검 필요 ${alertCnt}군</div>` : ''}
+        `;
+        card.onclick = () => openHiveScreen(a.id);
+        listBox.appendChild(card);
+      });
+
+      const manageSelect = document.getElementById('manageApiarySelect');
+      manageSelect.innerHTML = '';
       state.apiaries.forEach(a => {
         const opt = document.createElement('option');
         opt.value = a.id;
-        opt.textContent = `${a.name} (현재봉장군수: ${a.hives.length}군)`;
+        opt.textContent = `${a.name} (${a.hives.length}군)`;
         if (a.id === currentApiaryId) opt.selected = true;
-        select.appendChild(opt);
+        manageSelect.appendChild(opt);
       });
+    }
+
+    function render() {
+      document.getElementById('apiaryScreen').classList.toggle('active', screenMode === 'apiaries');
+      document.getElementById('hiveScreen').classList.toggle('active', screenMode === 'hives');
+
+      renderApiaryCards();
+
+      const apiary = getCurrentApiary();
+      document.getElementById('currentApiaryHeading').textContent = apiary.name;
 
       document.getElementById('viewGridBtn').classList.toggle('active', viewMode === 'grid');
       document.getElementById('viewStatsBtn').classList.toggle('active', viewMode === 'stats');
       document.getElementById('hiveGrid').style.display = viewMode === 'grid' ? 'grid' : 'none';
       document.getElementById('statsWrap').style.display = viewMode === 'stats' ? 'grid' : 'none';
 
-      const apiary = getCurrentApiary();
       const totalAllHives = state.apiaries.reduce((sum, a) => sum + a.hives.length, 0);
-      const alertCount = apiary.hives.filter(h =>
-        h.inspection === '필요' ||
-        String(h.queen || '').includes('무왕') ||
-        String(h.treatment || '').includes('응애') ||
-        String(h.treatment || '').includes('질병') ||
-        String(h.treatment || '').includes('의심')
-      ).length;
+      const alertCount = countAlertHives(apiary);
       const avgFrames = apiary.hives.length
         ? (apiary.hives.reduce((s, h) => s + Number(h.frames || 0), 0) / apiary.hives.length).toFixed(1)
         : 0;
 
       document.getElementById('summaryBox').innerHTML = `
+        <div class="stat"><span>현재 봉장 군수</span><strong>${apiary.hives.length}군</strong></div>
         <div class="stat"><span>전체 봉장 군수</span><strong>${totalAllHives}군</strong></div>
-        <div class="stat"><span>현재봉장군수 (${apiary.name})</span><strong>${apiary.hives.length}군</strong></div>
         <div class="stat"><span>평균 소비 수</span><strong>${avgFrames}매</strong></div>
         <div class="stat"><span>점검 필요 벌통</span><strong>${alertCount}군</strong></div>
       `;
@@ -648,6 +828,7 @@
         const coverageText = String(h.coverage || '');
         const feedText = String(h.feed || '');
         const treatmentText = String(h.treatment || '');
+        const noteText = String(h.note || '').trim();
 
         let cls = 'hive-card';
         if (queenText.includes('무왕') || treatmentText.includes('질병') || treatmentText.includes('의심')) cls += ' alert';
@@ -659,7 +840,7 @@
           <div class="hive-header">
             <div class="hive-num">${h.num}번 벌통</div>
             <div class="inspect-control">
-              <span class="inspect-label">내검대상</span>
+              <span class="inspect-label">내검</span>
               <span
                 role="button"
                 tabindex="0"
@@ -673,12 +854,14 @@
               </span>
             </div>
           </div>
-          <div class="hive-meta">
-            여왕: ${h.queen}<br/>
-            소비: ${h.frames}매 · 착봉: ${h.coverage}<br/>
-            산란: ${h.brood}<br/>
-            먹이: ${h.feed}<br/>
-            약제/병해충: ${h.treatment}
+          <div class="hive-lines">
+            <div class="hive-line"><span class="hive-line-key">여왕</span><span class="hive-line-val">${h.queen}</span></div>
+            <div class="hive-line"><span class="hive-line-key">소비</span><span class="hive-line-val">${h.frames}매</span></div>
+            <div class="hive-line"><span class="hive-line-key">착봉</span><span class="hive-line-val">${h.coverage}</span></div>
+            <div class="hive-line"><span class="hive-line-key">산란</span><span class="hive-line-val">${h.brood}</span></div>
+            <div class="hive-line"><span class="hive-line-key">먹이</span><span class="hive-line-val">${h.feed}</span></div>
+            <div class="hive-line"><span class="hive-line-key">약제/병</span><span class="hive-line-val">${h.treatment}</span></div>
+            ${noteText ? `<div class="hive-note-box">${noteText}</div>` : ''}
           </div>
         `;
 
@@ -698,8 +881,38 @@
       renderStats(apiary);
     }
 
+    document.getElementById('backToApiariesBtn').onclick = openApiaryScreen;
+
+    document.getElementById('toggleAddApiaryBtn').onclick = () => {
+      document.getElementById('manageApiaryBox').classList.remove('open');
+      const box = document.getElementById('addApiaryBox');
+      box.classList.toggle('open');
+      if (box.classList.contains('open')) {
+        document.getElementById('newApiaryName').focus();
+      }
+    };
+
+    document.getElementById('cancelAddApiaryBtn').onclick = () => {
+      document.getElementById('addApiaryBox').classList.remove('open');
+    };
+
     document.getElementById('renameApiaryBtn').onclick = () => {
-      const apiary = getCurrentApiary();
+      document.getElementById('addApiaryBox').classList.remove('open');
+      document.getElementById('manageApiaryBox').classList.toggle('open');
+    };
+
+    document.getElementById('deleteApiaryBtn').onclick = () => {
+      document.getElementById('addApiaryBox').classList.remove('open');
+      document.getElementById('manageApiaryBox').classList.toggle('open');
+    };
+
+    document.getElementById('closeManageApiaryBtn').onclick = () => {
+      document.getElementById('manageApiaryBox').classList.remove('open');
+    };
+
+    document.getElementById('confirmRenameApiaryBtn').onclick = () => {
+      const targetId = document.getElementById('manageApiarySelect').value;
+      const apiary = state.apiaries.find(a => a.id === targetId) || getCurrentApiary();
       const nextName = prompt('새 봉장 이름을 입력하세요.', apiary.name);
       if (nextName === null) return;
       const trimmed = nextName.trim();
@@ -711,16 +924,18 @@
       saveState();
     };
 
-    document.getElementById('toggleAddApiaryBtn').onclick = () => {
-      const box = document.getElementById('addApiaryBox');
-      box.classList.toggle('open');
-      if (box.classList.contains('open')) {
-        document.getElementById('newApiaryName').focus();
+    document.getElementById('confirmDeleteApiaryBtn').onclick = () => {
+      if (state.apiaries.length <= 1) {
+        alert('최소 1개의 봉장은 남아 있어야 합니다.');
+        return;
       }
-    };
-
-    document.getElementById('cancelAddApiaryBtn').onclick = () => {
-      document.getElementById('addApiaryBox').classList.remove('open');
+      const targetId = document.getElementById('manageApiarySelect').value;
+      const apiary = state.apiaries.find(a => a.id === targetId) || getCurrentApiary();
+      if (confirm(`'${apiary.name}' 전체 기록을 삭제할까요?`)) {
+        state.apiaries = state.apiaries.filter(a => a.id !== apiary.id);
+        currentApiaryId = state.apiaries[0].id;
+        saveState();
+      }
     };
 
     async function ensureBeekeeperFolder() {
@@ -796,6 +1011,7 @@
       }
       state = normalized;
       currentApiaryId = state.apiaries[0].id;
+      screenMode = 'apiaries';
       saveState();
       alert(`${labelText || '백업 데이터'}에서 복원했습니다.`);
       return true;
@@ -1015,11 +1231,6 @@
       }
     };
 
-    document.getElementById('apiarySelect').onchange = (e) => {
-      currentApiaryId = e.target.value;
-      render();
-    };
-
     document.getElementById('addApiaryBtn').onclick = () => {
       const nameInput = document.getElementById('newApiaryName');
       const countInput = document.getElementById('newApiaryCount');
@@ -1031,19 +1242,6 @@
       nameInput.value = '';
       document.getElementById('addApiaryBox').classList.remove('open');
       saveState();
-    };
-
-    document.getElementById('deleteApiaryBtn').onclick = () => {
-      if (state.apiaries.length <= 1) {
-        alert('최소 1개의 봉장은 남아 있어야 합니다.');
-        return;
-      }
-      const apiary = getCurrentApiary();
-      if (confirm(`'${apiary.name}' 전체 기록을 삭제할까요?`)) {
-        state.apiaries = state.apiaries.filter(a => a.id !== apiary.id);
-        currentApiaryId = state.apiaries[0].id;
-        saveState();
-      }
     };
 
     render();
