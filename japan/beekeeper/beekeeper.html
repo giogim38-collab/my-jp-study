@@ -38,7 +38,7 @@
       gap: 8px;
       align-items: center;
     }
-    .add-apiary-box {
+    .add-apiary-box, .paste-restore-box {
       display: none;
       width: 100%;
       padding-top: 10px;
@@ -48,7 +48,7 @@
       gap: 8px;
       align-items: center;
     }
-    .add-apiary-box.open {
+    .add-apiary-box.open, .paste-restore-box.open {
       display: flex;
     }
     select, input, textarea, button, .btn-label {
@@ -83,7 +83,6 @@
       background: #1b5e20;
       color: #fff;
     }
-    /* 안드로이드 브라우저에서 차단되지 않도록 화면 밖 투명 배치 */
     .visually-hidden-file {
       position: fixed;
       left: -9999px;
@@ -280,7 +279,8 @@
     <div class="divider"></div>
 
     <button type="button" class="secondary" id="exportBtn">백업(beekeeper)</button>
-    <label for="importFile" class="btn-label secondary" id="importBtn">복원</label>
+    <button type="button" class="secondary" id="importBtn">복원</button>
+    <button type="button" class="outline-green" id="togglePasteRestoreBtn">붙여넣기 복원</button>
     <input type="file" id="importFile" class="visually-hidden-file" />
 
     <div class="add-apiary-box" id="addApiaryBox">
@@ -289,6 +289,12 @@
       <input type="number" id="newApiaryCount" value="20" min="1" max="500" style="width:82px;" title="봉장 군수" />
       <button type="button" id="addApiaryBtn">추가 확정</button>
       <button type="button" class="secondary" id="cancelAddApiaryBtn">취소</button>
+    </div>
+
+    <div class="paste-restore-box" id="pasteRestoreBox">
+      <textarea id="pasteJsonInput" rows="5" style="width:100%;" placeholder="백업 .json 파일 내용을 여기에 붙여넣으세요"></textarea>
+      <button type="button" id="runPasteRestoreBtn">내용으로 복원</button>
+      <button type="button" class="secondary" id="clearPasteRestoreBtn">지우기/닫기</button>
     </div>
   </div>
 
@@ -353,7 +359,7 @@
         </datalist>
       </div>
       <div class="field">
-        <label>질병 및 약재 사용 현황</label>
+        <label>질병 및 약제 사용 현황</label>
         <input type="text" id="fTreatment" list="treatmentPresets" placeholder="예: 이상 없음 / 옥살산·플루발리네이트 처리" />
         <datalist id="treatmentPresets">
           <option value="이상 없음"></option>
@@ -401,6 +407,40 @@
       };
     }
 
+    function normalizeHive(h, idx) {
+      const base = createSingleHive(idx + 1);
+      const src = (h && typeof h === 'object') ? h : {};
+      return {
+        ...base,
+        ...src,
+        num: String(src.num !== undefined && src.num !== null && String(src.num).trim() !== '' ? src.num : (idx + 1)),
+        inspection: src.inspection === '필요' ? '필요' : '불필요',
+        queen: src.queen ? String(src.queen) : '정상 산란',
+        frames: (src.frames === '' || src.frames === undefined || src.frames === null || Number.isNaN(Number(src.frames))) ? 0 : Number(src.frames),
+        coverage: src.coverage ? String(src.coverage) : '양호(밀착)',
+        brood: src.brood ? String(src.brood) : '양호(집중 봉판)',
+        feed: src.feed !== undefined && src.feed !== null ? String(src.feed) : '저밀 충분',
+        treatment: src.treatment !== undefined && src.treatment !== null ? String(src.treatment) : '이상 없음',
+        note: src.note !== undefined && src.note !== null ? String(src.note) : '',
+        updatedAt: src.updatedAt ? String(src.updatedAt) : ''
+      };
+    }
+
+    function normalizeState(rawObj) {
+      if (!rawObj || !Array.isArray(rawObj.apiaries) || !rawObj.apiaries.length) {
+        return null;
+      }
+      const apiaries = rawObj.apiaries.map((a, aIdx) => {
+        const hivesList = Array.isArray(a && a.hives) ? a.hives : [];
+        return {
+          id: (a && a.id) ? String(a.id) : ('apiary-' + (aIdx + 1) + '-' + Date.now()),
+          name: (a && a.name && String(a.name).trim()) ? String(a.name).trim() : `제${aIdx + 1}봉장`,
+          hives: hivesList.map((h, hIdx) => normalizeHive(h, hIdx))
+        };
+      });
+      return { apiaries };
+    }
+
     function createHives(count) {
       return Array.from({ length: count }, (_, i) => createSingleHive(i + 1));
     }
@@ -416,7 +456,8 @@
       if (raw) {
         try {
           const parsed = JSON.parse(raw);
-          if (Array.isArray(parsed.apiaries) && parsed.apiaries.length) return parsed;
+          const normalized = normalizeState(parsed);
+          if (normalized) return normalized;
         } catch (e) {}
       }
       return {
@@ -582,10 +623,10 @@
       const totalAllHives = state.apiaries.reduce((sum, a) => sum + a.hives.length, 0);
       const alertCount = apiary.hives.filter(h =>
         h.inspection === '필요' ||
-        h.queen.includes('무왕') ||
-        h.treatment.includes('응애') ||
-        h.treatment.includes('질병') ||
-        h.treatment.includes('의심')
+        String(h.queen || '').includes('무왕') ||
+        String(h.treatment || '').includes('응애') ||
+        String(h.treatment || '').includes('질병') ||
+        String(h.treatment || '').includes('의심')
       ).length;
       const avgFrames = apiary.hives.length
         ? (apiary.hives.reduce((s, h) => s + Number(h.frames || 0), 0) / apiary.hives.length).toFixed(1)
@@ -603,9 +644,14 @@
       apiary.hives.forEach((h, idx) => {
         const card = document.createElement('div');
         const isInspectNeeded = h.inspection === '필요';
+        const queenText = String(h.queen || '');
+        const coverageText = String(h.coverage || '');
+        const feedText = String(h.feed || '');
+        const treatmentText = String(h.treatment || '');
+
         let cls = 'hive-card';
-        if (h.queen.includes('무왕') || h.treatment.includes('질병') || h.treatment.includes('의심')) cls += ' alert';
-        else if (h.queen.includes('왕대') || h.coverage.includes('약군') || h.feed.includes('부족')) cls += ' caution';
+        if (queenText.includes('무왕') || treatmentText.includes('질병') || treatmentText.includes('의심')) cls += ' alert';
+        else if (queenText.includes('왕대') || coverageText.includes('약군') || feedText.includes('부족')) cls += ' caution';
         else if (isInspectNeeded) cls += ' inspect-needed';
         card.className = cls;
 
@@ -730,9 +776,7 @@
         try {
           await dirHandle.removeEntry(oldName);
           deletedCount += 1;
-        } catch (err) {
-          // 개별 오래된 파일 삭제 실패 시 전체 백업을 막지 않음
-        }
+        } catch (err) {}
       }
       return deletedCount;
     }
@@ -745,14 +789,50 @@
     }
 
     function applyRestoredData(parsed, labelText) {
-      if (!parsed || !Array.isArray(parsed.apiaries) || !parsed.apiaries.length) {
-        alert('올바른 백업 파일이 아닙니다.');
-        return;
+      const normalized = normalizeState(parsed);
+      if (!normalized) {
+        alert('올바른 백업 파일이 아닙니다. (apiaries 배열 확인 필요)');
+        return false;
       }
-      state = parsed;
+      state = normalized;
       currentApiaryId = state.apiaries[0].id;
       saveState();
-      alert(`${labelText || '백업 파일'}에서 복원했습니다.`);
+      alert(`${labelText || '백업 데이터'}에서 복원했습니다.`);
+      return true;
+    }
+
+    function readFileAsTextSafe(file) {
+      return new Promise((resolve, reject) => {
+        if (typeof FileReader === 'undefined') {
+          if (typeof file.text === 'function') {
+            file.text().then(resolve, reject);
+            return;
+          }
+          reject(new Error('파일 읽기 API를 지원하지 않는 브라우저입니다.'));
+          return;
+        }
+        const reader = new FileReader();
+        reader.onload = () => {
+          const res = reader.result;
+          if (res instanceof ArrayBuffer) {
+            try {
+              resolve(new TextDecoder('utf-8').decode(res));
+            } catch (e) {
+              reject(e);
+            }
+          } else {
+            resolve(String(res || ''));
+          }
+        };
+        reader.onerror = () => {
+          reject(reader.error || new Error('FileReader 읽기 오류'));
+        };
+        if (typeof reader.readAsArrayBuffer === 'function') {
+          reader.readAsArrayBuffer(file);
+        } else {
+          reader.readAsText(file, 'utf-8');
+        }
+      });
     }
 
     document.getElementById('exportBtn').onclick = async () => {
@@ -786,21 +866,75 @@
       alert(`'${filename}' 파일을 내려받았습니다.`);
     };
 
-    document.getElementById('importFile').onchange = async (e) => {
+    const importFileInput = document.getElementById('importFile');
+    document.getElementById('importBtn').onclick = () => {
+      importFileInput.value = '';
+      importFileInput.click();
+    };
+
+    importFileInput.onchange = async (e) => {
       const file = e.target.files && e.target.files[0];
+      const fileName = file && file.name ? file.name : '선택한 파일';
       e.target.value = '';
       if (!file) return;
 
       try {
-        let text = await file.text();
-        text = text.replace(/^\uFEFF/, '').trim();
-        const parsed = JSON.parse(text);
-        applyRestoredData(parsed, file.name);
+        let rawText = '';
+        try {
+          rawText = await readFileAsTextSafe(file);
+        } catch (readErr) {
+          if (typeof file.text === 'function') {
+            rawText = await file.text();
+          } else {
+            throw readErr;
+          }
+        }
+
+        const cleaned = String(rawText || '').replace(/^\uFEFF/, '').trim();
+        if (!cleaned) {
+          throw new Error('파일 내용이 비어 있습니다.');
+        }
+
+        const parsed = JSON.parse(cleaned);
+        applyRestoredData(parsed, fileName);
       } catch (err) {
         alert(
-          `[${file.name}] 파일을 읽는 중 오류가 발생했습니다.\n` +
-          '원인: ' + (err && err.name ? err.name : 'Error') + ' - ' + (err && err.message ? err.message : String(err))
+          `[${fileName}] 복원 오류\n` +
+          `종류: ${err && err.name ? err.name : 'Error'}\n` +
+          `내용: ${err && err.message ? err.message : String(err)}\n` +
+          `※ 파일 선택기 오류가 계속되면 '붙여넣기 복원' 버튼을 이용해 주세요.`
         );
+      }
+    };
+
+    document.getElementById('togglePasteRestoreBtn').onclick = () => {
+      const box = document.getElementById('pasteRestoreBox');
+      box.classList.toggle('open');
+      if (box.classList.contains('open')) {
+        document.getElementById('pasteJsonInput').focus();
+      }
+    };
+
+    document.getElementById('clearPasteRestoreBtn').onclick = () => {
+      document.getElementById('pasteJsonInput').value = '';
+      document.getElementById('pasteRestoreBox').classList.remove('open');
+    };
+
+    document.getElementById('runPasteRestoreBtn').onclick = () => {
+      const raw = document.getElementById('pasteJsonInput').value.replace(/^\uFEFF/, '').trim();
+      if (!raw) {
+        alert('붙여넣은 JSON 내용이 없습니다.');
+        return;
+      }
+      try {
+        const parsed = JSON.parse(raw);
+        const ok = applyRestoredData(parsed, '붙여넣기 데이터');
+        if (ok) {
+          document.getElementById('pasteJsonInput').value = '';
+          document.getElementById('pasteRestoreBox').classList.remove('open');
+        }
+      } catch (err) {
+        alert('JSON 형식 오류: ' + (err && err.message ? err.message : String(err)));
       }
     };
 
