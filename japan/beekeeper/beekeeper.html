@@ -10,26 +10,26 @@
       font-family: -apple-system, BlinkMacSystemFont, "Malgun Gothic", sans-serif;
       background: #f4f6f3;
       color: #1e293b;
-      padding: 14px;
+      padding: 12px;
       max-width: 960px;
       margin: 0 auto;
-      font-size: 15px;
-      line-height: 1.45;
+      font-size: 14px;
+      line-height: 1.4;
     }
     header {
       background: #1b5e20;
       color: #fff;
-      padding: 16px 18px;
+      padding: 14px 16px;
       border-radius: 12px;
-      margin-bottom: 14px;
+      margin-bottom: 12px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
+      gap: 6px;
     }
-    h1 { font-size: 20px; }
-    .sub-status { font-size: 13px; opacity: 0.92; }
+    h1 { font-size: 19px; }
+    .sub-status { font-size: 12px; opacity: 0.92; }
 
     .screen { display: none; }
     .screen.active { display: block; }
@@ -38,11 +38,11 @@
       background: #fff;
       border: 1px solid #cbd5e1;
       border-radius: 12px;
-      padding: 14px;
-      margin-bottom: 14px;
+      padding: 12px;
+      margin-bottom: 12px;
     }
     .panel-title {
-      font-size: 16px;
+      font-size: 15px;
       font-weight: 800;
       color: #1b5e20;
       margin-bottom: 10px;
@@ -56,8 +56,8 @@
     .collapsible-box {
       display: none;
       width: 100%;
-      margin-top: 12px;
-      padding-top: 12px;
+      margin-top: 10px;
+      padding-top: 10px;
       border-top: 1px dashed #cbd5e1;
       flex-wrap: wrap;
       gap: 8px;
@@ -67,9 +67,9 @@
 
     select, input, textarea, button {
       font-family: inherit;
-      font-size: 15px;
-      padding: 10px 14px;
-      border-radius: 9px;
+      font-size: 14px;
+      padding: 9px 12px;
+      border-radius: 8px;
       border: 1px solid #cbd5e1;
     }
     button {
@@ -105,18 +105,23 @@
       opacity: 0.01;
     }
 
-    /* 봉장 선택 카드 목록 */
+    /* 봉장 선택 카드 목록: 모바일 2열 */
     .apiary-list {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(230px, 1fr));
-      gap: 12px;
-      margin-bottom: 14px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 10px;
+      margin-bottom: 12px;
+    }
+    @media (min-width: 640px) {
+      .apiary-list {
+        grid-template-columns: repeat(3, 1fr);
+      }
     }
     .apiary-card {
       background: #fff;
       border: 2px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 16px;
+      border-radius: 10px;
+      padding: 12px;
       cursor: pointer;
       transition: transform 0.1s, border-color 0.1s;
     }
@@ -128,10 +133,11 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      margin-bottom: 8px;
+      gap: 6px;
+      margin-bottom: 6px;
     }
     .apiary-name {
-      font-size: 18px;
+      font-size: 16px;
       font-weight: 800;
       color: #0f172a;
     }
@@ -139,18 +145,19 @@
       background: #e8f5e9;
       color: #1b5e20;
       font-weight: 800;
-      font-size: 14px;
-      padding: 4px 10px;
+      font-size: 13px;
+      padding: 3px 8px;
       border-radius: 999px;
+      white-space: nowrap;
     }
     .apiary-sub {
-      font-size: 14px;
+      font-size: 13px;
       color: #475569;
     }
     .apiary-alert-text {
-      margin-top: 6px;
-      font-size: 14px;
-      font-weight: 700;
+      margin-top: 4px;
+      font-size: 13px;
+      font-weight: 800;
       color: #dc2626;
     }
 
@@ -158,49 +165,66 @@
     .top-nav {
       background: #fff;
       border: 1px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 12px 14px;
-      margin-bottom: 12px;
+      border-radius: 10px;
+      padding: 10px 12px;
+      margin-bottom: 10px;
       display: flex;
       flex-wrap: wrap;
       justify-content: space-between;
       align-items: center;
-      gap: 10px;
+      gap: 8px;
     }
     .current-apiary-title {
-      font-size: 19px;
+      font-size: 18px;
       font-weight: 800;
       color: #1b5e20;
     }
 
     .summary {
       display: grid;
-      grid-template-columns: repeat(auto-fit, minmax(145px, 1fr));
-      gap: 10px;
-      margin-bottom: 14px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+      margin-bottom: 12px;
+    }
+    @media (min-width: 640px) {
+      .summary {
+        grid-template-columns: repeat(4, 1fr);
+      }
     }
     .stat {
       background: #fff;
-      padding: 12px 14px;
+      padding: 10px 12px;
       border-radius: 10px;
       border: 1px solid #cbd5e1;
     }
-    .stat span { display: block; font-size: 13px; color: #475569; }
-    .stat strong { font-size: 21px; color: #1b5e20; }
+    .stat span { display: block; font-size: 12px; color: #475569; font-weight: 700; }
+    .stat strong { font-size: 19px; color: #1b5e20; }
 
-    /* 벌통 카드: 줄바꿈으로 한눈에 보기 쉽게 */
+    /* 벌통 카드: 핸드폰에서 한 줄에 2개 배치 */
     .grid {
       display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
-      gap: 12px;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 8px;
+    }
+    @media (min-width: 680px) {
+      .grid {
+        grid-template-columns: repeat(3, 1fr);
+        gap: 12px;
+      }
+    }
+    @media (min-width: 900px) {
+      .grid {
+        grid-template-columns: repeat(4, 1fr);
+      }
     }
     .hive-card {
       background: #fff;
       border: 2px solid #cbd5e1;
-      border-radius: 12px;
-      padding: 14px;
+      border-radius: 10px;
+      padding: 10px;
       cursor: pointer;
       transition: transform 0.1s;
+      min-width: 0;
     }
     .hive-card:hover { transform: translateY(-2px); border-color: #2e7d32; }
     .hive-card.inspect-needed {
@@ -215,28 +239,28 @@
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 8px;
-      padding-bottom: 8px;
-      margin-bottom: 10px;
+      gap: 4px;
+      padding-bottom: 6px;
+      margin-bottom: 8px;
       border-bottom: 1px solid #e2e8f0;
     }
-    .hive-num { font-weight: 800; font-size: 18px; color: #0f172a; }
+    .hive-num { font-weight: 800; font-size: 16px; color: #0f172a; }
     .inspect-control {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 4px;
       user-select: none;
     }
     .inspect-label {
-      font-size: 13px;
-      font-weight: 700;
-      color: #334155;
+      font-size: 12px;
+      font-weight: 800;
+      color: #0f172a;
     }
     .inspect-toggle {
       display: inline-grid;
       grid-template-columns: 1fr 1fr;
-      width: 42px;
-      height: 22px;
+      width: 36px;
+      height: 18px;
       padding: 2px;
       border-radius: 999px;
       background: #e2e8f0;
@@ -266,64 +290,67 @@
     .hive-lines {
       display: flex;
       flex-direction: column;
-      gap: 5px;
-      font-size: 15px;
+      gap: 4px;
+      font-size: 14px;
       color: #1e293b;
     }
     .hive-line {
       display: flex;
       justify-content: space-between;
-      gap: 8px;
+      align-items: baseline;
+      gap: 6px;
     }
     .hive-line-key {
-      color: #64748b;
-      font-weight: 600;
+      color: #0f172a;
+      font-weight: 800;
       flex-shrink: 0;
     }
     .hive-line-val {
-      font-weight: 700;
+      font-weight: 600;
+      color: #1e293b;
       text-align: right;
       word-break: break-word;
     }
     .hive-note-box {
-      margin-top: 6px;
-      padding-top: 6px;
+      margin-top: 5px;
+      padding-top: 5px;
       border-top: 1px dashed #cbd5e1;
-      font-size: 14px;
-      color: #334155;
+      font-size: 13px;
+      color: #0f172a;
+      font-weight: 600;
       word-break: break-word;
     }
 
-    .stats-wrap { display: grid; gap: 14px; }
+    .stats-wrap { display: grid; gap: 12px; }
     .stats-card {
       background: #fff;
       border: 1px solid #cbd5e1;
       border-radius: 12px;
-      padding: 16px;
+      padding: 14px;
     }
     .stats-card h3 {
-      font-size: 17px;
+      font-size: 16px;
       color: #1b5e20;
-      margin-bottom: 12px;
+      margin-bottom: 10px;
     }
     .stat-row {
-      padding: 10px 0;
+      padding: 8px 0;
       border-bottom: 1px solid #f1f5f9;
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 5px;
     }
     .stat-row:last-child { border-bottom: none; }
     .stat-row-top {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      font-size: 15px;
+      font-size: 14px;
       font-weight: 700;
     }
     .bar-bg {
       width: 100%;
-      height: 11px;
+      height: 10px;
       background: #e2e8f0;
       border-radius: 999px;
       overflow: hidden;
@@ -337,28 +364,28 @@
     .bar-fill.warn { background: #d97706; }
     .bar-fill.alert { background: #dc2626; }
     .hive-list-text {
-      font-size: 13px;
+      font-size: 12px;
       color: #475569;
       line-height: 1.4;
     }
 
     .modal-backdrop {
       position: fixed; inset: 0; background: rgba(0,0,0,0.45);
-      display: none; align-items: center; justify-content: center; padding: 14px; z-index: 50;
+      display: none; align-items: center; justify-content: center; padding: 12px; z-index: 50;
     }
     .modal {
       background: #fff; width: 100%; max-width: 520px; border-radius: 12px;
-      padding: 20px; max-height: 90vh; overflow-y: auto;
+      padding: 18px; max-height: 90vh; overflow-y: auto;
     }
-    .field { margin-bottom: 12px; }
-    .field label { display: block; font-size: 14px; font-weight: 700; margin-bottom: 4px; }
+    .field { margin-bottom: 10px; }
+    .field label { display: block; font-size: 14px; font-weight: 800; color: #0f172a; margin-bottom: 4px; }
     .field input, .field select, .field textarea { width: 100%; }
     .modal-actions {
       display: flex;
       justify-content: space-between;
       align-items: center;
       gap: 8px;
-      margin-top: 16px;
+      margin-top: 14px;
     }
     .modal-actions-right { display: flex; gap: 8px; }
   </style>
@@ -376,24 +403,30 @@
       <div id="apiaryListBox" class="apiary-list"></div>
       <div class="btn-row">
         <button type="button" class="outline-green" id="toggleAddApiaryBtn">+ 새 봉장 추가</button>
-        <button type="button" class="secondary" id="renameApiaryBtn">봉장 이름 변경</button>
-        <button type="button" class="danger" id="deleteApiaryBtn">봉장 삭제</button>
+        <button type="button" class="secondary" id="toggleRenameApiaryBtn">봉장 이름 변경</button>
+        <button type="button" class="danger" id="toggleDeleteApiaryBtn">봉장 삭제</button>
       </div>
 
       <div class="collapsible-box" id="addApiaryBox">
         <input type="text" id="newApiaryName" placeholder="새 봉장 이름 (예: 제4봉장)" />
         <label for="newApiaryCount" style="font-size:14px;"><strong>군수:</strong></label>
-        <input type="number" id="newApiaryCount" value="20" min="1" max="500" style="width:90px;" />
+        <input type="number" id="newApiaryCount" value="20" min="1" max="500" style="width:86px;" />
         <button type="button" id="addApiaryBtn">추가 확정</button>
         <button type="button" class="secondary" id="cancelAddApiaryBtn">취소</button>
       </div>
 
-      <div class="collapsible-box" id="manageApiaryBox">
-        <label for="manageApiarySelect" style="font-size:14px;"><strong>대상 봉장:</strong></label>
-        <select id="manageApiarySelect"></select>
-        <button type="button" class="secondary" id="confirmRenameApiaryBtn">이름 바꾸기</button>
-        <button type="button" class="danger" id="confirmDeleteApiaryBtn">이 봉장 삭제</button>
-        <button type="button" class="secondary" id="closeManageApiaryBtn">닫기</button>
+      <div class="collapsible-box" id="renameApiaryBox">
+        <label for="renameApiarySelect" style="font-size:14px;"><strong>대상 봉장:</strong></label>
+        <select id="renameApiarySelect"></select>
+        <button type="button" id="confirmRenameApiaryBtn">변경 실행</button>
+        <button type="button" class="secondary" id="closeRenameApiaryBtn">닫기</button>
+      </div>
+
+      <div class="collapsible-box" id="deleteApiaryBox">
+        <label for="deleteApiarySelect" style="font-size:14px;"><strong>삭제 봉장:</strong></label>
+        <select id="deleteApiarySelect"></select>
+        <button type="button" class="danger" id="confirmDeleteApiaryBtn">삭제 실행</button>
+        <button type="button" class="secondary" id="closeDeleteApiaryBtn">닫기</button>
       </div>
     </div>
 
@@ -519,7 +552,7 @@
     const MAX_BACKUP_FILES = 10;
     let state = loadState();
     let currentApiaryId = state.apiaries[0].id;
-    let screenMode = 'apiaries'; // 'apiaries' | 'hives'
+    let screenMode = 'apiaries';
     let editingHiveIndex = null;
     let viewMode = 'grid';
     let beekeeperDirHandle = null;
@@ -757,6 +790,17 @@
       `;
     }
 
+    function fillApiarySelect(selectEl) {
+      selectEl.innerHTML = '';
+      state.apiaries.forEach(a => {
+        const opt = document.createElement('option');
+        opt.value = a.id;
+        opt.textContent = `${a.name} (${a.hives.length}군)`;
+        if (a.id === currentApiaryId) opt.selected = true;
+        selectEl.appendChild(opt);
+      });
+    }
+
     function renderApiaryCards() {
       const listBox = document.getElementById('apiaryListBox');
       listBox.innerHTML = '';
@@ -774,22 +818,15 @@
             <div class="apiary-name">${a.name}</div>
             <div class="apiary-badge">${a.hives.length}군</div>
           </div>
-          <div class="apiary-sub">평균 소비 ${avg}매 · 눌러서 열기</div>
-          ${alertCnt > 0 ? `<div class="apiary-alert-text">점검 필요 ${alertCnt}군</div>` : ''}
+          <div class="apiary-sub">평균 ${avg}매 · 열기</div>
+          ${alertCnt > 0 ? `<div class="apiary-alert-text">점검 ${alertCnt}군</div>` : ''}
         `;
         card.onclick = () => openHiveScreen(a.id);
         listBox.appendChild(card);
       });
 
-      const manageSelect = document.getElementById('manageApiarySelect');
-      manageSelect.innerHTML = '';
-      state.apiaries.forEach(a => {
-        const opt = document.createElement('option');
-        opt.value = a.id;
-        opt.textContent = `${a.name} (${a.hives.length}군)`;
-        if (a.id === currentApiaryId) opt.selected = true;
-        manageSelect.appendChild(opt);
-      });
+      fillApiarySelect(document.getElementById('renameApiarySelect'));
+      fillApiarySelect(document.getElementById('deleteApiarySelect'));
     }
 
     function render() {
@@ -813,10 +850,10 @@
         : 0;
 
       document.getElementById('summaryBox').innerHTML = `
-        <div class="stat"><span>현재 봉장 군수</span><strong>${apiary.hives.length}군</strong></div>
-        <div class="stat"><span>전체 봉장 군수</span><strong>${totalAllHives}군</strong></div>
-        <div class="stat"><span>평균 소비 수</span><strong>${avgFrames}매</strong></div>
-        <div class="stat"><span>점검 필요 벌통</span><strong>${alertCount}군</strong></div>
+        <div class="stat"><span>현재 봉장</span><strong>${apiary.hives.length}군</strong></div>
+        <div class="stat"><span>전체 봉장</span><strong>${totalAllHives}군</strong></div>
+        <div class="stat"><span>평균 소비</span><strong>${avgFrames}매</strong></div>
+        <div class="stat"><span>점검 필요</span><strong>${alertCount}군</strong></div>
       `;
 
       const grid = document.getElementById('hiveGrid');
@@ -838,7 +875,7 @@
 
         card.innerHTML = `
           <div class="hive-header">
-            <div class="hive-num">${h.num}번 벌통</div>
+            <div class="hive-num">${h.num}번</div>
             <div class="inspect-control">
               <span class="inspect-label">내검</span>
               <span
@@ -881,13 +918,19 @@
       renderStats(apiary);
     }
 
+    function openSingleBox(targetId) {
+      ['addApiaryBox', 'renameApiaryBox', 'deleteApiaryBox', 'pasteRestoreBox'].forEach(id => {
+        const el = document.getElementById(id);
+        if (id === targetId) el.classList.toggle('open');
+        else el.classList.remove('open');
+      });
+    }
+
     document.getElementById('backToApiariesBtn').onclick = openApiaryScreen;
 
     document.getElementById('toggleAddApiaryBtn').onclick = () => {
-      document.getElementById('manageApiaryBox').classList.remove('open');
-      const box = document.getElementById('addApiaryBox');
-      box.classList.toggle('open');
-      if (box.classList.contains('open')) {
+      openSingleBox('addApiaryBox');
+      if (document.getElementById('addApiaryBox').classList.contains('open')) {
         document.getElementById('newApiaryName').focus();
       }
     };
@@ -896,22 +939,24 @@
       document.getElementById('addApiaryBox').classList.remove('open');
     };
 
-    document.getElementById('renameApiaryBtn').onclick = () => {
-      document.getElementById('addApiaryBox').classList.remove('open');
-      document.getElementById('manageApiaryBox').classList.toggle('open');
+    document.getElementById('toggleRenameApiaryBtn').onclick = () => {
+      openSingleBox('renameApiaryBox');
     };
 
-    document.getElementById('deleteApiaryBtn').onclick = () => {
-      document.getElementById('addApiaryBox').classList.remove('open');
-      document.getElementById('manageApiaryBox').classList.toggle('open');
+    document.getElementById('closeRenameApiaryBtn').onclick = () => {
+      document.getElementById('renameApiaryBox').classList.remove('open');
     };
 
-    document.getElementById('closeManageApiaryBtn').onclick = () => {
-      document.getElementById('manageApiaryBox').classList.remove('open');
+    document.getElementById('toggleDeleteApiaryBtn').onclick = () => {
+      openSingleBox('deleteApiaryBox');
+    };
+
+    document.getElementById('closeDeleteApiaryBtn').onclick = () => {
+      document.getElementById('deleteApiaryBox').classList.remove('open');
     };
 
     document.getElementById('confirmRenameApiaryBtn').onclick = () => {
-      const targetId = document.getElementById('manageApiarySelect').value;
+      const targetId = document.getElementById('renameApiarySelect').value;
       const apiary = state.apiaries.find(a => a.id === targetId) || getCurrentApiary();
       const nextName = prompt('새 봉장 이름을 입력하세요.', apiary.name);
       if (nextName === null) return;
@@ -929,7 +974,7 @@
         alert('최소 1개의 봉장은 남아 있어야 합니다.');
         return;
       }
-      const targetId = document.getElementById('manageApiarySelect').value;
+      const targetId = document.getElementById('deleteApiarySelect').value;
       const apiary = state.apiaries.find(a => a.id === targetId) || getCurrentApiary();
       if (confirm(`'${apiary.name}' 전체 기록을 삭제할까요?`)) {
         state.apiaries = state.apiaries.filter(a => a.id !== apiary.id);
@@ -1114,15 +1159,14 @@
         alert(
           `[${fileName}] 파일 읽기/복원 실패\n` +
           `원인: ${err && err.message ? err.message : String(err)}\n\n` +
-          `안드로이드 파일 경로 제한으로 읽지 못했습니다. 아래 '붙여넣기 복원' 창에 JSON 내용을 붙여넣어 복원해 주세요.`
+          `아래 '붙여넣기 복원' 창에 JSON 내용을 붙여넣어 복원해 주세요.`
         );
       }
     };
 
     document.getElementById('togglePasteRestoreBtn').onclick = () => {
-      const box = document.getElementById('pasteRestoreBox');
-      box.classList.toggle('open');
-      if (box.classList.contains('open')) {
+      openSingleBox('pasteRestoreBox');
+      if (document.getElementById('pasteRestoreBox').classList.contains('open')) {
         document.getElementById('pasteJsonInput').focus();
       }
     };
