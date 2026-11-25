@@ -51,22 +51,24 @@
     .add-apiary-box.open {
       display: flex;
     }
-    select, input, textarea, button {
+    select, input, textarea, button, .btn-label {
       font-family: inherit;
       font-size: 14px;
       padding: 8px 12px;
       border-radius: 8px;
       border: 1px solid #cbd5e1;
     }
-    button {
+    button, .btn-label {
       background: #2e7d32;
       color: #fff;
       border: none;
       font-weight: 700;
       cursor: pointer;
+      display: inline-block;
+      user-select: none;
     }
-    button:active { opacity: 0.85; }
-    button.secondary { background: #475569; }
+    button:active, .btn-label:active { opacity: 0.85; }
+    button.secondary, .btn-label.secondary { background: #475569; }
     button.danger { background: #dc2626; }
     button.outline-green {
       background: #e8f5e9;
@@ -80,6 +82,15 @@
     button.tab-btn.active {
       background: #1b5e20;
       color: #fff;
+    }
+    /* 안드로이드 브라우저에서 차단되지 않도록 화면 밖 투명 배치 */
+    .visually-hidden-file {
+      position: fixed;
+      left: -9999px;
+      top: 0;
+      width: 1px;
+      height: 1px;
+      opacity: 0.01;
     }
     .divider {
       width: 1px;
@@ -269,8 +280,8 @@
     <div class="divider"></div>
 
     <button type="button" class="secondary" id="exportBtn">백업(beekeeper)</button>
-    <button type="button" class="secondary" id="importBtn">복원</button>
-    <input type="file" id="importFile" style="display:none;" />
+    <label for="importFile" class="btn-label secondary" id="importBtn">복원</label>
+    <input type="file" id="importFile" class="visually-hidden-file" />
 
     <div class="add-apiary-box" id="addApiaryBox">
       <input type="text" id="newApiaryName" placeholder="새 봉장 이름 (예: 제2봉장)" />
@@ -775,23 +786,23 @@
       alert(`'${filename}' 파일을 내려받았습니다.`);
     };
 
-  document.getElementById('importFile').onchange = async (e) => {
-  const file = e.target.files && e.target.files[0];
-  e.target.value = '';
-  if (!file) return;
+    document.getElementById('importFile').onchange = async (e) => {
+      const file = e.target.files && e.target.files[0];
+      e.target.value = '';
+      if (!file) return;
 
-  try {
-    let text = await file.text();
-    text = text.replace(/^\uFEFF/, '').trim();
-    const parsed = JSON.parse(text);
-    applyRestoredData(parsed, file.name);
-  } catch (err) {
-    alert(
-      `[${file.name}] 파일을 읽지 못했습니다.\n` +
-      '원인: ' + (err && err.name ? err.name : 'Error') + ' - ' + (err && err.message ? err.message : String(err))
-    );
-  }
-};
+      try {
+        let text = await file.text();
+        text = text.replace(/^\uFEFF/, '').trim();
+        const parsed = JSON.parse(text);
+        applyRestoredData(parsed, file.name);
+      } catch (err) {
+        alert(
+          `[${file.name}] 파일을 읽는 중 오류가 발생했습니다.\n` +
+          '원인: ' + (err && err.name ? err.name : 'Error') + ' - ' + (err && err.message ? err.message : String(err))
+        );
+      }
+    };
 
     document.getElementById('viewGridBtn').onclick = () => {
       viewMode = 'grid';
