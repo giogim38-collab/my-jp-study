@@ -250,6 +250,11 @@
       background: #eff6ff;
       box-shadow: 0 0 0 1px rgba(37, 99, 235, 0.25);
     }
+    .hive-card.focus-active {
+      border-color: #7c3aed;
+      background: #f5f3ff;
+      box-shadow: 0 0 0 1px rgba(124, 58, 237, 0.25);
+    }
     .hive-card.alert { border-color: #dc2626; background: #fef2f2; }
     .hive-card.caution { border-color: #d97706; background: #fffbeb; }
 
@@ -261,24 +266,48 @@
       padding-bottom: 6px;
       margin-bottom: 8px;
       border-bottom: 1px solid #e2e8f0;
+      flex-wrap: wrap;
     }
     .hive-num { font-weight: 800; font-size: 16px; color: #0f172a; }
+    .header-controls {
+      display: inline-flex;
+      align-items: center;
+      gap: 5px;
+      margin-left: auto;
+    }
+    .focus-chip {
+      font-size: 11px;
+      font-weight: 800;
+      padding: 3px 6px;
+      border-radius: 6px;
+      border: 1px solid #94a3b8;
+      background: #f1f5f9;
+      color: #334155;
+      cursor: pointer;
+      line-height: 1.2;
+      white-space: nowrap;
+    }
+    .focus-chip.is-active {
+      background: #7c3aed;
+      border-color: #6d28d9;
+      color: #fff;
+    }
     .inspect-control {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
+      gap: 3px;
       user-select: none;
     }
     .inspect-label {
-      font-size: 12px;
+      font-size: 11px;
       font-weight: 800;
       color: #0f172a;
     }
     .inspect-toggle {
       display: inline-grid;
       grid-template-columns: 1fr 1fr;
-      width: 36px;
-      height: 18px;
+      width: 32px;
+      height: 17px;
       padding: 2px;
       border-radius: 999px;
       background: #e2e8f0;
@@ -303,6 +332,41 @@
     }
     .inspect-toggle.is-active .inspect-dot.right {
       background: #2563eb;
+    }
+
+    .focus-banner {
+      background: #ede9fe;
+      border: 1px solid #c4b5fd;
+      color: #4c1d95;
+      border-radius: 7px;
+      padding: 5px 7px;
+      margin-bottom: 7px;
+      font-size: 12px;
+      font-weight: 700;
+      line-height: 1.35;
+      word-break: break-word;
+    }
+    .focus-banner-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 4px;
+      font-weight: 800;
+      color: #5b21b6;
+    }
+    .focus-dday {
+      background: #6d28d9;
+      color: #fff;
+      font-size: 11px;
+      padding: 1px 5px;
+      border-radius: 4px;
+      white-space: nowrap;
+    }
+    .focus-banner-note {
+      margin-top: 2px;
+      font-size: 12px;
+      color: #3b0764;
+      font-weight: 600;
     }
 
     .hive-lines {
@@ -404,8 +468,137 @@
       align-items: center;
       gap: 8px;
       margin-top: 14px;
+      flex-wrap: wrap;
     }
-    .modal-actions-right { display: flex; gap: 8px; }
+    .modal-actions-right { display: flex; gap: 8px; margin-left: auto; }
+
+    /* 집중관리 전용 팝업 스타일 */
+    .type-btn-group {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 6px;
+      margin-bottom: 10px;
+    }
+    .type-choice-btn {
+      background: #f1f5f9;
+      color: #1e293b;
+      border: 1px solid #cbd5e1;
+      padding: 8px 6px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 8px;
+      text-align: center;
+      position: relative;
+    }
+    .type-choice-btn.has-saved-date::after {
+      content: " · 날짜있음";
+      font-size: 11px;
+      font-weight: 800;
+      color: #6d28d9;
+    }
+    .type-choice-btn.selected {
+      background: #7c3aed;
+      color: #fff;
+      border-color: #6d28d9;
+    }
+    .type-choice-btn.selected.has-saved-date::after {
+      color: #ede9fe;
+    }
+    .draft-hint {
+      font-size: 12px;
+      color: #5b21b6;
+      background: #f5f3ff;
+      border: 1px solid #ddd6fe;
+      border-radius: 7px;
+      padding: 6px 9px;
+      margin-bottom: 10px;
+      line-height: 1.35;
+    }
+    .focus-history-box {
+      margin-top: 14px;
+      padding-top: 12px;
+      border-top: 1px solid #e2e8f0;
+    }
+    .focus-history-title {
+      font-size: 14px;
+      font-weight: 800;
+      color: #4c1d95;
+      margin-bottom: 8px;
+    }
+    .focus-log-item {
+      background: #f8fafc;
+      border: 1px solid #e2e8f0;
+      border-radius: 8px;
+      padding: 8px 10px;
+      margin-bottom: 6px;
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 8px;
+    }
+    .focus-log-main {
+      font-size: 13px;
+      line-height: 1.4;
+    }
+    .focus-log-head {
+      font-weight: 800;
+      color: #1e293b;
+    }
+    .focus-log-desc {
+      color: #475569;
+      margin-top: 2px;
+      word-break: break-word;
+    }
+    .focus-log-del {
+      background: #fee2e2;
+      color: #b91c1c;
+      border: 1px solid #fecaca;
+      padding: 4px 8px;
+      font-size: 12px;
+      border-radius: 6px;
+      flex-shrink: 0;
+    }
+    .focus-cum-item {
+      background: #faf5ff;
+      border-left: 3px solid #7c3aed;
+      border-top: 1px solid #ede9fe;
+      border-right: 1px solid #ede9fe;
+      border-bottom: 1px solid #ede9fe;
+      border-radius: 6px;
+      padding: 7px 10px;
+      margin-bottom: 6px;
+      font-size: 13px;
+    }
+    .focus-cum-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 6px;
+      font-weight: 800;
+      color: #4c1d95;
+    }
+    .focus-cum-body {
+      color: #1e293b;
+      margin-top: 2px;
+      white-space: pre-wrap;
+      word-break: break-word;
+    }
+    .add-entry-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+      flex-wrap: wrap;
+    }
+    .mini-btn {
+      padding: 5px 10px;
+      font-size: 12px;
+      border-radius: 6px;
+      background: #ede9fe;
+      color: #5b21b6;
+      border: 1px solid #c4b5fd;
+    }
   </style>
 </head>
 <body>
@@ -567,15 +760,99 @@
     </div>
   </div>
 
+  <!-- 집중관리 일자별 기록 모달 -->
+  <div class="modal-backdrop" id="focusModalBackdrop">
+    <div class="modal" id="focusModalBox">
+      <h2 id="focusModalTitle" style="font-size:18px; margin-bottom:10px; color:#5b21b6;">📌 집중관리 기록</h2>
+
+      <div class="field">
+        <label>관리 항목 선택</label>
+        <div class="type-btn-group" id="focusTypeGroup">
+          <button type="button" class="type-choice-btn selected" data-type="처녀왕 이입">처녀왕 이입</button>
+          <button type="button" class="type-choice-btn" data-type="왕대 이입">왕대 이입</button>
+          <button type="button" class="type-choice-btn" data-type="질병 발생">질병 발생</button>
+          <button type="button" class="type-choice-btn" data-type="약제 처치">약제 처치</button>
+          <button type="button" class="type-choice-btn" data-type="내검 완료">내검 완료</button>
+          <button type="button" class="type-choice-btn" data-type="기타">기타</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="focusDateInput">처치 / 발생 날짜</label>
+        <input type="date" id="focusDateInput" />
+      </div>
+
+      <div class="field">
+        <label for="focusMemoInput">세부 내용 (약제명, 상태, 다음 예정일 등)</label>
+        <input type="text" id="focusMemoInput" placeholder="예: 개미산 1차 투입 / 11.10 2차 예정" />
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="danger" id="clearFocusHiveBtn" style="display:none;">집중관리 해제</button>
+        <div class="modal-actions-right">
+          <button type="button" class="secondary" id="closeFocusModalBtn">닫기</button>
+          <button type="button" id="saveFocusRecordBtn" style="background:#6d28d9;">전체 저장</button>
+        </div>
+      </div>
+
+      <div class="focus-history-box" id="focusAllLogsBox" style="max-height:240px; overflow-y:auto;"></div>
+    </div>
+  </div>
+
   <script>
     const STORAGE_KEY = 'beekeeper_multi_apiary_v1';
     const MAX_BACKUP_FILES = 10;
+    const FOCUS_TYPES = ['처녀왕 이입', '왕대 이입', '질병 발생', '약제 처치', '내검 완료', '기타'];
+
     let state = loadState();
     let currentApiaryId = state.apiaries[0].id;
     let screenMode = 'apiaries';
     let editingHiveIndex = null;
+    let focusHiveIndex = null;
+    let selectedFocusType = '처녀왕 이입';
+    // 각 항목별 임시 메모리 상태: { [type]: { date, memo, dirty, savedId } }
+    let focusTempMap = {};
     let viewMode = 'grid';
     let beekeeperDirHandle = null;
+
+    function getTodayISO() {
+      const now = new Date();
+      const pad = n => String(n).padStart(2, '0');
+      return `${now.getFullYear()}-${pad(now.getMonth() + 1)}-${pad(now.getDate())}`;
+    }
+
+    function formatShortDate(isoDate) {
+      if (!isoDate || typeof isoDate !== 'string') return '';
+      const parts = isoDate.split('-');
+      if (parts.length !== 3) return isoDate;
+      return `${Number(parts[1])}/${Number(parts[2])}`;
+    }
+
+    function calcElapsedBadge(isoDate) {
+      if (!isoDate) return '';
+      const parts = isoDate.split('-').map(Number);
+      if (parts.length !== 3 || parts.some(Number.isNaN)) return '';
+      const target = new Date(parts[0], parts[1] - 1, parts[2]);
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const diffDays = Math.round((today - target) / (1000 * 60 * 60 * 24));
+      if (diffDays === 0) return '오늘';
+      if (diffDays > 0) return `D+${diffDays}`;
+      return `D${diffDays}`;
+    }
+
+    function normalizeFocusRecords(rawList) {
+      if (!Array.isArray(rawList)) return [];
+      return rawList
+        .filter(item => item && typeof item === 'object')
+        .map((item, idx) => ({
+          id: item.id ? String(item.id) : ('f-' + Date.now() + '-' + idx),
+          type: item.type ? String(item.type) : '기타',
+          date: item.date ? String(item.date) : getTodayISO(),
+          memo: item.memo ? String(item.memo) : ''
+        }))
+        .sort((a, b) => b.date.localeCompare(a.date));
+    }
 
     function createSingleHive(num) {
       return {
@@ -588,6 +865,8 @@
         feed: '저밀 충분',
         treatment: '이상 없음',
         note: '',
+        focusActive: false,
+        focusRecords: [],
         updatedAt: ''
       };
     }
@@ -595,6 +874,7 @@
     function normalizeHive(h, idx) {
       const base = createSingleHive(idx + 1);
       const src = (h && typeof h === 'object') ? h : {};
+      const records = normalizeFocusRecords(src.focusRecords);
       return {
         ...base,
         ...src,
@@ -607,6 +887,8 @@
         feed: src.feed !== undefined && src.feed !== null ? String(src.feed) : '저밀 충분',
         treatment: src.treatment !== undefined && src.treatment !== null ? String(src.treatment) : '이상 없음',
         note: src.note !== undefined && src.note !== null ? String(src.note) : '',
+        focusActive: Boolean(src.focusActive || records.length > 0),
+        focusRecords: records,
         updatedAt: src.updatedAt ? String(src.updatedAt) : ''
       };
     }
@@ -751,6 +1033,12 @@
       const hives = apiary.hives;
       const total = hives.length;
 
+      const focusStats = groupByField(
+        hives,
+        h => (h.focusActive || (h.focusRecords && h.focusRecords.length > 0)) ? '집중관리 중' : '일반 관리',
+        label => label === '집중관리 중' ? 'info' : ''
+      );
+
       const inspectionStats = groupByField(
         hives,
         h => h.inspection || '불필요',
@@ -816,6 +1104,10 @@
 
       document.getElementById('statsWrap').innerHTML = `
         <div class="stats-card">
+          <h3>📌 집중관리 현황</h3>
+          ${renderRows(focusStats)}
+        </div>
+        <div class="stats-card">
           <h3>🔎 내검 여부 분포</h3>
           ${renderRows(inspectionStats)}
         </div>
@@ -863,6 +1155,7 @@
 
       state.apiaries.forEach(a => {
         const alertCnt = countAlertHives(a);
+        const focusCnt = a.hives.filter(h => h.focusActive || (h.focusRecords && h.focusRecords.length > 0)).length;
         const counts = getSpecialCounts(a.hives);
         const hasIssue = (counts.virgin + counts.queenCell + counts.queenless + counts.disease) > 0;
         const subText = formatSpecialSummary(counts, true);
@@ -875,6 +1168,7 @@
             <div class="apiary-badge">${a.hives.length}군</div>
           </div>
           <div class="apiary-sub ${hasIssue ? 'has-issue' : ''}">${subText}</div>
+          ${focusCnt > 0 ? `<div class="apiary-alert-text" style="color:#6d28d9;">집중관리 ${focusCnt}군</div>` : ''}
           ${alertCnt > 0 ? `<div class="apiary-alert-text">점검 ${alertCnt}군</div>` : ''}
         `;
         card.onclick = () => openHiveScreen(a.id);
@@ -926,6 +1220,10 @@
       apiary.hives.forEach((h, idx) => {
         const card = document.createElement('div');
         const isInspectNeeded = h.inspection === '필요';
+        const records = Array.isArray(h.focusRecords) ? h.focusRecords : [];
+        const isFocusActive = Boolean(h.focusActive || records.length > 0);
+        const latestFocus = records.length > 0 ? records[0] : null;
+
         const queenText = String(h.queen || '');
         const coverageText = String(h.coverage || '');
         const feedText = String(h.feed || '');
@@ -936,26 +1234,57 @@
         if (queenText.includes('무왕') || treatmentText.includes('질병') || treatmentText.includes('의심')) cls += ' alert';
         else if (queenText.includes('왕대') || queenText.includes('처녀왕') || coverageText.includes('약군') || feedText.includes('부족') || isDiseaseHive(h)) cls += ' caution';
         else if (isInspectNeeded) cls += ' inspect-needed';
+        else if (isFocusActive) cls += ' focus-active';
         card.className = cls;
+
+        let focusBannerHtml = '';
+        if (latestFocus) {
+          const shortDate = formatShortDate(latestFocus.date);
+          const dday = calcElapsedBadge(latestFocus.date);
+          const extraCount = records.length > 1 ? ` 외 ${records.length - 1}건` : '';
+          focusBannerHtml = `
+            <div class="focus-banner">
+              <div class="focus-banner-top">
+                <span>📌 ${shortDate} ${latestFocus.type}${extraCount}</span>
+                ${dday ? `<span class="focus-dday">${dday}</span>` : ''}
+              </div>
+              ${latestFocus.memo ? `<div class="focus-banner-note">${latestFocus.memo}</div>` : ''}
+            </div>
+          `;
+        } else if (isFocusActive) {
+          focusBannerHtml = `
+            <div class="focus-banner">
+              <div class="focus-banner-top"><span>📌 집중관리 대상</span></div>
+            </div>
+          `;
+        }
 
         card.innerHTML = `
           <div class="hive-header">
             <div class="hive-num">${h.num}번</div>
-            <div class="inspect-control">
-              <span class="inspect-label">내검</span>
-              <span
-                role="button"
-                tabindex="0"
-                class="inspect-toggle ${isInspectNeeded ? 'is-active' : ''}"
-                aria-label="${h.num}번 벌통 내검대상 전환"
-                aria-pressed="${isInspectNeeded ? 'true' : 'false'}"
-                data-hive-idx="${idx}"
-              >
-                <span class="inspect-dot left"></span>
-                <span class="inspect-dot right"></span>
-              </span>
+            <div class="header-controls">
+              <button
+                type="button"
+                class="focus-chip ${isFocusActive ? 'is-active' : ''}"
+                aria-label="${h.num}번 벌통 집중관리 기록"
+              >집중관리</button>
+              <div class="inspect-control">
+                <span class="inspect-label">내검</span>
+                <span
+                  role="button"
+                  tabindex="0"
+                  class="inspect-toggle ${isInspectNeeded ? 'is-active' : ''}"
+                  aria-label="${h.num}번 벌통 내검대상 전환"
+                  aria-pressed="${isInspectNeeded ? 'true' : 'false'}"
+                  data-hive-idx="${idx}"
+                >
+                  <span class="inspect-dot left"></span>
+                  <span class="inspect-dot right"></span>
+                </span>
+              </div>
             </div>
           </div>
+          ${focusBannerHtml}
           <div class="hive-lines">
             <div class="hive-line"><span class="hive-line-key">여왕</span><span class="hive-line-val">${h.queen}</span></div>
             <div class="hive-line"><span class="hive-line-key">소비</span><span class="hive-line-val">${h.frames}매</span></div>
@@ -966,6 +1295,12 @@
             ${noteText ? `<div class="hive-note-box">${noteText}</div>` : ''}
           </div>
         `;
+
+        const focusBtn = card.querySelector('.focus-chip');
+        focusBtn.onclick = (ev) => {
+          ev.stopPropagation();
+          openFocusModal(idx);
+        };
 
         const toggleBtn = card.querySelector('.inspect-toggle');
         toggleBtn.onclick = (ev) => toggleHiveInspection(idx, ev);
@@ -982,6 +1317,132 @@
 
       renderStats(apiary);
     }
+
+    function openFocusModal(idx) {
+      focusHiveIndex = idx;
+      const apiary = getCurrentApiary();
+      const h = apiary.hives[idx];
+      if (!h) return;
+
+      document.getElementById('focusModalTitle').textContent = `📌 ${apiary.name} - ${h.num}번 집중관리`;
+      const records = Array.isArray(h.focusRecords) ? h.focusRecords : [];
+      selectedFocusType = (records.length > 0 && FOCUS_TYPES.includes(records[0].type))
+        ? records[0].type
+        : FOCUS_TYPES[0];
+
+      document.querySelectorAll('#focusTypeGroup .type-choice-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.type === selectedFocusType);
+      });
+
+      const latestForType = records.find(r => r.type === selectedFocusType);
+      document.getElementById('focusDateInput').value = (latestForType && latestForType.date) ? latestForType.date : getTodayISO();
+      document.getElementById('focusMemoInput').value = '';
+
+      renderFocusTimeline(h);
+      document.getElementById('focusModalBackdrop').style.display = 'flex';
+    }
+
+    function renderFocusTimeline(h, scrollToTimeline = false) {
+      const records = Array.isArray(h.focusRecords) ? h.focusRecords : [];
+      const clearBtn = document.getElementById('clearFocusHiveBtn');
+      clearBtn.style.display = (h.focusActive || records.length > 0) ? 'inline-block' : 'none';
+
+      const allBox = document.getElementById('focusAllLogsBox');
+      if (!records.length) {
+        allBox.innerHTML = '<div class="hive-list-text">저장된 누적 처지내용이 아직 없습니다.</div>';
+        return;
+      }
+
+      allBox.innerHTML = `
+        <div class="focus-history-title">누적 처지내용 타임라인 (${records.length}건)</div>
+        ${records.map((rec, rIdx) => {
+          const dday = calcElapsedBadge(rec.date);
+          return `
+            <div class="focus-cum-item">
+              <div class="focus-cum-top">
+                <span>${rec.date} (${dday}) · ${rec.type}</span>
+                <button type="button" class="focus-log-del" data-rec-idx="${rIdx}">기록삭제</button>
+              </div>
+              <div class="focus-cum-body">${rec.memo || '(메모 없음)'}</div>
+            </div>
+          `;
+        }).join('')}
+      `;
+
+      allBox.querySelectorAll('.focus-log-del').forEach(btn => {
+        btn.onclick = () => {
+          const rIdx = Number(btn.dataset.recIdx);
+          h.focusRecords.splice(rIdx, 1);
+          if (h.focusRecords.length === 0) {
+            h.focusActive = false;
+          }
+          h.updatedAt = new Date().toISOString();
+          renderFocusTimeline(h, true);
+          saveState();
+        };
+      });
+
+      if (scrollToTimeline) {
+        allBox.scrollTop = 0;
+        allBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+      }
+    }
+
+    document.querySelectorAll('#focusTypeGroup .type-choice-btn').forEach(btn => {
+      btn.onclick = () => {
+        selectedFocusType = btn.dataset.type;
+        document.querySelectorAll('#focusTypeGroup .type-choice-btn').forEach(b => {
+          b.classList.toggle('selected', b.dataset.type === selectedFocusType);
+        });
+        const apiary = getCurrentApiary();
+        const h = apiary.hives[focusHiveIndex];
+        const records = (h && Array.isArray(h.focusRecords)) ? h.focusRecords : [];
+        const latestForType = records.find(r => r.type === selectedFocusType);
+        document.getElementById('focusDateInput').value = (latestForType && latestForType.date) ? latestForType.date : getTodayISO();
+      };
+    });
+
+    document.getElementById('closeFocusModalBtn').onclick = () => {
+      document.getElementById('focusModalBackdrop').style.display = 'none';
+    };
+
+    document.getElementById('saveFocusRecordBtn').onclick = () => {
+      const apiary = getCurrentApiary();
+      const h = apiary.hives[focusHiveIndex];
+      if (!h) return;
+
+      const dateVal = document.getElementById('focusDateInput').value || getTodayISO();
+      const memoVal = document.getElementById('focusMemoInput').value.trim();
+
+      if (!Array.isArray(h.focusRecords)) h.focusRecords = [];
+      h.focusRecords.push({
+        id: 'f-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+        type: selectedFocusType,
+        date: dateVal,
+        memo: memoVal
+      });
+      h.focusRecords.sort((a, b) => b.date.localeCompare(a.date));
+      h.focusActive = true;
+      h.updatedAt = new Date().toISOString();
+
+      document.getElementById('focusMemoInput').value = '';
+      saveState();
+      renderFocusTimeline(h, true);
+    };
+
+    document.getElementById('clearFocusHiveBtn').onclick = () => {
+      const apiary = getCurrentApiary();
+      const h = apiary.hives[focusHiveIndex];
+      if (!h) return;
+
+      if (confirm(`${h.num}번 벌통의 집중관리 표시와 누적 기록을 모두 지우고 해제할까요?`)) {
+        h.focusRecords = [];
+        h.focusActive = false;
+        h.updatedAt = new Date().toISOString();
+        document.getElementById('focusModalBackdrop').style.display = 'none';
+        saveState();
+      }
+    };
 
     function openSingleBox(targetId) {
       ['addApiaryBox', 'renameApiaryBox', 'deleteApiaryBox', 'pasteRestoreBox'].forEach(id => {
