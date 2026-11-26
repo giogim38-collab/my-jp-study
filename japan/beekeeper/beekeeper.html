@@ -400,6 +400,7 @@
       font-size: 13px;
       color: #0f172a;
       font-weight: 600;
+      white-space: pre-line;
       word-break: break-word;
     }
 
@@ -599,6 +600,33 @@
       color: #5b21b6;
       border: 1px solid #c4b5fd;
     }
+    .batch-hive-grid {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      max-height: 150px;
+      overflow-y: auto;
+      padding: 8px;
+      background: #f8fafc;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      margin-top: 6px;
+    }
+    .batch-hive-chip {
+      padding: 5px 9px;
+      font-size: 13px;
+      font-weight: 700;
+      border-radius: 6px;
+      border: 1px solid #cbd5e1;
+      background: #fff;
+      color: #475569;
+      cursor: pointer;
+    }
+    .batch-hive-chip.selected {
+      background: #7c3aed;
+      border-color: #6d28d9;
+      color: #fff;
+    }
   </style>
 </head>
 <body>
@@ -668,6 +696,7 @@
         <span id="currentApiaryHeading" class="current-apiary-title">제1봉장</span>
       </div>
       <div class="btn-row">
+        <button type="button" style="background:#6d28d9;" id="openBatchFocusBtn">📌 일괄 집중관리</button>
         <button type="button" class="secondary" id="insertHiveBtn">+ 벌통 추가</button>
         <button type="button" class="tab-btn active" id="viewGridBtn">벌통 카드</button>
         <button type="button" class="tab-btn" id="viewStatsBtn">항목별 통계</button>
@@ -763,7 +792,8 @@
   <!-- 집중관리 일자별 기록 모달 -->
   <div class="modal-backdrop" id="focusModalBackdrop">
     <div class="modal" id="focusModalBox">
-      <h2 id="focusModalTitle" style="font-size:18px; margin-bottom:10px; color:#5b21b6;">📌 집중관리 기록</h2>
+      <h2 id="focusModalTitle" style="font-size:18px; margin-bottom:6px; color:#5b21b6;">📌 집중관리 기록</h2>
+      <div class="draft-hint">저장 시 카드의 <strong>여왕 · 약제/병 · 내검 · 메모</strong> 항목에도 자동 반영됩니다.</div>
 
       <div class="field">
         <label>관리 항목 선택</label>
@@ -796,6 +826,55 @@
       </div>
 
       <div class="focus-history-box" id="focusAllLogsBox" style="max-height:240px; overflow-y:auto;"></div>
+    </div>
+  </div>
+
+  <!-- 봉장 일괄 집중관리 모달 -->
+  <div class="modal-backdrop" id="batchFocusModalBackdrop">
+    <div class="modal">
+      <h2 id="batchFocusModalTitle" style="font-size:18px; margin-bottom:6px; color:#5b21b6;">📌 봉장 일괄 집중관리 입력</h2>
+      <div class="draft-hint">저장 시 선택한 모든 벌통 카드의 <strong>여왕 · 약제/병 · 내검 · 메모</strong> 항목에도 자동 반영됩니다.</div>
+
+      <div class="field">
+        <label>관리 항목 선택</label>
+        <div class="type-btn-group" id="batchFocusTypeGroup">
+          <button type="button" class="type-choice-btn" data-type="처녀왕 유입">처녀왕 유입</button>
+          <button type="button" class="type-choice-btn" data-type="왕대 이입">왕대 이입</button>
+          <button type="button" class="type-choice-btn" data-type="질병 발생">질병 발생</button>
+          <button type="button" class="type-choice-btn selected" data-type="약제 처치">약제 처치</button>
+          <button type="button" class="type-choice-btn" data-type="내검 완료">내검 완료</button>
+          <button type="button" class="type-choice-btn" data-type="기타">기타</button>
+        </div>
+      </div>
+
+      <div class="field">
+        <label for="batchFocusDateInput">처치 / 발생 날짜</label>
+        <input type="date" id="batchFocusDateInput" />
+      </div>
+
+      <div class="field">
+        <label for="batchFocusMemoInput">세부 내용 (약제명, 상태, 다음 예정일 등)</label>
+        <input type="text" id="batchFocusMemoInput" placeholder="예: 개미산 1차 투여" />
+      </div>
+
+      <div class="field">
+        <div class="add-entry-row" style="margin-bottom:4px;">
+          <label style="margin-bottom:0;">적용 대상 벌통 (<span id="batchSelectedCountText">0군 선택</span>)</label>
+          <div class="btn-row" style="gap:4px;">
+            <button type="button" class="mini-btn" id="batchSelectAllBtn">전체 선택</button>
+            <button type="button" class="mini-btn" id="batchDeselectAllBtn" style="background:#f1f5f9; color:#475569; border-color:#cbd5e1;">전체 해제</button>
+          </div>
+        </div>
+        <div class="batch-hive-grid" id="batchHiveGrid"></div>
+      </div>
+
+      <div class="modal-actions">
+        <button type="button" class="danger" id="batchClearSelectedBtn">선택 벌통 일괄 해제</button>
+        <div class="modal-actions-right">
+          <button type="button" class="secondary" id="closeBatchFocusModalBtn">취소</button>
+          <button type="button" id="saveBatchFocusBtn" style="background:#6d28d9;">선택 군 일괄 저장</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -1351,6 +1430,35 @@
       return `D${diffDays}`;
     }
 
+    function applyFocusRecordToHiveFields(h, rec) {
+      if (!h || !rec) return;
+      const type = String(rec.type || '');
+      const memo = String(rec.memo || '').trim();
+      const shortDate = formatShortDate(rec.date || getTodayISO());
+
+      if (type === '처녀왕 유입') {
+        h.queen = '처녀왕';
+      } else if (type === '왕대 이입') {
+        h.queen = '왕대 발견';
+      } else if (type === '질병 발생') {
+        h.treatment = memo || '질병 의심(주의)';
+      } else if (type === '약제 처치') {
+        h.treatment = memo || '약제 처치';
+      } else if (type === '내검 완료') {
+        h.inspection = '불필요';
+      }
+
+      if (memo) {
+        const entryLine = `[${shortDate} ${type}] ${memo}`;
+        const existingNote = String(h.note || '').trim();
+        const lines = existingNote ? existingNote.split('\n').map(s => s.trim()).filter(Boolean) : [];
+        if (!lines.includes(entryLine)) {
+          lines.push(entryLine);
+          h.note = lines.join('\n');
+        }
+      }
+    }
+
     function cloneRecords(recs) {
       return (Array.isArray(recs) ? recs : []).map((r, i) => ({
         id: r.id ? String(r.id) : ('f-' + Date.now() + '-' + i),
@@ -1632,6 +1740,15 @@
           return b.id.localeCompare(a.id);
         });
 
+      const newOrUpdated = cleaned
+        .filter(r => !originalSavedIds.has(r.id))
+        .sort((a, b) => {
+          const dCmp = a.date.localeCompare(b.date);
+          if (dCmp !== 0) return dCmp;
+          return a.id.localeCompare(b.id);
+        });
+      newOrUpdated.forEach(rec => applyFocusRecordToHiveFields(h, rec));
+
       h.focusRecords = cleaned;
       h.focusActive = cleaned.length > 0;
       h.updatedAt = new Date().toISOString();
@@ -1659,6 +1776,148 @@
         document.getElementById('focusModalBackdrop').style.display = 'none';
         saveState();
       }
+    };
+
+    // 봉장 일괄 집중관리 로직
+    let batchSelectedType = '약제 처치';
+    let batchSelectedIndices = new Set();
+
+    function updateBatchCountText() {
+      const apiary = getCurrentApiary();
+      const total = apiary.hives.length;
+      const cnt = batchSelectedIndices.size;
+      const label = cnt === total ? `전체 ${total}군 선택됨` : `${cnt}군 / 전체 ${total}군 선택됨`;
+      document.getElementById('batchSelectedCountText').textContent = label;
+    }
+
+    function renderBatchHiveChips() {
+      const apiary = getCurrentApiary();
+      const container = document.getElementById('batchHiveGrid');
+      container.innerHTML = '';
+      apiary.hives.forEach((h, idx) => {
+        const chip = document.createElement('button');
+        chip.type = 'button';
+        chip.className = 'batch-hive-chip' + (batchSelectedIndices.has(idx) ? ' selected' : '');
+        chip.textContent = `${h.num}번`;
+        chip.onclick = () => {
+          if (batchSelectedIndices.has(idx)) {
+            batchSelectedIndices.delete(idx);
+          } else {
+            batchSelectedIndices.add(idx);
+          }
+          chip.classList.toggle('selected', batchSelectedIndices.has(idx));
+          updateBatchCountText();
+        };
+        container.appendChild(chip);
+      });
+      updateBatchCountText();
+    }
+
+    function openBatchFocusModal() {
+      const apiary = getCurrentApiary();
+      document.getElementById('batchFocusModalTitle').textContent = `📌 ${apiary.name} (${apiary.hives.length}군) 일괄 집중관리`;
+
+      batchSelectedType = '약제 처치';
+      document.querySelectorAll('#batchFocusTypeGroup .type-choice-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.type === batchSelectedType);
+      });
+
+      document.getElementById('batchFocusDateInput').value = getTodayISO();
+      document.getElementById('batchFocusMemoInput').value = '';
+
+      // 기본값: 현재 봉장의 모든 군 전체 선택
+      batchSelectedIndices = new Set(apiary.hives.map((_, idx) => idx));
+      renderBatchHiveChips();
+
+      document.getElementById('batchFocusModalBackdrop').style.display = 'flex';
+    }
+
+    document.getElementById('openBatchFocusBtn').onclick = openBatchFocusModal;
+
+    document.querySelectorAll('#batchFocusTypeGroup .type-choice-btn').forEach(btn => {
+      btn.onclick = () => {
+        batchSelectedType = btn.dataset.type;
+        document.querySelectorAll('#batchFocusTypeGroup .type-choice-btn').forEach(b => {
+          b.classList.toggle('selected', b.dataset.type === batchSelectedType);
+        });
+      };
+    });
+
+    document.getElementById('batchSelectAllBtn').onclick = () => {
+      const apiary = getCurrentApiary();
+      batchSelectedIndices = new Set(apiary.hives.map((_, idx) => idx));
+      renderBatchHiveChips();
+    };
+
+    document.getElementById('batchDeselectAllBtn').onclick = () => {
+      batchSelectedIndices.clear();
+      renderBatchHiveChips();
+    };
+
+    document.getElementById('closeBatchFocusModalBtn').onclick = () => {
+      document.getElementById('batchFocusModalBackdrop').style.display = 'none';
+    };
+
+    document.getElementById('saveBatchFocusBtn').onclick = () => {
+      const apiary = getCurrentApiary();
+      if (batchSelectedIndices.size === 0) {
+        alert('적용할 벌통을 1군 이상 선택해 주세요.');
+        return;
+      }
+
+      const dateVal = document.getElementById('batchFocusDateInput').value || getTodayISO();
+      const memoVal = String(document.getElementById('batchFocusMemoInput').value || '').trim();
+      const nowIso = new Date().toISOString();
+      const baseTs = Date.now();
+
+      let count = 0;
+      batchSelectedIndices.forEach(idx => {
+        const h = apiary.hives[idx];
+        if (!h) return;
+        if (!Array.isArray(h.focusRecords)) h.focusRecords = [];
+        const newRec = {
+          id: 'f-' + baseTs + '-' + idx + '-' + Math.random().toString(36).slice(2, 5),
+          type: batchSelectedType,
+          date: dateVal,
+          memo: memoVal
+        };
+        h.focusRecords.unshift(newRec);
+        applyFocusRecordToHiveFields(h, newRec);
+        h.focusRecords.sort((a, b) => {
+          const dCmp = b.date.localeCompare(a.date);
+          if (dCmp !== 0) return dCmp;
+          return b.id.localeCompare(a.id);
+        });
+        h.focusActive = true;
+        h.updatedAt = nowIso;
+        count += 1;
+      });
+
+      document.getElementById('batchFocusModalBackdrop').style.display = 'none';
+      saveState();
+      alert(`${apiary.name} ${count}군에 [${batchSelectedType}] 기록을 일괄 저장했습니다.`);
+    };
+
+    document.getElementById('batchClearSelectedBtn').onclick = () => {
+      const apiary = getCurrentApiary();
+      if (batchSelectedIndices.size === 0) {
+        alert('해제할 벌통을 1군 이상 선택해 주세요.');
+        return;
+      }
+      if (!confirm(`선택한 ${batchSelectedIndices.size}군의 집중관리 표시와 기록을 모두 일괄 해제할까요?`)) {
+        return;
+      }
+      const nowIso = new Date().toISOString();
+      batchSelectedIndices.forEach(idx => {
+        const h = apiary.hives[idx];
+        if (!h) return;
+        h.focusRecords = [];
+        h.focusActive = false;
+        h.updatedAt = nowIso;
+      });
+      document.getElementById('batchFocusModalBackdrop').style.display = 'none';
+      saveState();
+      alert(`선택한 ${batchSelectedIndices.size}군의 집중관리를 일괄 해제했습니다.`);
     };
 
     function openSingleBox(targetId) {
