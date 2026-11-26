@@ -768,7 +768,7 @@
       <div class="field">
         <label>관리 항목 선택</label>
         <div class="type-btn-group" id="focusTypeGroup">
-          <button type="button" class="type-choice-btn selected" data-type="처녀왕 이입">처녀왕 이입</button>
+          <button type="button" class="type-choice-btn selected" data-type="처녀왕 유입">처녀왕 유입</button>
           <button type="button" class="type-choice-btn" data-type="왕대 이입">왕대 이입</button>
           <button type="button" class="type-choice-btn" data-type="질병 발생">질병 발생</button>
           <button type="button" class="type-choice-btn" data-type="약제 처치">약제 처치</button>
@@ -802,14 +802,14 @@
   <script>
     const STORAGE_KEY = 'beekeeper_multi_apiary_v1';
     const MAX_BACKUP_FILES = 10;
-    const FOCUS_TYPES = ['처녀왕 이입', '왕대 이입', '질병 발생', '약제 처치', '내검 완료', '기타'];
+    const FOCUS_TYPES = ['처녀왕 유입', '왕대 이입', '질병 발생', '약제 처치', '내검 완료', '기타'];
 
     let state = loadState();
     let currentApiaryId = state.apiaries[0].id;
     let screenMode = 'apiaries';
     let editingHiveIndex = null;
     let focusHiveIndex = null;
-    let selectedFocusType = '처녀왕 이입';
+    let selectedFocusType = '처녀왕 유입';
     // 각 항목별 임시 메모리 상태: { [type]: { date, memo, dirty, savedId } }
     let focusTempMap = {};
     let viewMode = 'grid';
@@ -1238,17 +1238,33 @@
         card.className = cls;
 
         let focusBannerHtml = '';
-        if (latestFocus) {
-          const shortDate = formatShortDate(latestFocus.date);
-          const dday = calcElapsedBadge(latestFocus.date);
-          const extraCount = records.length > 1 ? ` 외 ${records.length - 1}건` : '';
+        if (records.length > 0) {
+          const cardSummaryParts = [];
+          FOCUS_TYPES.forEach(typeName => {
+            const latestForType = getLatestRecordForType(records, typeName);
+            if (latestForType) {
+              const elapsed = formatElapsedTag(latestForType.date);
+              cardSummaryParts.push(`${typeName}: ${elapsed}`);
+            }
+          });
+          records.forEach(r => {
+            if (!FOCUS_TYPES.includes(r.type)) {
+              const latestCustom = getLatestRecordForType(records, r.type);
+              if (latestCustom) {
+                const label = `${r.type}: ${formatElapsedTag(latestCustom.date)}`;
+                if (!cardSummaryParts.includes(label)) {
+                  cardSummaryParts.push(label);
+                }
+              }
+            }
+          });
+
           focusBannerHtml = `
             <div class="focus-banner">
               <div class="focus-banner-top">
-                <span>📌 ${shortDate} ${latestFocus.type}${extraCount}</span>
-                ${dday ? `<span class="focus-dday">${dday}</span>` : ''}
+                <span>📌 ${cardSummaryParts.join(' · ')}</span>
               </div>
-              ${latestFocus.memo ? `<div class="focus-banner-note">${latestFocus.memo}</div>` : ''}
+              ${latestFocus && latestFocus.memo ? `<div class="focus-banner-note">${latestFocus.memo}</div>` : ''}
             </div>
           `;
         } else if (isFocusActive) {
@@ -1318,6 +1334,102 @@
       renderStats(apiary);
     }
 
+    let draftRecords = [];
+    let originalSavedIds = new Set();
+    let currentEditingRecId = null;
+
+    function formatElapsedTag(isoDate) {
+      if (!isoDate) return '';
+      const parts = isoDate.split('-').map(Number);
+      if (parts.length !== 3 || parts.some(Number.isNaN)) return '';
+      const target = new Date(parts[0], parts[1] - 1, parts[2]);
+      const now = new Date();
+      const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+      const diffDays = Math.round((today - target) / (1000 * 60 * 60 * 24));
+      if (diffDays === 0) return '오늘';
+      if (diffDays > 0) return `D+${diffDays}`;
+      return `D${diffDays}`;
+    }
+
+    function cloneRecords(recs) {
+      return (Array.isArray(recs) ? recs : []).map((r, i) => ({
+        id: r.id ? String(r.id) : ('f-' + Date.now() + '-' + i),
+        type: r.type ? String(r.type) : '기타',
+        date: r.date ? String(r.date) : getTodayISO(),
+        memo: r.memo !== undefined && r.memo !== null ? String(r.memo) : ''
+      }));
+    }
+
+    function getLatestRecordForType(list, typeName) {
+      const matched = (list || [])
+        .filter(r => r.type === typeName)
+        .sort((a, b) => {
+          const dCmp = b.date.localeCompare(a.date);
+          if (dCmp !== 0) return dCmp;
+          return b.id.localeCompare(a.id);
+        });
+      return matched.length > 0 ? matched[0] : null;
+    }
+
+    function commitCurrentInputsToDraft() {
+      const dateVal = document.getElementById('focusDateInput').value || getTodayISO();
+      const memoVal = document.getElementById('focusMemoInput').value;
+      const trimmedMemo = String(memoVal || '').trim();
+
+      if (!currentEditingRecId) {
+        if (trimmedMemo.length > 0) {
+          const newRec = {
+            id: 'f-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+            type: selectedFocusType,
+            date: dateVal,
+            memo: memoVal
+          };
+          draftRecords.push(newRec);
+          currentEditingRecId = newRec.id;
+        }
+        return;
+      }
+
+      const existing = draftRecords.find(r => r.id === currentEditingRecId);
+      if (!existing) return;
+
+      if (originalSavedIds.has(existing.id)) {
+        const dateChanged = existing.date !== dateVal;
+        const memoChanged = existing.memo !== memoVal;
+        if ((dateChanged || memoChanged) && trimmedMemo.length > 0) {
+          const newRec = {
+            id: 'f-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+            type: selectedFocusType,
+            date: dateVal,
+            memo: memoVal
+          };
+          draftRecords.push(newRec);
+          currentEditingRecId = newRec.id;
+        }
+      } else {
+        existing.date = dateVal;
+        existing.memo = memoVal;
+      }
+    }
+
+    function loadInputsForCategory(typeName) {
+      selectedFocusType = typeName;
+      document.querySelectorAll('#focusTypeGroup .type-choice-btn').forEach(btn => {
+        btn.classList.toggle('selected', btn.dataset.type === selectedFocusType);
+      });
+
+      const latest = getLatestRecordForType(draftRecords, selectedFocusType);
+      if (latest) {
+        currentEditingRecId = latest.id;
+        document.getElementById('focusDateInput').value = latest.date || getTodayISO();
+        document.getElementById('focusMemoInput').value = latest.memo || '';
+      } else {
+        currentEditingRecId = null;
+        document.getElementById('focusDateInput').value = getTodayISO();
+        document.getElementById('focusMemoInput').value = '';
+      }
+    }
+
     function openFocusModal(idx) {
       focusHiveIndex = idx;
       const apiary = getCurrentApiary();
@@ -1325,84 +1437,178 @@
       if (!h) return;
 
       document.getElementById('focusModalTitle').textContent = `📌 ${apiary.name} - ${h.num}번 집중관리`;
+      draftRecords = cloneRecords(h.focusRecords);
+      originalSavedIds = new Set(draftRecords.map(r => r.id));
+      currentEditingRecId = null;
+
       const records = Array.isArray(h.focusRecords) ? h.focusRecords : [];
-      selectedFocusType = (records.length > 0 && FOCUS_TYPES.includes(records[0].type))
+      const initialType = (records.length > 0 && FOCUS_TYPES.includes(records[0].type))
         ? records[0].type
         : FOCUS_TYPES[0];
 
-      document.querySelectorAll('#focusTypeGroup .type-choice-btn').forEach(btn => {
-        btn.classList.toggle('selected', btn.dataset.type === selectedFocusType);
-      });
-
-      const latestForType = records.find(r => r.type === selectedFocusType);
-      document.getElementById('focusDateInput').value = (latestForType && latestForType.date) ? latestForType.date : getTodayISO();
-      document.getElementById('focusMemoInput').value = '';
-
-      renderFocusTimeline(h);
+      loadInputsForCategory(initialType);
+      renderFocusTimeline(draftRecords, h.focusActive, false);
       document.getElementById('focusModalBackdrop').style.display = 'flex';
     }
 
-    function renderFocusTimeline(h, scrollToTimeline = false) {
-      const records = Array.isArray(h.focusRecords) ? h.focusRecords : [];
+    function scrollTimelineNow() {
+      const allBox = document.getElementById('focusAllLogsBox');
+      const modalBox = document.getElementById('focusModalBox');
+      if (allBox) {
+        allBox.scrollTop = allBox.scrollHeight;
+      }
+      if (modalBox) {
+        modalBox.scrollTop = modalBox.scrollHeight;
+      }
+    }
+
+    function renderFocusTimeline(list, isActive, scrollToTimeline = false) {
+      const allRecords = Array.isArray(list) ? list : [];
+
       const clearBtn = document.getElementById('clearFocusHiveBtn');
-      clearBtn.style.display = (h.focusActive || records.length > 0) ? 'inline-block' : 'none';
+      clearBtn.style.display = (isActive || allRecords.length > 0) ? 'inline-block' : 'none';
 
       const allBox = document.getElementById('focusAllLogsBox');
-      if (!records.length) {
-        allBox.innerHTML = '<div class="hive-list-text">저장된 누적 처지내용이 아직 없습니다.</div>';
+      if (!allRecords.length) {
+        allBox.innerHTML = '';
         return;
       }
 
-      allBox.innerHTML = `
-        <div class="focus-history-title">누적 처지내용 타임라인 (${records.length}건)</div>
-        ${records.map((rec, rIdx) => {
-          const dday = calcElapsedBadge(rec.date);
-          return `
-            <div class="focus-cum-item">
-              <div class="focus-cum-top">
-                <span>${rec.date} (${dday}) · ${rec.type}</span>
-                <button type="button" class="focus-log-del" data-rec-idx="${rIdx}">기록삭제</button>
+      // 기록이 있는 항목만 골라 항목별 최신기록 기준 D+n 요약 생성
+      const activeSummaryParts = [];
+      FOCUS_TYPES.forEach(typeName => {
+        const latestForType = getLatestRecordForType(allRecords, typeName);
+        if (latestForType) {
+          const elapsed = formatElapsedTag(latestForType.date);
+          activeSummaryParts.push(`${typeName}: ${elapsed}`);
+        }
+      });
+      // FOCUS_TYPES 외 커스텀 타입이 있는 경우도 기록이 있을 때만 포함
+      allRecords.forEach(r => {
+        if (!FOCUS_TYPES.includes(r.type)) {
+          const latestCustom = getLatestRecordForType(allRecords, r.type);
+          if (latestCustom) {
+            const label = `${r.type}: ${formatElapsedTag(latestCustom.date)}`;
+            if (!activeSummaryParts.includes(label)) {
+              activeSummaryParts.push(label);
+            }
+          }
+        }
+      });
+
+      const filteredRecords = allRecords
+        .filter(r => r.type === selectedFocusType)
+        .sort((a, b) => {
+          const dCmp = b.date.localeCompare(a.date);
+          if (dCmp !== 0) return dCmp;
+          return b.id.localeCompare(a.id);
+        });
+
+      const summaryHtml = activeSummaryParts.length > 0
+        ? `<div class="focus-history-title">${activeSummaryParts.join(' · ')}</div>`
+        : '';
+
+      const itemsHtml = filteredRecords.length > 0
+        ? filteredRecords.map((rec) => {
+            const elapsed = formatElapsedTag(rec.date);
+            return `
+              <div class="focus-cum-item">
+                <div class="focus-cum-top">
+                  <span>${rec.date} (${elapsed}) · ${rec.type}</span>
+                  <button type="button" class="focus-log-del" data-rec-id="${rec.id}">기록삭제</button>
+                </div>
+                <div class="focus-cum-body">${rec.memo || '(메모 없음)'}</div>
               </div>
-              <div class="focus-cum-body">${rec.memo || '(메모 없음)'}</div>
-            </div>
-          `;
-        }).join('')}
-      `;
+            `;
+          }).join('')
+        : '';
+
+      allBox.innerHTML = summaryHtml + itemsHtml;
 
       allBox.querySelectorAll('.focus-log-del').forEach(btn => {
         btn.onclick = () => {
-          const rIdx = Number(btn.dataset.recIdx);
-          h.focusRecords.splice(rIdx, 1);
-          if (h.focusRecords.length === 0) {
-            h.focusActive = false;
+          const recId = btn.dataset.recId;
+          draftRecords = draftRecords.filter(r => r.id !== recId);
+          originalSavedIds.delete(recId);
+          if (currentEditingRecId === recId) {
+            const nextLatest = getLatestRecordForType(draftRecords, selectedFocusType);
+            if (nextLatest) {
+              currentEditingRecId = nextLatest.id;
+              document.getElementById('focusDateInput').value = nextLatest.date || getTodayISO();
+              document.getElementById('focusMemoInput').value = nextLatest.memo || '';
+            } else {
+              currentEditingRecId = null;
+              document.getElementById('focusDateInput').value = getTodayISO();
+              document.getElementById('focusMemoInput').value = '';
+            }
           }
-          h.updatedAt = new Date().toISOString();
-          renderFocusTimeline(h, true);
-          saveState();
+          renderFocusTimeline(draftRecords, draftRecords.length > 0, true);
         };
       });
 
       if (scrollToTimeline) {
-        allBox.scrollTop = 0;
-        allBox.scrollIntoView({ behavior: 'smooth', block: 'nearest' });
+        setTimeout(() => {
+          scrollTimelineNow();
+        }, 30);
       }
     }
 
     document.querySelectorAll('#focusTypeGroup .type-choice-btn').forEach(btn => {
       btn.onclick = () => {
-        selectedFocusType = btn.dataset.type;
-        document.querySelectorAll('#focusTypeGroup .type-choice-btn').forEach(b => {
-          b.classList.toggle('selected', b.dataset.type === selectedFocusType);
-        });
+        commitCurrentInputsToDraft();
+        loadInputsForCategory(btn.dataset.type);
         const apiary = getCurrentApiary();
         const h = apiary.hives[focusHiveIndex];
-        const records = (h && Array.isArray(h.focusRecords)) ? h.focusRecords : [];
-        const latestForType = records.find(r => r.type === selectedFocusType);
-        document.getElementById('focusDateInput').value = (latestForType && latestForType.date) ? latestForType.date : getTodayISO();
+        renderFocusTimeline(draftRecords, h ? h.focusActive : false, false);
       };
     });
 
+    function ensureDraftRecordOnEdit() {
+      const dateVal = document.getElementById('focusDateInput').value || getTodayISO();
+      const memoVal = document.getElementById('focusMemoInput').value;
+
+      if (!currentEditingRecId) {
+        if (String(memoVal || '').trim().length > 0) {
+          const newRec = {
+            id: 'f-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+            type: selectedFocusType,
+            date: dateVal,
+            memo: memoVal
+          };
+          draftRecords.push(newRec);
+          currentEditingRecId = newRec.id;
+        }
+        return;
+      }
+
+      const existing = draftRecords.find(r => r.id === currentEditingRecId);
+      if (!existing) return;
+
+      if (originalSavedIds.has(existing.id)) {
+        if (String(memoVal || '').trim().length > 0 && (existing.date !== dateVal || existing.memo !== memoVal)) {
+          const newRec = {
+            id: 'f-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
+            type: selectedFocusType,
+            date: dateVal,
+            memo: memoVal
+          };
+          draftRecords.push(newRec);
+          currentEditingRecId = newRec.id;
+        }
+      } else {
+        existing.date = dateVal;
+        existing.memo = memoVal;
+      }
+    }
+
+    document.getElementById('focusDateInput').oninput = ensureDraftRecordOnEdit;
+    document.getElementById('focusDateInput').onchange = ensureDraftRecordOnEdit;
+    document.getElementById('focusMemoInput').oninput = ensureDraftRecordOnEdit;
+
     document.getElementById('closeFocusModalBtn').onclick = () => {
+      draftRecords = [];
+      originalSavedIds.clear();
+      currentEditingRecId = null;
       document.getElementById('focusModalBackdrop').style.display = 'none';
     };
 
@@ -1411,23 +1617,31 @@
       const h = apiary.hives[focusHiveIndex];
       if (!h) return;
 
-      const dateVal = document.getElementById('focusDateInput').value || getTodayISO();
-      const memoVal = document.getElementById('focusMemoInput').value.trim();
+      commitCurrentInputsToDraft();
 
-      if (!Array.isArray(h.focusRecords)) h.focusRecords = [];
-      h.focusRecords.push({
-        id: 'f-' + Date.now() + '-' + Math.random().toString(36).slice(2, 6),
-        type: selectedFocusType,
-        date: dateVal,
-        memo: memoVal
-      });
-      h.focusRecords.sort((a, b) => b.date.localeCompare(a.date));
-      h.focusActive = true;
+      const cleaned = draftRecords
+        .map(r => ({
+          id: r.id,
+          type: r.type,
+          date: r.date || getTodayISO(),
+          memo: String(r.memo || '').trim()
+        }))
+        .sort((a, b) => {
+          const dCmp = b.date.localeCompare(a.date);
+          if (dCmp !== 0) return dCmp;
+          return b.id.localeCompare(a.id);
+        });
+
+      h.focusRecords = cleaned;
+      h.focusActive = cleaned.length > 0;
       h.updatedAt = new Date().toISOString();
 
-      document.getElementById('focusMemoInput').value = '';
+      draftRecords = cloneRecords(h.focusRecords);
+      originalSavedIds = new Set(draftRecords.map(r => r.id));
+      loadInputsForCategory(selectedFocusType);
+
       saveState();
-      renderFocusTimeline(h, true);
+      renderFocusTimeline(draftRecords, h.focusActive, true);
     };
 
     document.getElementById('clearFocusHiveBtn').onclick = () => {
@@ -1439,6 +1653,9 @@
         h.focusRecords = [];
         h.focusActive = false;
         h.updatedAt = new Date().toISOString();
+        draftRecords = [];
+        originalSavedIds.clear();
+        currentEditingRecId = null;
         document.getElementById('focusModalBackdrop').style.display = 'none';
         saveState();
       }
